@@ -283,98 +283,88 @@ tolerations:
   operator: "Exists"
   effect: "NoSchedule"
 ```
-
 ---
-
 ## 3. Services & Networking (20%)
 
-This section focuses on Kubernetes services and networking concepts, which make up 20% of the CKA Exam. Below are the key topics explained with `kubectl` examples:
+This domain focuses on the various networking mechanisms in Kubernetes. You'll need to understand Pod communication, exposing applications, DNS, ingress, and network security.
 
-### 1. Understand Host Networking Configuration on the Cluster Nodes
-> Host networking involves understanding how network interfaces, IPs, and routes are configured on cluster nodes to ensure communication.
+### ✅ Understand Connectivity Between Pods
 
-#### Key Concepts:
-> - Check node network interfaces and routes using tools like `ip` or `ifconfig`.
+Pods should communicate seamlessly within a cluster using Pod IPs. Expect tasks to:
 
-> - Ensure proper setup of firewalls and ports for Kubernetes components.
+- Troubleshoot unreachable Pods
+- Use tools like `ping`, `curl`, and `nslookup`
 
-> **Example:**
-```bash
-# List network interfaces on a node
-kubectl get nodes -o wide
-ssh <node-name> "ip a"
-```
+**Example:**
 
-> - [Learn more about cluster networking](https://kubernetes.io/docs/concepts/architecture/nodes/)
-
-### 2. Understand Connectivity Between Pods
-> Pods communicate with each other via the cluster network. All Pods are assigned a unique IP and can communicate without NAT.
-
-#### Example:
-> **Test Pod-to-Pod connectivity:**
 ```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod1
-spec:
-  containers:
-  - name: nginx
-    image: nginx
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod2
-spec:
-  containers:
-  - name: busybox
-    image: busybox
-    command: ["sh", "-c", "sleep 3600"]
-```
-```bash
-kubectl apply -f pods.yaml
-kubectl exec pod2 -- ping pod1
+kubectl exec -it pod-a -- ping pod-b
+kubectl exec -it pod-a -- curl http://<pod-ip>:<port>
 ```
 
-> - [Learn more about Pod networking](https://kubernetes.io/docs/concepts/cluster-administration/networking/)
+### ✅ Define and Enforce Network Policies
 
-### 3. Understand ClusterIP, NodePort, LoadBalancer Service Types and Endpoints
-> Services expose Kubernetes applications for internal and external access. Common service types include:
+Use `NetworkPolicy` resources to restrict traffic between Pods.
 
-> - **ClusterIP:** Default; exposes the service inside the cluster.
+- Based on namespace and label selectors
+- Enforced only with CNI plugins that support it (e.g., Calico)
 
-> - **NodePort:** Exposes the service on a static port on each node.
+**Example:**
 
-> - **LoadBalancer:** Uses cloud provider load balancers to expose services externally.
-
-#### Example:
-> **Create a ClusterIP service:**
 ```yaml
-apiVersion: v1
-kind: Service
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
 metadata:
-  name: clusterip-service
+  name: allow-frontend
+  namespace: default
 spec:
-  selector:
-    app: my-app
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8080
-  type: ClusterIP
+  podSelector:
+    matchLabels:
+      role: backend
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
 ```
+
+### ✅ Use ClusterIP, NodePort, LoadBalancer Service Types and Endpoints
+
+Services expose Pods and provide stable networking endpoints.
+
+- `ClusterIP`: Internal-only access
+- `NodePort`: Exposes service on all nodes (port 30000-32767)
+- `LoadBalancer`: Uses external cloud load balancers
+
+**Example:**
+
 ```bash
-kubectl apply -f service.yaml
+kubectl expose pod nginx --port=80 --type=NodePort
+kubectl get svc
 ```
 
-> - [Learn more about services](https://kubernetes.io/docs/concepts/services-networking/service/)
+### ✅ Use the Gateway API to Manage Ingress Traffic
 
-### 4. Know How to Use Ingress Controllers and Ingress Resources
-> Ingress provides HTTP and HTTPS routing to applications inside the cluster using hostnames and paths.
+The new `Gateway API` provides a more extensible and standardized way to manage ingress.
 
-#### Example:
-> **Deploy an Ingress resource:**
+**Key Concepts:**
+
+- `GatewayClass`, `Gateway`, `HTTPRoute`
+- More fine-grained traffic control than classic Ingress
+
+**Example:** (See Kubernetes Gateway API docs or your cluster's specific implementation)
+
+```bash
+kubectl get gatewayclasses
+kubectl describe gateway <name>
+```
+
+### ✅ Know How to Use Ingress Controllers and Ingress Resources
+
+Ingress routes external traffic to internal services via HTTP rules.
+
+**Example:**
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -389,59 +379,34 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: clusterip-service
+            name: my-service
             port:
               number: 80
 ```
+
+Check ingress controller is deployed (like `nginx-ingress`) and working.
+
 ```bash
-kubectl apply -f ingress.yaml
+kubectl get pods -n ingress-nginx
 ```
 
-> - [Learn more about Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
+### ✅ Understand and Use CoreDNS
 
-### 5. Know How to Configure and Use CoreDNS
-> CoreDNS is a DNS server that provides name resolution within the Kubernetes cluster.
+Kubernetes uses CoreDNS for internal name resolution.
 
-#### Example:
-> **Check CoreDNS ConfigMap:**
+- Pod and Service DNS lookup
+- Can be customized via `Corefile`
+
+**Example:**
+
 ```bash
+kubectl exec -it <pod> -- nslookup kubernetes.default
 kubectl -n kube-system get configmap coredns -o yaml
 ```
-> **Test DNS resolution:**
-```bash
-kubectl exec -it <pod-name> -- nslookup kubernetes.default
-```
 
-> - [Learn more about CoreDNS](https://kubernetes.io/docs/tasks/administer-cluster/coredns/)
 
-### 6. Choose an Appropriate Container Network Interface (CNI) Plugin
-> CNIs enable networking in Kubernetes by providing Pod-to-Pod connectivity.
-
-#### Popular CNI Plugins:
-> - **Flannel:** Simple and easy-to-configure.
-
-> - **Calico:** Offers advanced networking and network policy capabilities.
-
-> - **Weave Net:** Supports encrypted communication.
-
-#### Example:
-> **Install Calico as a CNI:**
-```bash
-kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
-```
-
-> - [Learn more about CNIs](https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/)
 
 ---
-
-### Resources to Prepare
-> - [Kubernetes Documentation](https://kubernetes.io/docs/)
-
-> - [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
-
-> - [Kubernetes Services](https://kubernetes.io/docs/concepts/services-networking/service/)
-
-
 ## 4. Storage (10%)
 
 This section focuses on Kubernetes storage concepts, which make up 10% of the CKA Exam. Below are the key topics explained with `kubectl` examples:
