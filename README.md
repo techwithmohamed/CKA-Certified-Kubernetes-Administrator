@@ -404,106 +404,92 @@ kubectl exec -it <pod> -- nslookup kubernetes.default
 kubectl -n kube-system get configmap coredns -o yaml
 ```
 
-
-
 ---
+
+
 ## 4. Storage (10%)
 
-This section focuses on Kubernetes storage concepts, which make up 10% of the CKA Exam. Below are the key topics explained with `kubectl` examples:
+This section evaluates your understanding of how Kubernetes manages persistent storage, from dynamic provisioning to volume types and binding. You will be expected to configure and troubleshoot PVCs, storage classes, and volume access modes.
 
-### 1. Understand Storage Classes and Persistent Volumes
-> Storage Classes define the types of storage available, while Persistent Volumes (PVs) represent storage in the cluster.
+### ✅ Implement Storage Classes and Dynamic Volume Provisioning
 
-#### Example:
-> **Create a Storage Class:**
+A `StorageClass` defines how volumes are dynamically provisioned.
+
+**Example: Create a StorageClass:**
+
 ```yaml
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: fast-storage
-provisioner: kubernetes.io/aws-ebs
-parameters:
-  type: gp2
-```
-```bash
-kubectl apply -f storageclass.yaml
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
 ```
 
-> **Create a Persistent Volume:**
+Apply and check:
+
+```bash
+kubectl apply -f storageclass.yaml
+kubectl get sc
+```
+
+### ✅ Configure Volume Types, Access Modes, and Reclaim Policies
+
+You need to understand:
+
+- Volume Types: `hostPath`, `emptyDir`, `nfs`, etc.
+- Access Modes: `ReadWriteOnce`, `ReadOnlyMany`, `ReadWriteMany`
+- Reclaim Policies: `Delete`, `Retain`, `Recycle`
+
+**Example: Create a PV with reclaim policy:**
+
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv-demo
+  name: demo-pv
 spec:
   capacity:
     storage: 1Gi
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: fast-storage
   hostPath:
     path: /mnt/data
 ```
+
 ```bash
 kubectl apply -f pv.yaml
+kubectl get pv
 ```
 
-> - [Learn more about Storage Classes](https://kubernetes.io/docs/concepts/storage/storage-classes/)
+### ✅ Manage Persistent Volumes and Persistent Volume Claims
 
-> - [Learn more about Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
+A `PersistentVolumeClaim` (PVC) requests specific storage from a PV.
 
-### 2. Understand Volume Mode, Access Modes, and Reclaim Policies for Volumes
-> Volumes can have different modes and access settings to fit application needs. Reclaim policies determine what happens to a volume after it is released.
+**Example: Create a PVC and mount in a Pod:**
 
-#### Key Modes and Policies:
-> - **Volume Modes:** Filesystem, Block.
-
-> - **Access Modes:** ReadWriteOnce, ReadOnlyMany, ReadWriteMany.
-
-> - **Reclaim Policies:** Retain, Delete, Recycle.
-
-**Example:**
-> Check PV details:
-```bash
-kubectl describe pv pv-demo
-```
-
-> - [Learn more about Volume Modes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#volume-modes)
-
-> - [Learn more about Access Modes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes)
-
-### 3. Understand Persistent Volume Claims (PVC) Primitive
-> PVCs allow Pods to request specific storage resources from PVs.
-
-#### Example:
-> **Create a Persistent Volume Claim:**
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-demo
+  name: demo-pvc
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 500Mi
-  storageClassName: fast-storage
-```
-```bash
-kubectl apply -f pvc.yaml
 ```
 
-> **Use a PVC in a Pod:**
 ```yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pod-with-pvc
+  name: pvc-pod
 spec:
   containers:
-  - name: app-container
+  - name: nginx
     image: nginx
     volumeMounts:
     - mountPath: "/data"
@@ -511,60 +497,19 @@ spec:
   volumes:
   - name: storage
     persistentVolumeClaim:
-      claimName: pvc-demo
+      claimName: demo-pvc
 ```
+
+Check:
+
 ```bash
-kubectl apply -f pod.yaml
+kubectl get pvc
+kubectl describe pod pvc-pod
 ```
 
-> - [Learn more about PVCs](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims)
-
-### 4. Know How to Configure Applications with Persistent Storage
-> Applications often need persistent storage to retain data. Configure storage by mounting volumes to application Pods.
-
-#### Example:
-> **Deployment with Persistent Storage:**
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: app-with-storage
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: storage-app
-  template:
-    metadata:
-      labels:
-        app: storage-app
-    spec:
-      containers:
-      - name: app-container
-        image: nginx
-        volumeMounts:
-        - name: app-storage
-          mountPath: /usr/share/nginx/html
-      volumes:
-      - name: app-storage
-        persistentVolumeClaim:
-          claimName: pvc-demo
-```
-```bash
-kubectl apply -f deployment.yaml
-```
-
-> - [Learn more about configuring applications with storage](https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/)
+Understanding the PVC/PV lifecycle, binding status (`Pending`, `Bound`), and error troubleshooting is vital for the exam.
 
 ---
-
-### Resources to Prepare
-> - [Kubernetes Documentation](https://kubernetes.io/docs/)
-
-> - [Persistent Volumes Guide](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
-
-> - [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
-
 
 ## 5. Troubleshooting (30%)
 
