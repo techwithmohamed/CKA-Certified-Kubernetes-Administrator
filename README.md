@@ -513,109 +513,101 @@ Understanding the PVC/PV lifecycle, binding status (`Pending`, `Bound`), and err
 
 ## 5. Troubleshooting (30%)
 
-This section focuses on troubleshooting skills, which constitute 30% of the CKA Exam. Below are the key topics explained with `kubectl` examples:
+The most critical domain in the CKA exam, this section evaluates your ability to debug and recover a Kubernetes cluster under various failure scenarios.
 
-### 1. Evaluate Cluster and Node Logging
-> Logs from the cluster and nodes help identify issues with Kubernetes components and nodes.
+### ✅ Troubleshoot Clusters and Nodes
 
-#### Example:
-> **View cluster events:**
+Check node and cluster health:
 ```bash
-kubectl get events --sort-by='.metadata.creationTimestamp'
+kubectl get nodes
+kubectl describe node <node-name>
 ```
 
-> **Check kubelet logs on a node:**
+Drain a node for maintenance:
 ```bash
-ssh <node-name>
-sudo journalctl -u kubelet
+kubectl drain <node-name> --ignore-daemonsets
+kubectl uncordon <node-name>
 ```
 
-> - [Learn more about Kubernetes logging](https://kubernetes.io/docs/concepts/cluster-administration/logging/)
+Useful docs:
+- https://kubernetes.io/docs/tasks/debug/debug-cluster/
+- https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/
 
-### 2. Understand How to Monitor Applications
-> Application monitoring involves tracking application performance and resource usage using tools like `kubectl top` or external monitoring solutions.
+### ✅ Troubleshoot Cluster Components
 
-#### Example:
-> **Check resource usage of Pods:**
+Inspect static pods like `etcd`, `kube-apiserver`, `kube-controller-manager`, `kube-scheduler`:
 ```bash
-kubectl top pod
+ls /etc/kubernetes/manifests
 ```
 
-> **Check resource usage of nodes:**
-```bash
-kubectl top node
-```
-
-> - [Learn more about monitoring](https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-usage-monitoring/)
-
-### 3. Manage Container stdout & stderr Logs
-> Logs from containerized applications help diagnose issues in application behavior.
-
-#### Example:
-> **View logs from a Pod:**
-```bash
-kubectl logs <pod-name>
-```
-
-> **View logs from a specific container in a Pod:**
-```bash
-kubectl logs <pod-name> -c <container-name>
-```
-
-> - [Learn more about container logs](https://kubernetes.io/docs/concepts/cluster-administration/logging/#logging-at-the-node-level)
-
-### 4. Troubleshoot Application Failure
-> Application failures often arise from misconfigurations, missing dependencies, or resource constraints.
-
-#### Example:
-> **Describe a failing Pod to identify issues:**
-```bash
-kubectl describe pod <pod-name>
-```
-
-> **Debug a failing Pod:**
-```bash
-kubectl exec -it <pod-name> -- /bin/sh
-```
-
-> - [Learn more about troubleshooting applications](https://kubernetes.io/docs/tasks/debug/debug-application/)
-
-### 5. Troubleshoot Cluster Component Failure
-> Cluster component failures can disrupt the entire cluster. Key components include the API server, scheduler, controller manager, and etcd.
-
-#### Example:
-> **Check the status of cluster components:**
+Check component statuses:
 ```bash
 kubectl get componentstatuses
 ```
 
-> **Check the logs of a specific component:**
+Get logs of kubelet on node:
 ```bash
-kubectl logs -n kube-system <component-pod-name>
+journalctl -u kubelet
 ```
 
-> - [Learn more about troubleshooting cluster components](https://kubernetes.io/docs/tasks/debug/debug-cluster/)
+Docs:
+- https://kubernetes.io/docs/tasks/debug/debug-cluster/
+- https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/troubleshooting-kubeadm/
 
-### 6. Troubleshoot Networking
-> Networking issues can affect Pod communication, service access, or external connectivity.
+### ✅ Monitor Cluster and Application Resource Usage
 
-#### Example:
-> **Test Pod connectivity:**
+Use metrics-server to view resource consumption:
 ```bash
-kubectl exec -it <pod-name> -- ping <target-pod-ip>
+kubectl top nodes
+kubectl top pods --all-namespaces
 ```
 
-> **Debug Service issues:**
+Sort by usage:
 ```bash
-kubectl describe service <service-name>
+kubectl top pods --sort-by=cpu
 ```
 
-> **Test DNS resolution:**
+Docs:
+- https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-usage-monitoring/
+
+### ✅ Manage and Evaluate Container Output Streams
+
+To analyze logs for single- and multi-container pods:
+```bash
+kubectl logs <pod-name>
+kubectl logs <pod-name> -c <container-name>
+kubectl logs -f <pod-name>
+```
+
+Review logs from the kubelet process:
+```bash
+journalctl -u kubelet -f
+```
+
+Docs:
+- https://kubernetes.io/docs/concepts/cluster-administration/logging/
+
+### ✅ Troubleshoot Services and Networking
+
+Check if Service is routing traffic properly:
+```bash
+kubectl get svc
+kubectl describe svc <service-name>
+```
+
+Test DNS resolution:
 ```bash
 kubectl exec -it <pod-name> -- nslookup <service-name>
 ```
 
-> - [Learn more about troubleshooting networking](https://kubernetes.io/docs/tasks/debug/debug-cluster/dns-debugging-resolution/)
+Test connectivity between pods:
+```bash
+kubectl exec -it <source-pod> -- curl <target-pod-ip>:<port>
+```
+
+Docs:
+- https://kubernetes.io/docs/tasks/debug/debug-cluster/dns-debugging-resolution/
+- https://kubernetes.io/docs/concepts/services-networking/service/
 
 ---
 
