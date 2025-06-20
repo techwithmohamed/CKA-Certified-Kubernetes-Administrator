@@ -48,39 +48,123 @@
 | [**5. Troubleshooting - 30%**](#5-troubleshooting-30) | 1. Troubleshoot clusters and nodes<br>2. Troubleshoot cluster components<br>3. Monitor cluster and application resource usage<br>4. Manage and evaluate container output streams<br>5. Troubleshoot services and networking | 30% |
 
 
-# 1. Cluster Architecture, Installation & Configuration (25%)
 
-This section focuses on the core concepts of Kubernetes cluster architecture, installation, and configuration, which make up 25% of the CKA Exam. Below is a simplified breakdown of the topics covered:
+## 1. Cluster Architecture, Installation & Configuration (25%)
 
-### Manage Role-Based Access Control (RBAC)
-> RBAC allows you to control access to your Kubernetes cluster. You can define roles and assign them to users or applications to limit what they can do within the cluster.- [Learn more about RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
+This section tests your ability to build, configure, and manage Kubernetes clusters using `kubeadm` and core cluster components. It covers the full cluster lifecycle—from provisioning infrastructure, enforcing access, performing upgrades, to integrating components like Helm, CRDs, and networking plugins.
 
-### Use Kubeadm to Install a Basic Cluster
-> Kubeadm is a tool that helps you set up a Kubernetes cluster quickly and easily. It handles the necessary configurations to initialize a cluster and add worker nodes.
+### ✅ Manage Role-Based Access Control (RBAC)
 
-> - [Learn more about Kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/)
+RBAC lets you define *who* can do *what* on *which* Kubernetes resources.
 
-### Manage a Highly-Available Kubernetes Cluster
-> High availability ensures your Kubernetes cluster remains operational even if some components fail. This involves setting up multiple control plane nodes and using a load balancer.
+**Example:**
 
-> - [Learn more about high availability](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/)
+```bash
+kubectl create role cm-writer --verb=create --resource=configmaps -n dev
+kubectl create rolebinding writer-bind --role=cm-writer --serviceaccount=dev:app-sa -n dev
+```
 
-### Provision Underlying Infrastructure to Deploy a Kubernetes Cluster
-> Before deploying a cluster, you need to set up the underlying infrastructure, such as servers, networking, and storage, either on-premises or in the cloud.
+### ✅ Prepare Underlying Infrastructure for a Kubernetes Cluster
 
-> - [Learn more about cluster infrastructure](https://kubernetes.io/docs/setup/)
+Prepare nodes with:
 
-### Perform a Version Upgrade on a Kubernetes Cluster Using Kubeadm
-> Keeping your Kubernetes cluster updated is important for security and new features. Kubeadm provides a streamlined process for upgrading cluster versions.
+- Proper hostname resolution
+- Disabled swap: `swapoff -a`
+- Opened required ports (6443, 2379–2380, 10250)
 
-> - [Learn more about upgrading](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
+**Example:**
 
-### Implement Etcd Backup and Restore
-> Etcd is the key-value store used by Kubernetes to store cluster data. Regular backups ensure you can recover your cluster in case of a failure.
+```bash
+hostnamectl set-hostname master-node
+echo "10.0.0.2 worker-node" >> /etc/hosts
+swapoff -a
+```
 
-> - [Learn more about etcd backup and restore](https://etcd.io/docs/latest/op-guide/backup/)
+### ✅ Create and Manage Kubernetes Clusters Using kubeadm
 
+Bootstrap clusters using `kubeadm`.
 
+**Example:**
+
+```bash
+kubeadm init --pod-network-cidr=192.168.0.0/16
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+```
+
+Join node:
+
+```bash
+kubeadm join <MASTER_IP>:6443 --token <TOKEN> --discovery-token-ca-cert-hash sha256:<HASH>
+```
+
+### ✅ Manage the Lifecycle of Kubernetes Clusters
+
+Upgrade, reset, or reconfigure.
+
+**Example:**
+
+```bash
+kubeadm upgrade plan
+kubeadm upgrade apply v1.32.1
+```
+
+### ✅ Implement and Configure a Highly-Available Control Plane
+
+Use multiple control-plane nodes with a shared load balancer.
+
+**Example:**
+
+```bash
+kubeadm init --control-plane-endpoint "LOAD_BALANCER_DNS:6443" ...
+```
+
+### ✅ Use Helm and Kustomize to Install Cluster Components
+
+Deploy apps using Helm or Kustomize.
+
+**Helm:**
+
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install nginx bitnami/nginx
+```
+
+**Kustomize:**
+
+```bash
+kubectl apply -k ./my-kustomization/
+```
+
+### ✅ Understand Extension Interfaces (CNI, CSI, CRI)
+
+Know how to validate and troubleshoot:
+
+- **CNI**: Pod networking (e.g., Calico)
+- **CSI**: Storage drivers
+- **CRI**: Runtime (e.g., containerd)
+
+**Example:**
+
+```bash
+crictl info
+ls /etc/cni/net.d/
+kubectl get csidrivers
+```
+
+### ✅ Understand CRDs, Install and Configure Operators
+
+Understand how CRDs extend Kubernetes and how to manage Operators.
+
+**Example:**
+
+```bash
+kubectl get crds
+kubectl describe crd <customresource>
+```
+
+Install a Prometheus operator or similar using manifest or operatorhub.io.
+
+---
 # 2. Workloads & Scheduling (15%)
 
 This section focuses on managing workloads and scheduling in Kubernetes, making up 15% of the CKA Exam. Below are the key topics explained with `kubectl` examples:
