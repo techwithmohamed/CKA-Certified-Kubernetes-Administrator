@@ -1939,7 +1939,7 @@ No resources found in default namespace.
  
 ## Additional Resources
 * 💬 [Kubernetes Slack Channel #certifications](https://kubernetes.slack.com/)<sup>Slack</sup>
-* 📚 [Guide to Certified Kubernetes Administrator (CKA)](https://techwithmohamed.com/cka-exam-study-guide/)<sup>Blog</sup>
+* 📚 [Guide to Certified Kubernetes Administrator (CKA)]([https://techwithmohamed.com/cka-exam-study-guide/](https://techwithmohamed.com/blog/ckad-exam-study/))<sup>Blog</sup>
 * 🎞️ [Udemy: CKA Certified Kubernetes AdministratorCrash Course](https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests)<sup>Video Course</sup>
 * 🎞️ [Certified Kubernetes Administrator (CKA) - A Cloud Guru (formerly Linux Academy)](https://acloudguru.com/course/cloud-native-certified-kubernetes-administrator-cka/)<sup>Video Course</sup>
 * 🎞️ [Kubernetes Fundamentals (LFS258) - Linux Foundation](https://training.linuxfoundation.org/training/kubernetes-fundamentals/)<sup>Official Course</sup>
