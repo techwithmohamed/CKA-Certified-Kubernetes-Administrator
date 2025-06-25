@@ -33,9 +33,6 @@
 - [Additional Resources](#additional-resources)
 - [Practice](#practice)
 
-## CKA Exam Syllabus (Updated Kubernetes 1.32)
-
-## CKA Exam Syllabus (Updated Kubernetes 1.32 - 2025)
 
 ## CKA Exam Syllabus (Updated Kubernetes 1.32 - 2025)
 
