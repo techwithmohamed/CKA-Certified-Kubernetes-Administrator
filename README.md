@@ -7,7 +7,7 @@
   <img src="assets/cka.png" alt="CKA EXAM">
 </p>
 
-> This guide is part of our blog [Pass the CKA Certification Exam: The Complete Study Guide ](https://techwithmohamed.com/cka-exam-study-guide/).
+> This guide is part of our blog [Pass the CKA Certification Exam: The Complete Study Guide ](https://techwithmohamed.com/blog/cka-exam-study/).
 
 ## Hit the Star! :star:
 > If you are using this repo for guidance, please hit the star. Thanks A lot !
