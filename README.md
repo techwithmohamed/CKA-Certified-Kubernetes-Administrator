@@ -18,7 +18,7 @@
 
 | **CKA Exam Details**                     | **Information**                                                                                     |
 |-------------------------------------------|-----------------------------------------------------------------------------------------------------|
-| **Exam Type**                             | Performance Based NOT MCQ )                                    |
+| **Exam Type**                             | Performance Based ( NOT MCQ )                                    |
 | **Exam Duration**                         | 2 hours                                                                                            |
 | **Pass Percentage**                       | 66%  ( One Retake )                                                                                                |
 | **CKA Exam Kubernetes Version**          | [Kubernetes v1.32]((https://kubernetes.io/blog/2024/12/11/kubernetes-v1-32-release/))                                                                               |
