@@ -1,7 +1,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-# ☸️ Certified Kubernetes Administrator (CKA) Exam Guide - V1.32 (2025)
+# ☸️ Certified Kubernetes Administrator (CKA) Exam Guide - V1.33 (2025)
 
 <p align="center">
   <img src="assets/cka.png" alt="CKA EXAM">
@@ -14,21 +14,21 @@
 
 >  The [Certified Kubernetes Administrator (CKA) certification](https://www.cncf.io/certification/cka/) exam certifies that candidates have the skills, knowledge, and competency to perform the responsibilities of Kubernetes administrators.
  
-## CKA Exam details (v1.32  2025 ) 
+## CKA Exam details (v1.33  2025 ) 
 
 | **CKA Exam Details**                     | **Information**                                                                                     |
 |-------------------------------------------|-----------------------------------------------------------------------------------------------------|
 | **Exam Type**                             | Performance Based ( NOT MCQ )                                    |
 | **Exam Duration**                         | 2 hours                                                                                            |
 | **Pass Percentage**                       | 66%  ( One Retake )                                                                                                |
-| **CKA Exam Kubernetes Version**          | [Kubernetes v1.32]((https://kubernetes.io/blog/2024/12/11/kubernetes-v1-32-release/))                                                                               |
+| **CKA Exam Kubernetes Version**          | [Kubernetes v1.33]((https://kubernetes.io/blog/2025/04/23/kubernetes-v1-33-release/))                                                                               |
 | **CKA Validity**                         | 2 Years  |
 | **Exam Cost**                            | $445 USD   |
 
 
 ## Table of Contents
 
-- [CKA Exam Syllabus (Updated Kubernetes 1.32)](#cka-exam-syllabus-updated-kubernetes-132)
+- [CKA Exam Syllabus (Updated Kubernetes 1.33)](#cka-exam-syllabus-updated-kubernetes-133)
 - [CKA Exam Questions And Answers](#cka-exam-questions-and-answers)
 - [Additional Resources](#additional-resources)
 - [Practice](#practice)
