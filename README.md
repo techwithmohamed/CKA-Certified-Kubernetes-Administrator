@@ -34,7 +34,7 @@
 - [Practice](#practice)
 
 
-## CKA Exam Syllabus (Updated Kubernetes 1.32 - 2025)
+## CKA Exam Syllabus (Updated Kubernetes 1.33 - 2025)
 
 | **Topic** | **Concepts** | **Weightage** |
 |-----------|--------------|---------------|
