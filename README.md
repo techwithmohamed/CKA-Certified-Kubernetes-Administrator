@@ -26,6 +26,67 @@
 | **Exam Cost**                            | $445 USD   |
 
 
+## What’s New in Kubernetes 1.33
+
+Kubernetes **v1.33** (April 2025) brings a mix of stability, new features, and important deprecations that are directly relevant for the CKA exam.
+
+### 🔥 Key Features
+
+- **In-place Pod Resize (beta, enabled by default)**  
+  You can now adjust CPU and memory requests/limits of running Pods **without deleting or recreating them**.  
+  ```bash
+  # Increase CPU/memory for a running pod
+  kubectl patch pod mypod --subresource=resize     --type=merge -p '{"spec":{"containers":[{"name":"app","resources":{"requests":{"cpu":"500m","memory":"256Mi"},"limits":{"cpu":"1","memory":"512Mi"}}}]}}'
+  ```
+  This is especially useful in troubleshooting or resource tuning scenarios.
+
+- **User Namespaces**  
+  Stronger pod-level isolation: Kubernetes can now map container “root” to an **unprivileged UID on the host**.  
+  ```yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: userns-demo
+  spec:
+    hostUsers: false   # opt-in to user namespaces
+    containers:
+    - name: c
+      image: busybox
+      command: ["sh","-c","id && sleep 1d"]
+  ```
+  Expect to see it in security-related exam tasks.
+
+- **Storage Enhancements**  
+  - **Image Volumes (beta):** mount OCI images directly as read-only volumes (handy for configs/data).  
+  - **Volume Populators GA:** more flexible ways to pre-populate PVCs.  
+  - **Leak-prevention improvements:** Kubernetes cleans up dangling PVs more reliably.  
+
+- **Gateway API Progress**  
+  Gateway API (`GatewayClass`, `Gateway`, `HTTPRoute`) continues to replace classic Ingress in many clusters. Exam scenarios now reference it directly.
+
+- **Ephemeral Containers & `kubectl debug` (stable)**  
+  Debugging tools are fully supported. Example:  
+  ```bash
+  kubectl debug pod/mypod -it --image=busybox --target=app -- sh
+  ```
+
+### ⚠️ Deprecations & Removals
+
+- **`kubectl get componentstatuses` removed**  
+  Use API server health endpoints instead:  
+  ```bash
+  kubectl get --raw='/readyz?verbose'
+  kubectl get --raw='/livez?verbose'
+  ```
+
+- **PersistentVolume `Recycle` policy removed**  
+  Only **Retain** and **Delete** are valid reclaim policies now.  
+
+---
+
+👉 These changes mean the exam in 2025 will place more weight on **resizing resources, debugging live Pods, Gateway API traffic routing, and CSI-driven storage management**, while also testing that you know which commands/policies are deprecated.
+
+
 ## Table of Contents
 
 - [CKA Exam Syllabus (Updated Kubernetes 1.33)](#cka-exam-syllabus-updated-kubernetes-133)
@@ -45,102 +106,66 @@
 | [**5. Troubleshooting - 30%**](#5-troubleshooting-30) | 1. Troubleshoot clusters and nodes<br>2. Troubleshoot cluster components<br>3. Monitor cluster and application resource usage<br>4. Manage and evaluate container output streams<br>5. Troubleshoot services and networking | 30% |
 
 
-
 ## 1. Cluster Architecture, Installation & Configuration (25%)
 
-This section tests your ability to build, configure, and manage Kubernetes clusters using `kubeadm` and core cluster components. It covers the full cluster lifecycle—from provisioning infrastructure, enforcing access, performing upgrades, to integrating components like Helm, CRDs, and networking plugins.
+This section tests your ability to **build, configure, and manage Kubernetes clusters** using `kubeadm` and core cluster components.
 
 ### ✅ Manage Role-Based Access Control (RBAC)
-
-RBAC lets you define *who* can do *what* on *which* Kubernetes resources.
-
-**Example:**
 
 ```bash
 kubectl create role cm-writer --verb=create --resource=configmaps -n dev
 kubectl create rolebinding writer-bind --role=cm-writer --serviceaccount=dev:app-sa -n dev
+kubectl auth can-i create configmap --as system:serviceaccount:dev:app-sa -n dev
 ```
 
-### ✅ Prepare Underlying Infrastructure for a Kubernetes Cluster
-
-Prepare nodes with:
-
-- Proper hostname resolution
-- Disabled swap: `swapoff -a`
-- Opened required ports (6443, 2379–2380, 10250)
-
-**Example:**
+### ✅ Prepare Underlying Infrastructure
 
 ```bash
-hostnamectl set-hostname master-node
+hostnamectl set-hostname control-plane-node
 echo "10.0.0.2 worker-node" >> /etc/hosts
 swapoff -a
 ```
 
-### ✅ Create and Manage Kubernetes Clusters Using kubeadm
-
-Bootstrap clusters using `kubeadm`.
-
-**Example:**
+### ✅ Create and Manage Clusters (kubeadm)
 
 ```bash
 kubeadm init --pod-network-cidr=192.168.0.0/16
-kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml
 ```
 
-Join node:
-
+Join worker node:
 ```bash
-kubeadm join <MASTER_IP>:6443 --token <TOKEN> --discovery-token-ca-cert-hash sha256:<HASH>
+kubeadm join <CONTROL_PLANE_IP>:6443 --token <TOKEN> --discovery-token-ca-cert-hash sha256:<HASH>
 ```
 
-### ✅ Manage the Lifecycle of Kubernetes Clusters
-
-Upgrade, reset, or reconfigure.
-
-**Example:**
+### ✅ Manage Cluster Lifecycle
 
 ```bash
 kubeadm upgrade plan
-kubeadm upgrade apply v1.32.1
+kubeadm upgrade apply v1.33.1
+kubelet --version
 ```
 
-### ✅ Implement and Configure a Highly-Available Control Plane
-
-Use multiple control-plane nodes with a shared load balancer.
-
-**Example:**
+### ✅ Configure HA Control Plane
 
 ```bash
-kubeadm init --control-plane-endpoint "LOAD_BALANCER_DNS:6443" ...
+kubeadm init --control-plane-endpoint "LOADBALANCER_DNS:6443" --upload-certs
 ```
 
-### ✅ Use Helm and Kustomize to Install Cluster Components
+Add extra control-plane node:
+```bash
+kubeadm join LOADBALANCER_DNS:6443 --control-plane --token <TOKEN>   --discovery-token-ca-cert-hash sha256:<HASH> --certificate-key <CERT_KEY>
+```
 
-Deploy apps using Helm or Kustomize.
-
-**Helm:**
+### ✅ Helm & Kustomize
 
 ```bash
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install nginx bitnami/nginx
-```
-
-**Kustomize:**
-
-```bash
 kubectl apply -k ./my-kustomization/
 ```
 
-### ✅ Understand Extension Interfaces (CNI, CSI, CRI)
-
-Know how to validate and troubleshoot:
-
-- **CNI**: Pod networking (e.g., Calico)
-- **CSI**: Storage drivers
-- **CRI**: Runtime (e.g., containerd)
-
-**Example:**
+### ✅ CNI / CSI / CRI
 
 ```bash
 crictl info
@@ -148,59 +173,60 @@ ls /etc/cni/net.d/
 kubectl get csidrivers
 ```
 
-### ✅ Understand CRDs, Install and Configure Operators
-
-Understand how CRDs extend Kubernetes and how to manage Operators.
-
-**Example:**
+### ✅ CRDs & Operators
 
 ```bash
 kubectl get crds
 kubectl describe crd <customresource>
+kubectl apply -f https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.70.0/bundle.yaml
 ```
 
-Install a Prometheus operator or similar using manifest or operatorhub.io.
+### ✅ New for v1.33 — In-Place Resize & Debugging
+
+```bash
+kubectl patch pod mypod --subresource=resize --type=merge   -p '{"spec":{"containers":[{"name":"app","resources":{"limits":{"cpu":"1","memory":"512Mi"}}}]}}'
+
+kubectl debug pod/mypod -it --image=busybox --target=app -- sh
+```
 
 ---
 
 ## 2. Workloads & Scheduling (15%)
 
-This domain evaluates your knowledge in defining and managing application workloads and controlling how they are deployed and scheduled in a Kubernetes cluster. You should be confident with rolling updates, autoscaling, resource limits, and health probes.
+This domain evaluates your knowledge in defining and managing application workloads and controlling how they are deployed and scheduled in a Kubernetes cluster. You should be confident with rolling updates, autoscaling, resource limits, health probes, and scheduling constraints.
+
+---
 
 ### ✅ Understand Application Deployments and Perform Rolling Updates and Rollbacks
 
-Deployments are controllers that ensure the desired number of Pod replicas are running and updated properly.
+**Deployment**: A controller that ensures the desired number of Pods are running. It supports rolling updates (gradual replacement of Pods) and rollbacks (return to the last known good state).
 
 **You're expected to:**
-
 - Deploy applications using `kubectl` or YAML
 - Upgrade images with zero downtime
 - Rollback failed updates
 
 **Example:**
-
 ```bash
-kubectl create deployment nginx --image=nginx:1.21 --replicas=2
-kubectl set image deployment nginx nginx=nginx:1.23
+kubectl create deployment nginx --image=nginx:1.27 --replicas=2
+kubectl set image deployment nginx nginx=nginx:1.28
 kubectl rollout undo deployment nginx
 ```
 
+---
+
 ### ✅ Use ConfigMaps and Secrets to Configure Applications
 
-Externalize configuration to decouple it from container images.
-
-- **ConfigMaps** are used for non-sensitive data
-- **Secrets** are used for credentials or sensitive values
+- **ConfigMap**: Stores non-sensitive configuration (e.g., app modes, URLs).  
+- **Secret**: Stores sensitive values (e.g., passwords, tokens). Data is base64-encoded but not encrypted by default.  
 
 **Example:**
-
 ```bash
 kubectl create configmap app-config --from-literal=APP_MODE=prod
 kubectl create secret generic app-secret --from-literal=PASSWORD=1234
 ```
 
 Injected into a Pod:
-
 ```yaml
 env:
 - name: APP_MODE
@@ -215,29 +241,30 @@ env:
       key: PASSWORD
 ```
 
+---
+
 ### ✅ Configure Workload Autoscaling
 
-Use HPA (Horizontal Pod Autoscaler) to scale based on CPU or custom metrics.
+**Horizontal Pod Autoscaler (HPA):** Automatically increases or decreases the number of Pods based on CPU, memory, or custom metrics. Requires `metrics-server` or an external metrics adapter.
 
 **Example:**
-
 ```bash
 kubectl autoscale deployment nginx --cpu-percent=50 --min=1 --max=5
 kubectl get hpa
 ```
 
-Metrics server must be installed and functional.
+---
 
 ### ✅ Understand the Primitives Used to Create Robust, Self-Healing Deployments
 
-Use Kubernetes primitives to improve reliability and recoverability:
+Kubernetes uses several **probes and controllers** to make applications resilient:
 
-- Liveness probes (restart containers if unhealthy)
-- Readiness probes (control traffic until ready)
-- ReplicaSets (high availability)
+- **Liveness Probe** → restarts containers if they hang or crash.  
+- **Readiness Probe** → ensures traffic only reaches Pods ready to serve.  
+- **Startup Probe** → for slow apps, prevents false liveness failures.  
+- **ReplicaSet** → guarantees a certain number of Pods run at all times.  
 
 **Example:**
-
 ```yaml
 livenessProbe:
   httpGet:
@@ -247,22 +274,23 @@ livenessProbe:
   periodSeconds: 10
 ```
 
-Use:
-
+Check in Deployment:
 ```bash
 kubectl get deploy nginx -o yaml | grep probe -A 5
 ```
 
-### ✅ Configure Pod Admission and Scheduling (limits, node affinity, etc.)
+---
 
-You must understand how to:
+### ✅ Configure Pod Admission and Scheduling (limits, node affinity, tolerations)
 
-- Limit CPU and memory usage
-- Use labels, affinity/anti-affinity
-- Handle taints and tolerations
+Kubernetes schedules Pods onto nodes based on resources and constraints:
+
+- **Requests/Limits**: Reserve minimum CPU/memory (requests) and enforce maximum usage (limits).  
+- **NodeSelector**: Place Pods only on nodes with specific labels.  
+- **Affinity/Anti-Affinity**: Fine-grained rules to group or separate Pods.  
+- **Taints/Tolerations**: Prevent Pods from scheduling on nodes unless explicitly tolerated.  
 
 **Example:**
-
 ```yaml
 resources:
   requests:
@@ -276,38 +304,51 @@ nodeSelector:
   disktype: ssd
 
 tolerations:
-- key: "node-role.kubernetes.io/master"
+- key: "node-role.kubernetes.io/control-plane"
   operator: "Exists"
   effect: "NoSchedule"
 ```
+
 ---
+
+✅ **Kubernetes v1.33 Updates to Remember:**  
+- Use `node-role.kubernetes.io/control-plane` instead of `master` (deprecated).  
+- `startupProbe`, `livenessProbe`, and `readinessProbe` are stable and exam-relevant.  
+- HPA supports CPU and memory natively; custom metrics need an adapter (Prometheus/Stackdriver).  
+
+---
+
+
 ## 3. Services & Networking (20%)
 
-This domain focuses on the various networking mechanisms in Kubernetes. You'll need to understand Pod communication, exposing applications, DNS, ingress, and network security.
+This domain focuses on the networking mechanisms in Kubernetes. You need to understand **Pod-to-Pod communication, Services, DNS, ingress traffic, the new Gateway API, and network security (NetworkPolicies).**
+
+---
 
 ### ✅ Understand Connectivity Between Pods
 
-Pods should communicate seamlessly within a cluster using Pod IPs. Expect tasks to:
+**Pod networking**: Every Pod gets its own IP address. By default, all Pods in the cluster can communicate with each other without NAT.  
 
+You should be able to:
 - Troubleshoot unreachable Pods
-- Use tools like `ping`, `curl`, and `nslookup`
+- Test connectivity using tools like `ping`, `curl`, and `nslookup`
 
 **Example:**
-
-```yaml
+```bash
 kubectl exec -it pod-a -- ping pod-b
 kubectl exec -it pod-a -- curl http://<pod-ip>:<port>
 ```
 
+---
+
 ### ✅ Define and Enforce Network Policies
 
-Use `NetworkPolicy` resources to restrict traffic between Pods.
+**NetworkPolicy**: Controls Pod-to-Pod traffic. By default, all traffic is allowed; once a NetworkPolicy is applied, traffic is denied unless explicitly allowed.  
 
-- Based on namespace and label selectors
-- Enforced only with CNI plugins that support it (e.g., Calico)
+- Policies use **labels** (Pods/Namespaces)  
+- Enforced only when the **CNI plugin** supports it (e.g., Calico, Cilium)  
 
 **Example:**
-
 ```yaml
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
@@ -325,43 +366,51 @@ spec:
           role: frontend
 ```
 
+This allows traffic **from frontend Pods → to backend Pods**, blocking all other ingress.
+
+---
+
 ### ✅ Use ClusterIP, NodePort, LoadBalancer Service Types and Endpoints
 
-Services expose Pods and provide stable networking endpoints.
+**Service**: Provides stable networking to Pods (since Pod IPs are ephemeral).  
 
-- `ClusterIP`: Internal-only access
-- `NodePort`: Exposes service on all nodes (port 30000-32767)
-- `LoadBalancer`: Uses external cloud load balancers
+Types:
+- **ClusterIP (default):** Internal-only access within the cluster.  
+- **NodePort:** Exposes service on each node’s IP at a static port (30000–32767).  
+- **LoadBalancer:** Integrates with cloud provider to provision an external LB.  
 
 **Example:**
-
 ```bash
 kubectl expose pod nginx --port=80 --type=NodePort
 kubectl get svc
 ```
 
+---
+
 ### ✅ Use the Gateway API to Manage Ingress Traffic
 
-The new `Gateway API` provides a more extensible and standardized way to manage ingress.
+**Gateway API**: The modern replacement for Ingress. Provides more **flexible routing**, standardization, and portability across different implementations.
 
-**Key Concepts:**
+Key resources:
+- **GatewayClass** → defines the type of gateway (like IngressClass).  
+- **Gateway** → represents a load balancer/data plane instance.  
+- **HTTPRoute** → defines routing rules for traffic.  
 
-- `GatewayClass`, `Gateway`, `HTTPRoute`
-- More fine-grained traffic control than classic Ingress
-
-**Example:** (See Kubernetes Gateway API docs or your cluster's specific implementation)
-
+**Example:**
 ```bash
 kubectl get gatewayclasses
 kubectl describe gateway <name>
 ```
 
+👉 Expect Gateway API scenarios on the exam (Ingress still appears, but Gateway API is the future).
+
+---
+
 ### ✅ Know How to Use Ingress Controllers and Ingress Resources
 
-Ingress routes external traffic to internal services via HTTP rules.
+**Ingress**: Routes external HTTP(S) traffic into the cluster based on hostnames/paths. Requires an **Ingress Controller** (e.g., `nginx-ingress`, HAProxy, Traefik).  
 
 **Example:**
-
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -381,21 +430,21 @@ spec:
               number: 80
 ```
 
-Check ingress controller is deployed (like `nginx-ingress`) and working.
-
+Verify the Ingress Controller is deployed:
 ```bash
 kubectl get pods -n ingress-nginx
 ```
 
+---
+
 ### ✅ Understand and Use CoreDNS
 
-Kubernetes uses CoreDNS for internal name resolution.
+**CoreDNS**: The DNS server inside Kubernetes clusters. Handles service discovery (resolving `service.namespace.svc.cluster.local`).  
 
-- Pod and Service DNS lookup
-- Can be customized via `Corefile`
+- Pods and Services get automatic DNS entries.  
+- Configurable via the `Corefile` in the `coredns` ConfigMap.  
 
 **Example:**
-
 ```bash
 kubectl exec -it <pod> -- nslookup kubernetes.default
 kubectl -n kube-system get configmap coredns -o yaml
@@ -403,17 +452,28 @@ kubectl -n kube-system get configmap coredns -o yaml
 
 ---
 
+✅ **Kubernetes v1.33 Updates to Remember:**  
+- **Gateway API** is exam-relevant → expect `GatewayClass`, `Gateway`, and `HTTPRoute` tasks.  
+- NetworkPolicy enforcement depends on CNI → exam clusters often use Calico.  
+- `kubectl get endpoints` helps verify which Pods are backing a Service.  
+- CoreDNS is stable and often part of troubleshooting scenarios.  
+
+---
 
 ## 4. Storage (10%)
 
-This section evaluates your understanding of how Kubernetes manages persistent storage, from dynamic provisioning to volume types and binding. You will be expected to configure and troubleshoot PVCs, storage classes, and volume access modes.
+This section tests your knowledge of **persistent storage in Kubernetes**. Unlike temporary storage (like `emptyDir` which disappears when the Pod dies), persistent storage ensures that data survives Pod restarts or rescheduling.
+
+In Kubernetes, storage is managed through **Persistent Volumes (PVs)** and **Persistent Volume Claims (PVCs)**, usually provisioned dynamically via **StorageClasses**.
+
+---
 
 ### ✅ Implement Storage Classes and Dynamic Volume Provisioning
 
-A `StorageClass` defines how volumes are dynamically provisioned.
+- **StorageClass**: Think of this as a *template* that tells Kubernetes *how* to create volumes (what type, speed, reclaim policy).  
+- **Dynamic provisioning**: Instead of manually creating volumes, Kubernetes automatically provisions them when a PVC requests storage.  
 
-**Example: Create a StorageClass:**
-
+**Example:**
 ```yaml
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -424,22 +484,33 @@ volumeBindingMode: WaitForFirstConsumer
 ```
 
 Apply and check:
-
 ```bash
 kubectl apply -f storageclass.yaml
 kubectl get sc
 ```
 
+👉 In real clusters, cloud providers (AWS, GCP, Azure) or CSI drivers (e.g., rook-ceph, longhorn) are used as the **provisioner**.
+
+---
+
 ### ✅ Configure Volume Types, Access Modes, and Reclaim Policies
 
-You need to understand:
+**Volume Types** define where data is stored:
+- `hostPath`: A path on the node’s filesystem (for single-node testing only).  
+- `emptyDir`: Temporary space that vanishes when the Pod is deleted.  
+- `nfs`, `cephfs`, `glusterfs`, CSI drivers → external, shared storage backends.  
 
-- Volume Types: `hostPath`, `emptyDir`, `nfs`, etc.
-- Access Modes: `ReadWriteOnce`, `ReadOnlyMany`, `ReadWriteMany`
-- Reclaim Policies: `Delete`, `Retain`, `Recycle`
+**Access Modes** (who can read/write):
+- `ReadWriteOnce (RWO)` → One node can read/write.  
+- `ReadOnlyMany (ROX)` → Many nodes, read-only.  
+- `ReadWriteMany (RWX)` → Many nodes can read/write simultaneously.  
 
-**Example: Create a PV with reclaim policy:**
+**Reclaim Policies** (what happens when PVC is deleted):
+- `Retain` → Keep the data for manual cleanup.  
+- `Delete` → Delete the volume automatically.  
+- `Recycle` → Deprecated in v1.33, no longer used.  
 
+**Example PV:**
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
@@ -455,17 +526,20 @@ spec:
     path: /mnt/data
 ```
 
+Apply and verify:
 ```bash
 kubectl apply -f pv.yaml
 kubectl get pv
 ```
 
-### ✅ Manage Persistent Volumes and Persistent Volume Claims
+---
 
-A `PersistentVolumeClaim` (PVC) requests specific storage from a PV.
+### ✅ Manage Persistent Volumes (PV) and Persistent Volume Claims (PVC)
 
-**Example: Create a PVC and mount in a Pod:**
+- **PersistentVolume (PV)**: The actual piece of storage (like a disk).  
+- **PersistentVolumeClaim (PVC)**: A request for storage by a Pod. Kubernetes binds a PVC to a matching PV automatically.  
 
+**PVC Example:**
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -479,6 +553,7 @@ spec:
       storage: 500Mi
 ```
 
+**Pod using the PVC:**
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -498,124 +573,163 @@ spec:
 ```
 
 Check:
-
 ```bash
 kubectl get pvc
 kubectl describe pod pvc-pod
 ```
 
-Understanding the PVC/PV lifecycle, binding status (`Pending`, `Bound`), and error troubleshooting is vital for the exam.
+---
+
+### ✅ Kubernetes v1.33 Updates to Remember (Storage)
+
+- **Recycle policy is removed** → only `Retain` and `Delete` remain.  
+- **Image Volumes (beta)** → use container images as data sources for volumes.  
+- **Volume Populators GA** → custom logic can pre-populate PVCs (e.g., with test data).  
+- **CSI (Container Storage Interface)** is the standard → older in-tree plugins are deprecated.  
+
+---
 
 ---
 
 ## 5. Troubleshooting (30%)
 
-The most critical domain in the CKA exam, this section evaluates your ability to debug and recover a Kubernetes cluster under various failure scenarios.
+This is the **most important section of the CKA exam**. It tests your ability to **debug and recover a Kubernetes cluster** when things break.  
+You’ll be expected to quickly identify issues with **nodes, Pods, control plane components, networking, and logs** — under time pressure.  
+
+---
 
 ### ✅ Troubleshoot Clusters and Nodes
 
-Check node and cluster health:
+Nodes are the "machines" (VMs or physical) where Pods run. If a node is unhealthy, workloads may fail.  
+
+- **Check cluster health:**
 ```bash
 kubectl get nodes
 kubectl describe node <node-name>
 ```
 
-Drain a node for maintenance:
+- **Put a node into maintenance mode (drain):**
 ```bash
 kubectl drain <node-name> --ignore-daemonsets
+```
+
+- **Bring it back after maintenance:**
+```bash
 kubectl uncordon <node-name>
 ```
 
-Useful docs:
-- https://kubernetes.io/docs/tasks/debug/debug-cluster/
-- https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/
+👉 *Think of this as telling Kubernetes “stop scheduling new Pods here, move the old ones out” and then “okay, this node is ready again.”*
+
+---
 
 ### ✅ Troubleshoot Cluster Components
 
-Inspect static pods like `etcd`, `kube-apiserver`, `kube-controller-manager`, `kube-scheduler`:
+The control plane consists of components like:
+- **etcd** → the cluster’s database  
+- **kube-apiserver** → the main API for kubectl and clients  
+- **kube-scheduler** → decides which node runs a Pod  
+- **kube-controller-manager** → ensures desired state  
+
+These are usually run as **static Pods** (YAML manifests in `/etc/kubernetes/manifests`).  
+
+- **Check control plane Pods:**
 ```bash
 ls /etc/kubernetes/manifests
 ```
 
-Check component statuses:
+- **Check if components are reporting healthy:**
 ```bash
 kubectl get componentstatuses
 ```
 
-Get logs of kubelet on node:
+- **Check kubelet logs (runs on every node):**
 ```bash
 journalctl -u kubelet
 ```
 
-Docs:
-- https://kubernetes.io/docs/tasks/debug/debug-cluster/
-- https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/troubleshooting-kubeadm/
+👉 If the API server is down, `kubectl` won’t work — you may need to check logs directly on the node.  
+
+---
 
 ### ✅ Monitor Cluster and Application Resource Usage
 
-Use metrics-server to view resource consumption:
+Resource bottlenecks (CPU/memory pressure) often cause issues.  
+
+- **Use metrics-server (must be installed):**
 ```bash
 kubectl top nodes
 kubectl top pods --all-namespaces
 ```
 
-Sort by usage:
+- **Sort by usage:**
 ```bash
 kubectl top pods --sort-by=cpu
 ```
 
-Docs:
-- https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-usage-monitoring/
+👉 This shows if Pods are consuming too many resources or if a node is overloaded.  
+
+---
 
 ### ✅ Manage and Evaluate Container Output Streams
 
-To analyze logs for single- and multi-container pods:
+Logs are your best friend in debugging.  
+
+- **Check Pod logs:**
 ```bash
 kubectl logs <pod-name>
-kubectl logs <pod-name> -c <container-name>
-kubectl logs -f <pod-name>
+kubectl logs <pod-name> -c <container-name>   # for multi-container Pods
+kubectl logs -f <pod-name>                    # stream logs
 ```
 
-Review logs from the kubelet process:
+- **Check node process logs (e.g., kubelet):**
 ```bash
 journalctl -u kubelet -f
 ```
 
-Docs:
-- https://kubernetes.io/docs/concepts/cluster-administration/logging/
+👉 Use `-f` (follow) to watch logs in real time as you reproduce issues.  
+
+---
 
 ### ✅ Troubleshoot Services and Networking
 
-Check if Service is routing traffic properly:
+Networking is one of the most common failure points.  
+
+- **Check Services:**
 ```bash
 kubectl get svc
 kubectl describe svc <service-name>
 ```
 
-Test DNS resolution:
+- **Test DNS resolution inside a Pod:**
 ```bash
 kubectl exec -it <pod-name> -- nslookup <service-name>
 ```
 
-Test connectivity between pods:
+- **Test connectivity between Pods:**
 ```bash
 kubectl exec -it <source-pod> -- curl <target-pod-ip>:<port>
 ```
 
-Docs:
-- https://kubernetes.io/docs/tasks/debug/debug-cluster/dns-debugging-resolution/
-- https://kubernetes.io/docs/concepts/services-networking/service/
+👉 This helps you confirm whether the issue is with DNS, Pod IPs, or Service routing.  
+
+---
+
+### ✅ Kubernetes v1.33 Updates to Remember (Troubleshooting)
+
+- `kubectl get events --sort-by=.metadata.creationTimestamp` → helpful to see why scheduling failed.  
+- Gateway API troubleshooting (v1.33 exam includes Gateway instead of just Ingress).  
+- Container runtimes (`containerd`, `crictl`) often used for low-level debugging.  
+- `kubectl debug` (ephemeral containers) is now stable and commonly tested.  
 
 ---
 
 ### Resources to Prepare
-> - [Kubernetes Documentation](https://kubernetes.io/docs/)
 
-> - [Troubleshooting Guide](https://kubernetes.io/docs/tasks/debug/)
+- [Kubernetes Documentation](https://kubernetes.io/docs/)  
+- [Troubleshooting Guide](https://kubernetes.io/docs/tasks/debug/)  
+- [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)  
 
-> - [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
-
-
+---
 
 ## CKA Exam Questions And Answers
 
