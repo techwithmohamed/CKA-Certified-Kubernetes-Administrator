@@ -731,7 +731,7 @@ kubectl exec -it <source-pod> -- curl <target-pod-ip>:<port>
 
 ---
 
-## CKA Exam Questions and Answers (2025 Edition)
+## CKA Exam Questions and Answers
 
 This section contains **hands-on practice scenarios** that mirror the exam.  
 For each, we include: **Task → Reasoning → Solution (YAML/commands) → Exam tips**.
@@ -1350,39 +1350,38 @@ kubectl get pods -l run=test
 
 ---
 
+## 💬 Direct Candidate Feedback: 2025 CKA Exam Insights (August Update)
 
-## 💬 Direct Candidate Feedback: 2025 CKA Exam Insights (Reddit Source) 
-
-> “The exam has shifted. It’s less about copying manifests and more about troubleshooting, Helm, CRDs, and Gateway APIs.”
+> “The exam has shifted. It’s less about copying manifests and more about **troubleshooting**, **Helm**, **CRDs**, and **Gateway APIs**.”
 
 > “I left 3 questions blank — Helm packaging, Gateway API, and cluster setup using `kubeadm`. It was tougher than expected.”
 
 > “Gateway API and HTTPRoute threw me off — the documentation wasn’t clear. Helm was tricky too, but overall manageable.”
 
-> “Topics I saw: HPA, Ingress, Helm, ArgoCD, cert-manager CRDs, container runtimes, and setting up NetPol with least privileges.”
+> “Topics I saw: **HPA**, **Ingress**, **Helm**, **ArgoCD**, **cert-manager CRDs**, **container runtimes**, and setting up **NetworkPolicies with least privilege**.”
 
 > “The new format made me think more deeply. I had to actually solve problems — not just recognize YAML.”
 
 > “Low-resolution VM made it hard to read docs. And some questions were significantly more complex than the mock exams.”
 
-> “Expect lag, tab loading delays, and broken copy-paste. Know your `kubectl`, `vim`, and command-line tools well.”
+> “Expect **lag, tab loading delays, and broken copy-paste**. Know your `kubectl`, `vim`, and command-line tools well.”
 
 > “Mouse movement was sluggish — keyboard navigation with `:vsplit` and `kubectl explain` helped me save time.”
 
 
-## Key Topic Coverage Summary (2025)
+## 📌 Key Topic Coverage Summary (2025)
 
 | Topic Area                  | Common Feedback Summary                                                                 |
-|----------------------------|------------------------------------------------------------------------------------------|
-| **Helm & Packaging**       | Required for install and templating questions; Helm + dpkg appeared                     |
-| **Gateway API / HTTPRoute**| Often noted as tricky; vague docs made questions harder                                 |
-| **CRI / containerd**       | Manual installs and configuration came up in several questions                          |
+|-----------------------------|------------------------------------------------------------------------------------------|
+| **Helm & Packaging**        | Required for install and templating questions; Helm + dpkg appeared                     |
+| **Gateway API / HTTPRoute** | Often noted as tricky; vague docs made questions harder                                 |
+| **CRI / containerd**        | Manual installs and configuration came up in several questions                          |
 | **CRDs & Admission Webhooks** | Edge-case topics that still showed up — be familiar                                     |
-| **HPA, ArgoCD, NetPol**    | Popular topics; applied in realistic scenarios like scaling and access control          |
-| **PVC, Volumes, Ingress**  | Included in questions requiring debug/fix/validate workflows                           |
-| **Cluster Setup (kubeadm)**| Appeared unexpectedly; time-consuming if unprepared                                     |
-| **PSI Exam UI**            | Reported lag, poor copy/paste support, and low-res experience                           |
-| **Keyboard Proficiency**   | Critical due to interface slowness — `vim`, tabs, and shortcuts helped significantly    |
+| **HPA, ArgoCD, NetPol**     | Popular topics; applied in realistic scenarios like scaling and access control          |
+| **PVC, Volumes, Ingress**   | Included in questions requiring debug/fix/validate workflows                            |
+| **Cluster Setup (kubeadm)** | Appeared unexpectedly; time-consuming if unprepared                                     |
+| **PSI Exam UI**             | Reported lag, poor copy/paste support, and low-res experience                           |
+| **Keyboard Proficiency**    | Critical due to interface slowness — `vim`, tabs, and shortcuts helped significantly    |
 
 
 ## Additional Resources
