@@ -30,17 +30,19 @@
 
 Kubernetes **v1.33** (April 2025) brings a mix of stability, new features, and important deprecations that are directly relevant for the CKA exam.
 
-### 🔥 Key Features
+###  Key Features
 
-- **In-place Pod Resize (beta, enabled by default)**  
+- **In-place Pod Resize (beta, enabled by default)**
+  [Docs: Resize Containers](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources)  
   You can now adjust CPU and memory requests/limits of running Pods **without deleting or recreating them**.  
   ```bash
   # Increase CPU/memory for a running pod
-  kubectl patch pod mypod --subresource=resize     --type=merge -p '{"spec":{"containers":[{"name":"app","resources":{"requests":{"cpu":"500m","memory":"256Mi"},"limits":{"cpu":"1","memory":"512Mi"}}}]}}'
+  kubectl patch pod mypod --subresource=resize --type=merge -p '{"spec":{"containers":[{"name":"app","resources":{"requests":{"cpu":"500m","memory":"256Mi"},"limits":{"cpu":"1","memory":"512Mi"}}}]}}'
   ```
   This is especially useful in troubleshooting or resource tuning scenarios.
 
-- **User Namespaces**  
+- **User Namespaces**
+  [Docs: user ](https://kubernetes.io/blog/2025/04/25/userns-enabled-by-default/)  
   Stronger pod-level isolation: Kubernetes can now map container “root” to an **unprivileged UID on the host**.  
   ```yaml
   apiVersion: v1
@@ -64,28 +66,15 @@ Kubernetes **v1.33** (April 2025) brings a mix of stability, new features, and i
 - **Gateway API Progress**  
   Gateway API (`GatewayClass`, `Gateway`, `HTTPRoute`) continues to replace classic Ingress in many clusters. Exam scenarios now reference it directly.
 
-- **Ephemeral Containers & `kubectl debug` (stable)**  
-  Debugging tools are fully supported. Example:  
-  ```bash
-  kubectl debug pod/mypod -it --image=busybox --target=app -- sh
-  ```
 
 ### ⚠️ Deprecations & Removals
-
-- **`kubectl get componentstatuses` removed**  
-  Use API server health endpoints instead:  
-  ```bash
-  kubectl get --raw='/readyz?verbose'
-  kubectl get --raw='/livez?verbose'
-  ```
-
-- **PersistentVolume `Recycle` policy removed**  
-  Only **Retain** and **Delete** are valid reclaim policies now.  
-
+ - kube-proxy version information in node status was removed.
+ - in-tree gitRepo volume driver was removed due to security issues.
+ - Host network support for Windows Pods was removed due to technical limitations.
+ - Stable Endpoints API was deprecated in favor of the EndpointSlices API.
 ---
 
 👉 These changes mean the exam in 2025 will place more weight on **resizing resources, debugging live Pods, Gateway API traffic routing, and CSI-driven storage management**, while also testing that you know which commands/policies are deprecated.
-
 
 ## Table of Contents
 
