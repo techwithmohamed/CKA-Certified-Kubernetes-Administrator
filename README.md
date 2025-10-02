@@ -637,11 +637,6 @@ These are usually run as **static Pods** (YAML manifests in `/etc/kubernetes/man
 ls /etc/kubernetes/manifests
 ```
 
-- **Check if components are reporting healthy:**
-```bash
-kubectl get componentstatuses
-```
-
 - **Check kubelet logs (runs on every node):**
 ```bash
 journalctl -u kubelet
