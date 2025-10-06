@@ -14,7 +14,7 @@
 
 >  The [Certified Kubernetes Administrator (CKA) certification](https://www.cncf.io/certification/cka/) exam certifies that candidates have the skills, knowledge, and competency to perform the responsibilities of Kubernetes administrators.
  
-## CKA Exam details (v1.33  2025 ) 
+## CKA Exam details (v1.33  October 2025 ) 
 
 | **CKA Exam Details**                     | **Information**                                                                                     |
 |-------------------------------------------|-----------------------------------------------------------------------------------------------------|
@@ -23,68 +23,58 @@
 | **Pass Percentage**                       | 66%  ( One Retake )                                                                                                |
 | **CKA Exam Kubernetes Version**          | [Kubernetes v1.33]((https://kubernetes.io/blog/2025/04/23/kubernetes-v1-33-release/))                                                                               |
 | **CKA Validity**                         | 2 Years  |
-| **Exam Cost**                            | $445 USD   |
+| **Exam Cost**                            | $445 USD  ( check some coupons online you will get up to 30% and sometimes in the year 50% during Cyber Monday Savings)   |
 
 
-## What’s New in Kubernetes 1.33
+## What's New in Kubernetes v1.33 (Octarine) - Key Features
 
-Kubernetes **v1.33** (April 2025) brings a mix of stability, new features, and important deprecations that are directly relevant for the CKA exam.
+The actual exam CKA is based on v1.33 of Kubernetes (codenamed "Octarine")  , so here we will give some new features of K8s 1.33 to help you feel more confortable about about is new ! 
+But while writing this notes , the last Kubernetes version is 1.34.1 (released: 2025-09-09) : [check this releases page](https://kubernetes.io/releases/#release-v1-34)  
+Kubernetes **v1.33.5** ((released: 2025-09-09 ) brings a mix of stability, new features, and important deprecations that are directly relevant for the CKA exam.
+[Official Changes in Kubernetes 1.33](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.33.md) 
 
-###  Key Features
+Kubernetes 1.33 introduces a range of features designed to improve security, scalability, and the developer experience. As I’ve been preparing for the CKA certification, I've found a few of these features particularly useful, and I'm excited to share them with you.
 
-- **In-place Pod Resize (beta, enabled by default)**
-  [Docs: Resize Containers](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources)  
-  You can now adjust CPU and memory requests/limits of running Pods **without deleting or recreating them**.  
-  ```bash
-  # Increase CPU/memory for a running pod
-  kubectl patch pod mypod --subresource=resize --type=merge -p '{"spec":{"containers":[{"name":"app","resources":{"requests":{"cpu":"500m","memory":"256Mi"},"limits":{"cpu":"1","memory":"512Mi"}}}]}}'
-  ```
-  This is especially useful in troubleshooting or resource tuning scenarios.
+### 1. In-Place Pod Vertical Scaling (Beta)
+One of the most exciting updates in v1.33 is the ability to adjust the **CPU** and **memory** of a running pod **without needing to restart** it. This feature is a game-changer, especially for **stateful applications** or **long-running workloads** that require fine-tuning without causing disruptions. This could save you a lot of downtime in production environments.
 
-- **User Namespaces**
-  [Docs: user ](https://kubernetes.io/blog/2025/04/25/userns-enabled-by-default/)  
-  Stronger pod-level isolation: Kubernetes can now map container “root” to an **unprivileged UID on the host**.  
-  ```yaml
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    name: userns-demo
-  spec:
-    hostUsers: false   # opt-in to user namespaces
-    containers:
-    - name: c
-      image: busybox
-      command: ["sh","-c","id && sleep 1d"]
-  ```
-  Expect to see it in security-related exam tasks.
+### 2. Sidecar Containers Graduate to Stable
+Sidecar containers have now reached **stable** status! This means Kubernetes guarantees they will start **before your main application container** and stay running for the entire lifecycle of the pod. This is a huge win for tasks like **logging**, **monitoring**, and **proxying**, making it easier to implement these components in a standardized, reliable way.
 
-- **Storage Enhancements**  
-  - **Image Volumes (beta):** mount OCI images directly as read-only volumes (handy for configs/data).  
-  - **Volume Populators GA:** more flexible ways to pre-populate PVCs.  
-  - **Leak-prevention improvements:** Kubernetes cleans up dangling PVs more reliably.  
+### 3. OCI Artifact and Image Volumes (Alpha)
+Mounting container images directly as read-only volumes inside a pod is now supported in Kubernetes v1.33. With this, you can mount **OCI artifacts** and **container images** as volumes. For workflows like **sidecar injection** or using **CLI tooling** inside your pods, this can streamline the process and reduce the need for complex volume management.
 
-- **Gateway API Progress**  
-  Gateway API (`GatewayClass`, `Gateway`, `HTTPRoute`) continues to replace classic Ingress in many clusters. Exam scenarios now reference it directly.
+### 4. User Namespaces for Pods (Beta)
+Security is always top of mind in Kubernetes, and with the new **user namespaces for pods** feature, Kubernetes allows us to isolate **container root users** from the underlying host system. Even if a container runs as root, this feature ensures it stays securely isolated, providing an extra layer of protection against potential exploits. This could be particularly useful for securing multi-tenant or production environments.
 
+### 5. Job Success Policies
+Kubernetes v1.33 introduces more flexibility for **batch workloads** with **Job Success Policies**. Instead of using a one-size-fits-all definition for when a job is considered successful, you can now define custom conditions. This makes it easier to match the specific needs of your workloads and ensure that they complete successfully under the conditions that matter most.
 
-### ⚠️ Deprecations & Removals
- - kube-proxy version information in node status was removed.
- - in-tree gitRepo volume driver was removed due to security issues.
- - Host network support for Windows Pods was removed due to technical limitations.
- - Stable Endpoints API was deprecated in favor of the EndpointSlices API.
+### 6. Ordered Namespace Deletion (Alpha)
+In complex environments, deleting namespaces in an orderly manner is critical to ensure proper cleanup. Kubernetes 1.33 now supports **ordered namespace deletion**, ensuring that resources within namespaces are cleaned up systematically. This makes managing large clusters more predictable and less error-prone.
+
+### 7. Service Account Token Configuration Enhancements
+For those managing **multi-tenant environments**, Kubernetes now provides better flexibility for configuring **service account tokens**. This enhancement allows you to define the audience and dynamically adjust the tokens that kubelets request, making identity and access management easier and more secure.
+
+### 8. Extended Loopback Client Certificate Validity
+The default validity period for **loopback client certificates** has been extended to **14 months**. This reduces the administrative overhead of frequent certificate rotations and helps ensure that your control plane remains functional without unnecessary disruptions.
+
 ---
 
-👉 These changes mean the exam in 2025 will place more weight on **resizing resources, debugging live Pods, Gateway API traffic routing, and CSI-driven storage management**, while also testing that you know which commands/policies are deprecated.
+### Why These Matter
+
+Personally, I’m particularly excited about the **in-place scaling** and **user namespaces** features. These improvements make Kubernetes administration not only more efficient but also more **secure**. Whether you're dealing with production environments or scaling applications, these updates are a huge step forward. As Kubernetes evolves, it continues to be a powerful tool for handling complex, real-world workloads with ease and security.
+
 
 ## Table of Contents
 
-- [CKA Exam Syllabus (Updated Kubernetes 1.33)](#cka-exam-syllabus-updated-kubernetes-133)
+- [CKA Exam Syllabus ( Kubernetes 1.33 - Oct 2025)](#cka-exam-syllabus-updated-kubernetes-133)
 - [CKA Exam Questions And Answers](#cka-exam-questions-and-answers)
 - [Additional Resources](#additional-resources)
 - [Practice](#practice)
 
 
-## CKA Exam Syllabus (Updated Kubernetes 1.33 - 2025)
+## CKA Exam Syllabus (Updated Kubernetes 1.33 - oct - 2025)
 
 | **Topic** | **Concepts** | **Weightage** |
 |-----------|--------------|---------------|
