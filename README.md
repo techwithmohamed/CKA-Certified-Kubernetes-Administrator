@@ -303,17 +303,17 @@ tolerations:
 
 ## 3. Services & Networking (20%)
 
-This domain focuses on the networking mechanisms in Kubernetes. You need to understand **Pod-to-Pod communication, Services, DNS, ingress traffic, the new Gateway API, and network security (NetworkPolicies).**
+This domain focuses on the networking mechanisms in Kubernetes. You need to understand **Pod-to-Pod communication, Services, DNS, ingress traffic, the new Gateway API, and network security (NetworkPolicies).
 
 ---
 
-### ✅ Understand Connectivity Between Pods
+### Understand Connectivity Between Pods
 
-**Pod networking**: Every Pod gets its own IP address. By default, all Pods in the cluster can communicate with each other without NAT.  
+**Pod networking**: Each Pod in Kubernetes gets its own unique IP address. By default, Pods within a cluster can communicate with each other without the need for Network Address Translation (NAT).
 
 You should be able to:
-- Troubleshoot unreachable Pods
-- Test connectivity using tools like `ping`, `curl`, and `nslookup`
+- Troubleshoot unreachable Pods.
+- Test connectivity using tools like `ping`, `curl`, and `nslookup`.
 
 **Example:**
 ```bash
@@ -323,12 +323,11 @@ kubectl exec -it pod-a -- curl http://<pod-ip>:<port>
 
 ---
 
-### ✅ Define and Enforce Network Policies
+### Define and Enforce Network Policies
 
-**NetworkPolicy**: Controls Pod-to-Pod traffic. By default, all traffic is allowed; once a NetworkPolicy is applied, traffic is denied unless explicitly allowed.  
+**NetworkPolicy**: Controls the traffic between Pods. By default, all traffic is allowed. However, once a **NetworkPolicy** is applied, traffic is blocked unless explicitly allowed.
 
-- Policies use **labels** (Pods/Namespaces)  
-- Enforced only when the **CNI plugin** supports it (e.g., Calico, Cilium)  
+Network policies rely on **labels** (for Pods and Namespaces) and are enforced only when the **CNI plugin** supports them (such as Calico or Cilium).
 
 **Example:**
 ```yaml
@@ -348,18 +347,18 @@ spec:
           role: frontend
 ```
 
-This allows traffic **from frontend Pods → to backend Pods**, blocking all other ingress.
+This policy allows traffic **from frontend Pods → to backend Pods**, blocking all other incoming traffic.
 
 ---
 
-### ✅ Use ClusterIP, NodePort, LoadBalancer Service Types and Endpoints
+### Use ClusterIP, NodePort, LoadBalancer Service Types and Endpoints
 
-**Service**: Provides stable networking to Pods (since Pod IPs are ephemeral).  
+**Service**: Services in Kubernetes provide stable networking to Pods since Pod IPs are ephemeral.
 
-Types:
-- **ClusterIP (default):** Internal-only access within the cluster.  
-- **NodePort:** Exposes service on each node’s IP at a static port (30000–32767).  
-- **LoadBalancer:** Integrates with cloud provider to provision an external LB.  
+Service types:
+- **ClusterIP** (default): Internal-only access within the cluster.
+- **NodePort**: Exposes the service on each node’s IP at a static port (port range 30000–32767).
+- **LoadBalancer**: Integrates with cloud providers to provision an external Load Balancer.
 
 **Example:**
 ```bash
@@ -369,14 +368,14 @@ kubectl get svc
 
 ---
 
-### ✅ Use the Gateway API to Manage Ingress Traffic
+### Use the Gateway API to Manage Ingress Traffic
 
-**Gateway API**: The modern replacement for Ingress. Provides more **flexible routing**, standardization, and portability across different implementations.
+The **Gateway API** is the modern replacement for **Ingress**, providing more flexible routing, standardization, and portability across different implementations.
 
-Key resources:
-- **GatewayClass** → defines the type of gateway (like IngressClass).  
-- **Gateway** → represents a load balancer/data plane instance.  
-- **HTTPRoute** → defines routing rules for traffic.  
+Key resources in Gateway API:
+- **GatewayClass**: Defines the type of gateway (similar to `IngressClass`).
+- **Gateway**: Represents a load balancer or data plane instance.
+- **HTTPRoute**: Defines routing rules for HTTP traffic.
 
 **Example:**
 ```bash
@@ -384,13 +383,13 @@ kubectl get gatewayclasses
 kubectl describe gateway <name>
 ```
 
-👉 Expect Gateway API scenarios on the exam (Ingress still appears, but Gateway API is the future).
+Expect **Gateway API** tasks on the exam. Ingress is still relevant, but the Gateway API is the future.
 
 ---
 
-### ✅ Know How to Use Ingress Controllers and Ingress Resources
+### Know How to Use Ingress Controllers and Ingress Resources
 
-**Ingress**: Routes external HTTP(S) traffic into the cluster based on hostnames/paths. Requires an **Ingress Controller** (e.g., `nginx-ingress`, HAProxy, Traefik).  
+**Ingress**: Routes external HTTP(S) traffic into the Kubernetes cluster based on hostnames and paths. To make use of Ingress, you must have an **Ingress Controller** deployed (such as `nginx-ingress`, HAProxy, or Traefik).
 
 **Example:**
 ```yaml
@@ -412,33 +411,24 @@ spec:
               number: 80
 ```
 
-Verify the Ingress Controller is deployed:
+Verify if the Ingress Controller is deployed:
 ```bash
 kubectl get pods -n ingress-nginx
 ```
 
 ---
 
-### ✅ Understand and Use CoreDNS
+### Understand and Use CoreDNS
 
-**CoreDNS**: The DNS server inside Kubernetes clusters. Handles service discovery (resolving `service.namespace.svc.cluster.local`).  
+**CoreDNS**: CoreDNS is the DNS server inside Kubernetes that handles service discovery by resolving service names like `service.namespace.svc.cluster.local`.
 
-- Pods and Services get automatic DNS entries.  
-- Configurable via the `Corefile` in the `coredns` ConfigMap.  
+CoreDNS is configurable via the `Corefile` in the `coredns` ConfigMap.
 
 **Example:**
 ```bash
 kubectl exec -it <pod> -- nslookup kubernetes.default
 kubectl -n kube-system get configmap coredns -o yaml
 ```
-
----
-
-✅ **Kubernetes v1.33 Updates to Remember:**  
-- **Gateway API** is exam-relevant → expect `GatewayClass`, `Gateway`, and `HTTPRoute` tasks.  
-- NetworkPolicy enforcement depends on CNI → exam clusters often use Calico.  
-- `kubectl get endpoints` helps verify which Pods are backing a Service.  
-- CoreDNS is stable and often part of troubleshooting scenarios.  
 
 ---
 
