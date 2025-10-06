@@ -69,12 +69,13 @@ Personally, I’m particularly excited about the **in-place scaling** and **user
 | [**4. Storage - 10%**](#4-storage-10) | 1. Implement storage classes and dynamic volume provisioning<br>2. Configure volume types, access modes and reclaim policies<br>3. Manage persistent volumes and persistent volume claims | 10% |
 | [**5. Troubleshooting - 30%**](#5-troubleshooting-30) | 1. Troubleshoot clusters and nodes<br>2. Troubleshoot cluster components<br>3. Monitor cluster and application resource usage<br>4. Manage and evaluate container output streams<br>5. Troubleshoot services and networking | 30% |
 
-
 ## 1. Cluster Architecture, Installation & Configuration (25%)
 
-This section tests your ability to **build, configure, and manage Kubernetes clusters** using `kubeadm` and core cluster components.
+This section tests your ability to **build, configure, and manage Kubernetes clusters** using `kubeadm` and core Kubernetes components.
 
-### ✅ Manage Role-Based Access Control (RBAC)
+### Manage Role-Based Access Control (RBAC)
+
+RBAC is essential for managing access to cluster resources. Here’s how to create a role and bind it to a service account:
 
 ```bash
 kubectl create role cm-writer --verb=create --resource=configmaps -n dev
@@ -82,7 +83,9 @@ kubectl create rolebinding writer-bind --role=cm-writer --serviceaccount=dev:app
 kubectl auth can-i create configmap --as system:serviceaccount:dev:app-sa -n dev
 ```
 
-### ✅ Prepare Underlying Infrastructure
+### Prepare Underlying Infrastructure
+
+Before setting up Kubernetes, you must prepare your underlying infrastructure. Here’s how to configure the node and disable swap:
 
 ```bash
 hostnamectl set-hostname control-plane-node
@@ -90,19 +93,26 @@ echo "10.0.0.2 worker-node" >> /etc/hosts
 swapoff -a
 ```
 
-### ✅ Create and Manage Clusters (kubeadm)
+This prepares the system to host Kubernetes components.
+
+### Create and Manage Clusters (kubeadm)
+
+To initialize the Kubernetes control plane and deploy a network plugin, use the following commands:
 
 ```bash
 kubeadm init --pod-network-cidr=192.168.0.0/16
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml
 ```
 
-Join worker node:
+To join worker nodes:
+
 ```bash
 kubeadm join <CONTROL_PLANE_IP>:6443 --token <TOKEN> --discovery-token-ca-cert-hash sha256:<HASH>
 ```
 
-### ✅ Manage Cluster Lifecycle
+### Manage Cluster Lifecycle
+
+You’ll need to manage your cluster lifecycle, including upgrades. Here’s how to upgrade the cluster to **v1.33**:
 
 ```bash
 kubeadm upgrade plan
@@ -110,18 +120,25 @@ kubeadm upgrade apply v1.33.1
 kubelet --version
 ```
 
-### ✅ Configure HA Control Plane
+These commands allow you to upgrade your Kubernetes version to the latest stable release.
+
+### Configure HA Control Plane
+
+High availability (HA) for the control plane is essential for production environments. Here’s how to set up a highly available control plane:
 
 ```bash
 kubeadm init --control-plane-endpoint "LOADBALANCER_DNS:6443" --upload-certs
 ```
 
-Add extra control-plane node:
+To add an additional control-plane node:
+
 ```bash
-kubeadm join LOADBALANCER_DNS:6443 --control-plane --token <TOKEN>   --discovery-token-ca-cert-hash sha256:<HASH> --certificate-key <CERT_KEY>
+kubeadm join LOADBALANCER_DNS:6443 --control-plane --token <TOKEN> --discovery-token-ca-cert-hash sha256:<HASH> --certificate-key <CERT_KEY>
 ```
 
-### ✅ Helm & Kustomize
+### Helm & Kustomize
+
+Helm is a Kubernetes package manager that simplifies application deployment. Kustomize helps you manage configurations. Here’s how you can deploy **nginx** using Helm and apply custom configurations using Kustomize:
 
 ```bash
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -129,7 +146,9 @@ helm install nginx bitnami/nginx
 kubectl apply -k ./my-kustomization/
 ```
 
-### ✅ CNI / CSI / CRI
+### CNI / CSI / CRI
+
+Container Network Interface (CNI), Container Storage Interface (CSI), and Container Runtime Interface (CRI) are crucial for network and storage management. Here’s how to verify the CNI configuration and check for available storage drivers:
 
 ```bash
 crictl info
@@ -137,7 +156,11 @@ ls /etc/cni/net.d/
 kubectl get csidrivers
 ```
 
-### ✅ CRDs & Operators
+These commands help you manage and troubleshoot networking and storage drivers in Kubernetes.
+
+### CRDs & Operators
+
+Custom Resource Definitions (CRDs) and Operators help extend Kubernetes capabilities. To interact with CRDs and manage an operator like **Prometheus**, use the following commands:
 
 ```bash
 kubectl get crds
@@ -145,16 +168,16 @@ kubectl describe crd <customresource>
 kubectl apply -f https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.70.0/bundle.yaml
 ```
 
-### ✅ New for v1.33 — In-Place Resize & Debugging
+### New for v1.33 — In-Place Resize & Debugging
+
+Kubernetes v1.33 introduces **in-place pod resizing**—allowing you to increase resources without restarting the pod. Additionally, debugging has improved with tools like `kubectl debug`:
 
 ```bash
 kubectl patch pod mypod --subresource=resize --type=merge   -p '{"spec":{"containers":[{"name":"app","resources":{"limits":{"cpu":"1","memory":"512Mi"}}}]}}'
-
 kubectl debug pod/mypod -it --image=busybox --target=app -- sh
 ```
 
----
-
+These features make it easier to manage resources dynamically and debug issues on the fly without downtime.
 ## 2. Workloads & Scheduling (15%)
 
 This domain evaluates your knowledge in defining and managing application workloads and controlling how they are deployed and scheduled in a Kubernetes cluster. You should be confident with rolling updates, autoscaling, resource limits, health probes, and scheduling constraints.
