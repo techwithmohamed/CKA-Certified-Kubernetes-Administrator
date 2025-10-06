@@ -1,18 +1,18 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-# ☸️ Certified Kubernetes Administrator (CKA) Exam Guide - V1.33 (2025)
+# ☸️ Certified Kubernetes Administrator (CKA) Exam Guide - V1.33 (OCT 2025 UPDATED )
 
 <p align="center">
   <img src="assets/cka.png" alt="CKA EXAM">
 </p>
 
+This[Certified Kubernetes Administrator (CKA) certification](https://www.cncf.io/certification/cka/)  Guide  provides a comprehensive, hands-on approach to mastering Kubernetes, with practical labs and real-world examples. Tailored specifically for the CKA exam, this guide covers key topics like cluster setup, networking, and security, ensuring you're fully prepared. Stay ahead with the latest Kubernetes features and updates, and gain the skills needed to pass the CKA certification with confidence.
+
 > This guide is part of our blog [Pass the CKA Certification Exam: The Complete Study Guide ](https://techwithmohamed.com/blog/cka-exam-study/).
 
 ## Hit the Star! :star:
 > If you are using this repo for guidance, please hit the star. Thanks A lot !
-
->  The [Certified Kubernetes Administrator (CKA) certification](https://www.cncf.io/certification/cka/) exam certifies that candidates have the skills, knowledge, and competency to perform the responsibilities of Kubernetes administrators.
  
 ## CKA Exam details (v1.33  October 2025 ) 
 
