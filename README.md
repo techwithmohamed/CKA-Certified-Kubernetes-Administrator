@@ -27,44 +27,29 @@
 
 
 ## What's New in Kubernetes v1.33 (Octarine) - Key Features
+While writing this notes , the last Kubernetes version is 1.34.1 (released: 2025-09-09) : [check this releases page](https://kubernetes.io/releases/#release-v1-34)  
 
-The actual exam CKA is based on v1.33 of Kubernetes (codenamed "Octarine")  , so here we will give some new features of K8s 1.33 to help you feel more confortable about about is new ! 
-But while writing this notes , the last Kubernetes version is 1.34.1 (released: 2025-09-09) : [check this releases page](https://kubernetes.io/releases/#release-v1-34)  
-Kubernetes **v1.33.5** ((released: 2025-09-09 ) brings a mix of stability, new features, and important deprecations that are directly relevant for the CKA exam.
+The current exam CKA is based on v1.33 of Kubernetes (codenamed "Octarine") , Kubernetes **v1.33.5** ((released: 2025-09-09 ) brings a mix of stability, new features, and important deprecations that are directly relevant for the CKA exam.
 [Official Changes in Kubernetes 1.33](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.33.md) 
 
-Kubernetes 1.33 introduces a range of features designed to improve security, scalability, and the developer experience. As I’ve been preparing for the CKA certification, I've found a few of these features particularly useful, and I'm excited to share them with you.
+As I’ve been preparing for the CKA certification, I've found a few of these features particularly useful, and I'm excited to share them with you.
 
-### 1. In-Place Pod Vertical Scaling (Beta)
-One of the most exciting updates in v1.33 is the ability to adjust the **CPU** and **memory** of a running pod **without needing to restart** it. This feature is a game-changer, especially for **stateful applications** or **long-running workloads** that require fine-tuning without causing disruptions. This could save you a lot of downtime in production environments.
-
-### 2. Sidecar Containers Graduate to Stable
-Sidecar containers have now reached **stable** status! This means Kubernetes guarantees they will start **before your main application container** and stay running for the entire lifecycle of the pod. This is a huge win for tasks like **logging**, **monitoring**, and **proxying**, making it easier to implement these components in a standardized, reliable way.
-
-### 3. OCI Artifact and Image Volumes (Alpha)
-Mounting container images directly as read-only volumes inside a pod is now supported in Kubernetes v1.33. With this, you can mount **OCI artifacts** and **container images** as volumes. For workflows like **sidecar injection** or using **CLI tooling** inside your pods, this can streamline the process and reduce the need for complex volume management.
-
-### 4. User Namespaces for Pods (Beta)
-Security is always top of mind in Kubernetes, and with the new **user namespaces for pods** feature, Kubernetes allows us to isolate **container root users** from the underlying host system. Even if a container runs as root, this feature ensures it stays securely isolated, providing an extra layer of protection against potential exploits. This could be particularly useful for securing multi-tenant or production environments.
-
-### 5. Job Success Policies
-Kubernetes v1.33 introduces more flexibility for **batch workloads** with **Job Success Policies**. Instead of using a one-size-fits-all definition for when a job is considered successful, you can now define custom conditions. This makes it easier to match the specific needs of your workloads and ensure that they complete successfully under the conditions that matter most.
-
-### 6. Ordered Namespace Deletion (Alpha)
-In complex environments, deleting namespaces in an orderly manner is critical to ensure proper cleanup. Kubernetes 1.33 now supports **ordered namespace deletion**, ensuring that resources within namespaces are cleaned up systematically. This makes managing large clusters more predictable and less error-prone.
-
-### 7. Service Account Token Configuration Enhancements
-For those managing **multi-tenant environments**, Kubernetes now provides better flexibility for configuring **service account tokens**. This enhancement allows you to define the audience and dynamically adjust the tokens that kubelets request, making identity and access management easier and more secure.
-
-### 8. Extended Loopback Client Certificate Validity
-The default validity period for **loopback client certificates** has been extended to **14 months**. This reduces the administrative overhead of frequent certificate rotations and helps ensure that your control plane remains functional without unnecessary disruptions.
+| Feature                                | Description                                                                                                                                               |
+|----------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **In-Place Pod Vertical Scaling (Beta)** | Allows you to adjust **CPU** and **memory** of a **running pod** without needing to restart it. Great for **stateful applications** and **long-running workloads** to reduce downtime. |
+| **Sidecar Containers Graduate to Stable** | Sidecar containers are now **stable**, ensuring they start **before** your main application container and run throughout the pod's lifecycle. Ideal for **logging**, **monitoring**, and **proxying** tasks. |
+| **OCI Artifact and Image Volumes (Alpha)** | Allows you to mount **OCI artifacts** and **container images** as read-only volumes inside a pod. Useful for workflows like **sidecar injection** and **CLI tooling**. |
+| **User Namespaces for Pods (Beta)**     | Provides **security isolation** by keeping **container root users** isolated from the host system, making Kubernetes more secure, especially in multi-tenant or production environments. |
+| **Job Success Policies**               | Adds flexibility to **batch workloads** by allowing you to define custom conditions for when a job is considered successful, improving workflow control. |
+| **Ordered Namespace Deletion (Alpha)** | Ensures a **systematic cleanup** process when deleting namespaces, making it more predictable and reducing the risk of errors in large environments. |
+| **Service Account Token Configuration Enhancements** | Enhances flexibility for **multi-tenant environments**, allowing you to configure and manage **service account tokens** more dynamically. |
+| **Extended Loopback Client Certificate Validity** | Extends the validity of **loopback client certificates** to **14 months**, reducing the administrative burden of frequent certificate rotations and helping maintain stability in control plane operations. |
 
 ---
 
 ### Why These Matter
 
 Personally, I’m particularly excited about the **in-place scaling** and **user namespaces** features. These improvements make Kubernetes administration not only more efficient but also more **secure**. Whether you're dealing with production environments or scaling applications, these updates are a huge step forward. As Kubernetes evolves, it continues to be a powerful tool for handling complex, real-world workloads with ease and security.
-
 
 ## Table of Contents
 
