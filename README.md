@@ -178,13 +178,15 @@ kubectl debug pod/mypod -it --image=busybox --target=app -- sh
 ```
 
 These features make it easier to manage resources dynamically and debug issues on the fly without downtime.
+
+
 ## 2. Workloads & Scheduling (15%)
 
-This domain evaluates your knowledge in defining and managing application workloads and controlling how they are deployed and scheduled in a Kubernetes cluster. You should be confident with rolling updates, autoscaling, resource limits, health probes, and scheduling constraints.
+This domain evaluates your proficiency in defining and managing application workloads, along with controlling their deployment and scheduling within a Kubernetes cluster. Key areas include rolling updates, autoscaling, resource limits, health probes, and scheduling constraints.
 
 ---
 
-### ✅ Understand Application Deployments and Perform Rolling Updates and Rollbacks
+### Understand Application Deployments and Perform Rolling Updates and Rollbacks
 
 **Deployment**: A controller that ensures the desired number of Pods are running. It supports rolling updates (gradual replacement of Pods) and rollbacks (return to the last known good state).
 
@@ -202,10 +204,10 @@ kubectl rollout undo deployment nginx
 
 ---
 
-### ✅ Use ConfigMaps and Secrets to Configure Applications
+### Use ConfigMaps and Secrets to Configure Applications
 
-- **ConfigMap**: Stores non-sensitive configuration (e.g., app modes, URLs).  
-- **Secret**: Stores sensitive values (e.g., passwords, tokens). Data is base64-encoded but not encrypted by default.  
+- **ConfigMap**: Stores non-sensitive configuration (e.g., app modes, URLs).
+- **Secret**: Stores sensitive values (e.g., passwords, tokens). Data is base64-encoded but not encrypted by default.
 
 **Example:**
 ```bash
@@ -230,9 +232,9 @@ env:
 
 ---
 
-### ✅ Configure Workload Autoscaling
+### Configure Workload Autoscaling
 
-**Horizontal Pod Autoscaler (HPA):** Automatically increases or decreases the number of Pods based on CPU, memory, or custom metrics. Requires `metrics-server` or an external metrics adapter.
+**Horizontal Pod Autoscaler (HPA)**: Automatically increases or decreases the number of Pods based on CPU, memory, or custom metrics. Requires `metrics-server` or an external metrics adapter.
 
 **Example:**
 ```bash
@@ -242,14 +244,14 @@ kubectl get hpa
 
 ---
 
-### ✅ Understand the Primitives Used to Create Robust, Self-Healing Deployments
+### Understand the Primitives Used to Create Robust, Self-Healing Deployments
 
 Kubernetes uses several **probes and controllers** to make applications resilient:
 
-- **Liveness Probe** → restarts containers if they hang or crash.  
-- **Readiness Probe** → ensures traffic only reaches Pods ready to serve.  
-- **Startup Probe** → for slow apps, prevents false liveness failures.  
-- **ReplicaSet** → guarantees a certain number of Pods run at all times.  
+- **Liveness Probe** → restarts containers if they hang or crash.
+- **Readiness Probe** → ensures traffic only reaches Pods ready to serve.
+- **Startup Probe** → for slow apps, prevents false liveness failures.
+- **ReplicaSet** → guarantees a certain number of Pods run at all times.
 
 **Example:**
 ```yaml
@@ -268,14 +270,14 @@ kubectl get deploy nginx -o yaml | grep probe -A 5
 
 ---
 
-### ✅ Configure Pod Admission and Scheduling (limits, node affinity, tolerations)
+### Configure Pod Admission and Scheduling (limits, node affinity, tolerations)
 
 Kubernetes schedules Pods onto nodes based on resources and constraints:
 
-- **Requests/Limits**: Reserve minimum CPU/memory (requests) and enforce maximum usage (limits).  
-- **NodeSelector**: Place Pods only on nodes with specific labels.  
-- **Affinity/Anti-Affinity**: Fine-grained rules to group or separate Pods.  
-- **Taints/Tolerations**: Prevent Pods from scheduling on nodes unless explicitly tolerated.  
+- **Requests/Limits**: Reserve minimum CPU/memory (requests) and enforce maximum usage (limits).
+- **NodeSelector**: Place Pods only on nodes with specific labels.
+- **Affinity/Anti-Affinity**: Fine-grained rules to group or separate Pods.
+- **Taints/Tolerations**: Prevent Pods from scheduling on nodes unless explicitly tolerated.
 
 **Example:**
 ```yaml
@@ -295,13 +297,6 @@ tolerations:
   operator: "Exists"
   effect: "NoSchedule"
 ```
-
----
-
-✅ **Kubernetes v1.33 Updates to Remember:**  
-- Use `node-role.kubernetes.io/control-plane` instead of `master` (deprecated).  
-- `startupProbe`, `livenessProbe`, and `readinessProbe` are stable and exam-relevant.  
-- HPA supports CPU and memory natively; custom metrics need an adapter (Prometheus/Stackdriver).  
 
 ---
 
