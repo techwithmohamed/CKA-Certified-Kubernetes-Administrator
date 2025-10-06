@@ -549,17 +549,15 @@ kubectl get pvc
 kubectl describe pod pvc-pod
 ```
 
-
 ## 5. Troubleshooting (30%)
 
-This is the **most important section of the CKA exam**. It tests your ability to **debug and recover a Kubernetes cluster** when things break.  
-You’ll be expected to quickly identify issues with **nodes, Pods, control plane components, networking, and logs** — under time pressure.  
+This is the **most important section** of the CKA exam. It tests your ability to **debug and recover** a Kubernetes cluster when things go wrong. You'll need to quickly identify issues with **nodes, Pods, control plane components, networking, and logs**, all while managing time pressure.
 
 ---
 
-### ✅ Troubleshoot Clusters and Nodes
+### Troubleshoot Clusters and Nodes
 
-Nodes are the "machines" (VMs or physical) where Pods run. If a node is unhealthy, workloads may fail.  
+Nodes are the physical or virtual machines that run your Pods. When a node is unhealthy, workloads can fail or become unresponsive.
 
 - **Check cluster health:**
 ```bash
@@ -577,19 +575,20 @@ kubectl drain <node-name> --ignore-daemonsets
 kubectl uncordon <node-name>
 ```
 
-👉 *Think of this as telling Kubernetes “stop scheduling new Pods here, move the old ones out” and then “okay, this node is ready again.”*
+This is how Kubernetes lets you manage node availability. When you drain a node, it stops scheduling new Pods, and once maintenance is done, you uncordon it to allow scheduling again.
 
 ---
 
-### ✅ Troubleshoot Cluster Components
+### Troubleshoot Cluster Components
 
-The control plane consists of components like:
-- **etcd** → the cluster’s database  
-- **kube-apiserver** → the main API for kubectl and clients  
-- **kube-scheduler** → decides which node runs a Pod  
-- **kube-controller-manager** → ensures desired state  
+The control plane is composed of several important components:
 
-These are usually run as **static Pods** (YAML manifests in `/etc/kubernetes/manifests`).  
+- **etcd**: The cluster's database
+- **kube-apiserver**: The API server that handles requests from kubectl and other clients
+- **kube-scheduler**: Decides where Pods should run within the cluster
+- **kube-controller-manager**: Ensures the cluster is in its desired state
+
+These are often run as **static Pods** and can be found in `/etc/kubernetes/manifests`.
 
 - **Check control plane Pods:**
 ```bash
@@ -601,81 +600,73 @@ ls /etc/kubernetes/manifests
 journalctl -u kubelet
 ```
 
-👉 If the API server is down, `kubectl` won’t work — you may need to check logs directly on the node.  
+If the **API server** is down, your `kubectl` command won’t work, and you’ll need to check logs directly on the node to diagnose the issue.
 
 ---
 
-### ✅ Monitor Cluster and Application Resource Usage
+### Monitor Cluster and Application Resource Usage
 
-Resource bottlenecks (CPU/memory pressure) often cause issues.  
+Resource bottlenecks (such as CPU or memory pressure) often cause issues in Kubernetes clusters.
 
-- **Use metrics-server (must be installed):**
+- **Use metrics-server (make sure it’s installed):**
 ```bash
 kubectl top nodes
 kubectl top pods --all-namespaces
 ```
 
-- **Sort by usage:**
+- **Sort by resource usage:**
 ```bash
 kubectl top pods --sort-by=cpu
 ```
 
-👉 This shows if Pods are consuming too many resources or if a node is overloaded.  
+This will help you identify if Pods are consuming too many resources, or if nodes are overloaded.
 
 ---
 
-### ✅ Manage and Evaluate Container Output Streams
+### Manage and Evaluate Container Output Streams
 
-Logs are your best friend in debugging.  
+Logs are your best tool for troubleshooting Kubernetes issues.
 
 - **Check Pod logs:**
 ```bash
 kubectl logs <pod-name>
 kubectl logs <pod-name> -c <container-name>   # for multi-container Pods
-kubectl logs -f <pod-name>                    # stream logs
+kubectl logs -f <pod-name>                    # stream logs in real time
 ```
 
-- **Check node process logs (e.g., kubelet):**
+- **Check node process logs (e.g., kubelet logs):**
 ```bash
 journalctl -u kubelet -f
 ```
 
-👉 Use `-f` (follow) to watch logs in real time as you reproduce issues.  
+Use the `-f` flag to **follow logs** in real-time as you reproduce issues, which can be incredibly helpful in identifying what went wrong.
 
 ---
 
-### ✅ Troubleshoot Services and Networking
+### Troubleshoot Services and Networking
 
-Networking is one of the most common failure points.  
+Networking is one of the most common failure points in Kubernetes.
 
-- **Check Services:**
+- **Check Services:** Verify that your services are correctly configured:
 ```bash
 kubectl get svc
 kubectl describe svc <service-name>
 ```
 
-- **Test DNS resolution inside a Pod:**
+- **Test DNS resolution inside a Pod:** Make sure your Pods can resolve DNS names:
 ```bash
 kubectl exec -it <pod-name> -- nslookup <service-name>
 ```
 
-- **Test connectivity between Pods:**
+- **Test connectivity between Pods:** If Pods can’t communicate, check connectivity using `curl` or `ping`:
 ```bash
 kubectl exec -it <source-pod> -- curl <target-pod-ip>:<port>
 ```
 
-👉 This helps you confirm whether the issue is with DNS, Pod IPs, or Service routing.  
+This will help confirm whether the issue is related to DNS resolution, Pod IPs, or Service routing.
 
 ---
 
-### ✅ Kubernetes v1.33 Updates to Remember (Troubleshooting)
-
-- `kubectl get events --sort-by=.metadata.creationTimestamp` → helpful to see why scheduling failed.  
-- Gateway API troubleshooting (v1.33 exam includes Gateway instead of just Ingress).  
-- Container runtimes (`containerd`, `crictl`) often used for low-level debugging.  
-- `kubectl debug` (ephemeral containers) is now stable and commonly tested.  
-
----
 
 ### Resources to Prepare
 
