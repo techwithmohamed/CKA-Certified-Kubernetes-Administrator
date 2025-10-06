@@ -431,19 +431,18 @@ kubectl -n kube-system get configmap coredns -o yaml
 ```
 
 ---
-
 ## 4. Storage (10%)
 
-This section tests your knowledge of **persistent storage in Kubernetes**. Unlike temporary storage (like `emptyDir` which disappears when the Pod dies), persistent storage ensures that data survives Pod restarts or rescheduling.
+This section evaluates your knowledge of **persistent storage** in Kubernetes. Unlike temporary storage (like `emptyDir` which disappears when the Pod dies), **persistent storage** ensures that data survives Pod restarts or rescheduling.
 
-In Kubernetes, storage is managed through **Persistent Volumes (PVs)** and **Persistent Volume Claims (PVCs)**, usually provisioned dynamically via **StorageClasses**.
+In Kubernetes, storage is managed through **Persistent Volumes (PVs)** and **Persistent Volume Claims (PVCs)**, typically provisioned dynamically via **StorageClasses**.
 
 ---
 
-### ✅ Implement Storage Classes and Dynamic Volume Provisioning
+### Implement Storage Classes and Dynamic Volume Provisioning
 
-- **StorageClass**: Think of this as a *template* that tells Kubernetes *how* to create volumes (what type, speed, reclaim policy).  
-- **Dynamic provisioning**: Instead of manually creating volumes, Kubernetes automatically provisions them when a PVC requests storage.  
+- **StorageClass**: This is like a *template* for Kubernetes. It defines how volumes should be created, specifying things like volume type, speed, and reclaim policies.  
+- **Dynamic Provisioning**: Instead of manually creating volumes, Kubernetes can automatically provision them when a PVC requests storage.
 
 **Example:**
 ```yaml
@@ -461,26 +460,26 @@ kubectl apply -f storageclass.yaml
 kubectl get sc
 ```
 
-👉 In real clusters, cloud providers (AWS, GCP, Azure) or CSI drivers (e.g., rook-ceph, longhorn) are used as the **provisioner**.
+In real-world clusters, **cloud providers** (AWS, GCP, Azure) or **CSI drivers** (e.g., **rook-ceph**, **longhorn**) are often used as the **provisioner**.
 
 ---
 
-### ✅ Configure Volume Types, Access Modes, and Reclaim Policies
+### Configure Volume Types, Access Modes, and Reclaim Policies
 
-**Volume Types** define where data is stored:
-- `hostPath`: A path on the node’s filesystem (for single-node testing only).  
-- `emptyDir`: Temporary space that vanishes when the Pod is deleted.  
-- `nfs`, `cephfs`, `glusterfs`, CSI drivers → external, shared storage backends.  
+**Volume Types** define where the data is stored:
+- `hostPath`: A path on the node's filesystem (typically used for single-node testing).
+- `emptyDir`: Temporary space that disappears when the Pod is deleted.
+- `nfs`, `cephfs`, `glusterfs`, CSI drivers: External shared storage backends.
 
-**Access Modes** (who can read/write):
-- `ReadWriteOnce (RWO)` → One node can read/write.  
-- `ReadOnlyMany (ROX)` → Many nodes, read-only.  
-- `ReadWriteMany (RWX)` → Many nodes can read/write simultaneously.  
+**Access Modes** specify who can read or write the volume:
+- `ReadWriteOnce (RWO)`: One node can read/write the volume.
+- `ReadOnlyMany (ROX)`: Many nodes can read the volume.
+- `ReadWriteMany (RWX)`: Many nodes can read and write the volume simultaneously.
 
-**Reclaim Policies** (what happens when PVC is deleted):
-- `Retain` → Keep the data for manual cleanup.  
-- `Delete` → Delete the volume automatically.  
-- `Recycle` → Deprecated in v1.33, no longer used.  
+**Reclaim Policies** determine what happens when the PVC is deleted:
+- `Retain`: Keeps the data for manual cleanup.
+- `Delete`: Deletes the volume automatically when the PVC is deleted.
+- `Recycle`: Deprecated in v1.33 and no longer used.
 
 **Example PV:**
 ```yaml
@@ -506,10 +505,10 @@ kubectl get pv
 
 ---
 
-### ✅ Manage Persistent Volumes (PV) and Persistent Volume Claims (PVC)
+### Manage Persistent Volumes (PV) and Persistent Volume Claims (PVC)
 
-- **PersistentVolume (PV)**: The actual piece of storage (like a disk).  
-- **PersistentVolumeClaim (PVC)**: A request for storage by a Pod. Kubernetes binds a PVC to a matching PV automatically.  
+- **PersistentVolume (PV)**: The actual piece of storage (think of it like a disk).
+- **PersistentVolumeClaim (PVC)**: A request for storage by a Pod. Kubernetes automatically binds a PVC to a matching PV.
 
 **PVC Example:**
 ```yaml
@@ -550,18 +549,6 @@ kubectl get pvc
 kubectl describe pod pvc-pod
 ```
 
----
-
-### ✅ Kubernetes v1.33 Updates to Remember (Storage)
-
-- **Recycle policy is removed** → only `Retain` and `Delete` remain.  
-- **Image Volumes (beta)** → use container images as data sources for volumes.  
-- **Volume Populators GA** → custom logic can pre-populate PVCs (e.g., with test data).  
-- **CSI (Container Storage Interface)** is the standard → older in-tree plugins are deprecated.  
-
----
-
----
 
 ## 5. Troubleshooting (30%)
 
