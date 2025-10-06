@@ -36,12 +36,12 @@ As I’ve been preparing for the CKA certification, I've found a few of these fe
 
 | Feature                                | Description                                                                                                                                               |
 |----------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **In-Place Pod Vertical Scaling (Beta)** | Allows you to adjust **CPU** and **memory** of a **running pod** without needing to restart it. Great for **stateful applications** and **long-running workloads** to reduce downtime. |
-| **Sidecar Containers Graduate to Stable** | Sidecar containers are now **stable**, ensuring they start **before** your main application container and run throughout the pod's lifecycle. Ideal for **logging**, **monitoring**, and **proxying** tasks. |
-| **OCI Artifact and Image Volumes (Alpha)** | Allows you to mount **OCI artifacts** and **container images** as read-only volumes inside a pod. Useful for workflows like **sidecar injection** and **CLI tooling**. |
-| **User Namespaces for Pods (Beta)**     | Provides **security isolation** by keeping **container root users** isolated from the host system, making Kubernetes more secure, especially in multi-tenant or production environments. |
+| **In-Place Pod Vertical Scaling** | Allows you to adjust **CPU** and **memory** of a **running pod** without needing to restart it. Great for **stateful applications** and **long-running workloads** to reduce downtime. |
+| **Sidecar Containers ** | Sidecar containers are now **stable**, ensuring they start **before** your main application container and run throughout the pod's lifecycle. Ideal for **logging**, **monitoring**, and **proxying** tasks. |
+| **OCI Artifact and Image Volumes** | Allows you to mount **OCI artifacts** and **container images** as read-only volumes inside a pod. Useful for workflows like **sidecar injection** and **CLI tooling**. |
+| **User Namespaces for Pods **     | Provides **security isolation** by keeping **container root users** isolated from the host system, making Kubernetes more secure, especially in multi-tenant or production environments. |
 | **Job Success Policies**               | Adds flexibility to **batch workloads** by allowing you to define custom conditions for when a job is considered successful, improving workflow control. |
-| **Ordered Namespace Deletion (Alpha)** | Ensures a **systematic cleanup** process when deleting namespaces, making it more predictable and reducing the risk of errors in large environments. |
+| **Ordered Namespace Deletion ** | Ensures a **systematic cleanup** process when deleting namespaces, making it more predictable and reducing the risk of errors in large environments. |
 | **Service Account Token Configuration Enhancements** | Enhances flexibility for **multi-tenant environments**, allowing you to configure and manage **service account tokens** more dynamically. |
 | **Extended Loopback Client Certificate Validity** | Extends the validity of **loopback client certificates** to **14 months**, reducing the administrative burden of frequent certificate rotations and helping maintain stability in control plane operations. |
 
