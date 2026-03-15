@@ -1,0 +1,36 @@
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+._*
+
+# Editor / IDE files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# Temp & backup files
+*.tmp
+*.bak
+*.log
+*.orig
+
+# Node (in case of tooling)
+node_modules/
+
+# Python (in case of tooling)
+__pycache__/
+*.pyc
+.venv/
+
+# Terraform / IaC state (if someone tests locally)
+*.tfstate
+*.tfstate.backup
+.terraform/

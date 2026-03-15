@@ -1,0 +1,84 @@
+# Exercise 04 — RBAC
+
+> Related: [RBAC skeleton](../../skeletons/rbac.yaml) | [ClusterRole skeleton](../../skeletons/clusterrole.yaml) | [README — Cluster Architecture](../../README.md#domain-4--cluster-architecture-installation--configuration-25)
+
+Set up Role-Based Access Control with Roles, ClusterRoles, and bindings. This is heavily tested on the CKA.
+
+## Tasks
+
+1. Create a namespace called `exercise-04`
+2. Create a ServiceAccount named `dev-sa` in namespace `exercise-04`
+3. Create a Role named `pod-manager` in namespace `exercise-04` that allows:
+   - `get`, `list`, `watch`, `create`, `delete` on `pods`
+   - `get`, `list` on `services`
+4. Create a RoleBinding named `dev-pod-access` that binds `pod-manager` to `dev-sa`
+5. Verify that `dev-sa` can list pods in `exercise-04`
+6. Verify that `dev-sa` cannot list pods in `default` namespace
+7. Create a ClusterRole named `node-viewer` that allows `get`, `list` on `nodes`
+8. Create a ClusterRoleBinding named `dev-node-access` binding `node-viewer` to `dev-sa`
+9. Verify that `dev-sa` can now list nodes
+
+## Hints
+
+- `k create sa` to create ServiceAccount
+- `k create role` with `--verb` and `--resource` flags
+- `k create rolebinding` with `--role` and `--serviceaccount` flags
+- `k auth can-i --as=system:serviceaccount:<ns>:<sa>` to test permissions
+
+## Verify
+
+```bash
+# Should return "yes"
+k auth can-i list pods -n exercise-04 --as=system:serviceaccount:exercise-04:dev-sa
+
+# Should return "no"
+k auth can-i list pods -n default --as=system:serviceaccount:exercise-04:dev-sa
+
+# Should return "yes" after ClusterRoleBinding
+k auth can-i list nodes --as=system:serviceaccount:exercise-04:dev-sa
+```
+
+## Cleanup
+
+```bash
+k delete ns exercise-04
+k delete clusterrole node-viewer
+k delete clusterrolebinding dev-node-access
+```
+
+<details>
+<summary>Solution</summary>
+
+```bash
+k create ns exercise-04
+
+# ServiceAccount
+k create sa dev-sa -n exercise-04
+
+# Role
+k create role pod-manager -n exercise-04 \
+  --verb=get,list,watch,create,delete --resource=pods \
+  --verb=get,list --resource=services
+
+# RoleBinding
+k create rolebinding dev-pod-access -n exercise-04 \
+  --role=pod-manager \
+  --serviceaccount=exercise-04:dev-sa
+
+# Test namespace-scoped access
+k auth can-i list pods -n exercise-04 --as=system:serviceaccount:exercise-04:dev-sa
+k auth can-i list pods -n default --as=system:serviceaccount:exercise-04:dev-sa
+
+# ClusterRole
+k create clusterrole node-viewer --verb=get,list --resource=nodes
+
+# ClusterRoleBinding
+k create clusterrolebinding dev-node-access \
+  --clusterrole=node-viewer \
+  --serviceaccount=exercise-04:dev-sa
+
+# Test cluster-scoped access
+k auth can-i list nodes --as=system:serviceaccount:exercise-04:dev-sa
+```
+
+</details>
