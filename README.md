@@ -1,7 +1,6 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![Last Updated](https://img.shields.io/badge/Updated-March%202026-blue.svg)]()
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?logo=kubernetes&logoColor=white)]()
+[![YAML Validation](https://github.com/mbenh/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml/badge.svg)](https://github.com/mbenh/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml)
 [![CKA](https://img.shields.io/badge/CKA-Certified%202026-success)]()
 
 > My CKA study notes, practice questions, and kubectl cheat sheet. Kubernetes v1.35. I scored 89% — this is everything I used to prepare.
@@ -72,8 +71,16 @@ CKA-Certified-Kubernetes-Administrator/
 │   ├── configmap-secret.yaml
 │   ├── securitycontext.yaml
 │   └── resourcequota.yaml
+├── cheatsheet/
+│   └── cka-cheatsheet.md              # One-page printable reference
+├── troubleshooting/
+│   └── README.md                      # Symptom-based lookup playbook
 ├── scripts/
 │   └── exam-setup.sh                 # Aliases, vim config, bash completion
+├── .github/
+│   ├── workflows/validate.yml         # CI — YAML lint on every push
+│   ├── ISSUE_TEMPLATE/                # Bug, content request, exam feedback
+│   └── PULL_REQUEST_TEMPLATE.md
 ├── CONTRIBUTING.md
 └── LICENSE
 ```
