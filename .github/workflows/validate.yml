@@ -28,7 +28,7 @@ jobs:
 
       - name: Lint skeleton YAML files
         run: |
-          yamllint -d '{extends: default, rules: {line-length: {max: 200}, truthy: disable, document-start: disable, comments-indentation: disable}}' skeletons/
+          yamllint -d '{extends: default, rules: {line-length: {max: 200}, truthy: disable, document-start: disable, comments-indentation: disable, indentation: {indent-sequences: whatever}, new-lines: {type: platform}}}' skeletons/
 
       - name: Validate YAML syntax (kubectl dry-run)
         run: |
