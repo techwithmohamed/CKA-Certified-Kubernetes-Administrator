@@ -1,7 +1,11 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![YAML Validation](https://github.com/mbenh/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml/badge.svg)](https://github.com/mbenh/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml)
+[![YAML Validation](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml/badge.svg)](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml)
 [![CKA](https://img.shields.io/badge/CKA-Certified%202026-success)]()
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![Exercises](https://img.shields.io/badge/Exercises-17-blue)](exercises/)
+[![Skeletons](https://img.shields.io/badge/YAML%20Skeletons-23-blue)](skeletons/)
+[![GitHub stars](https://img.shields.io/github/stars/theplatformlab/CKA-Certified-Kubernetes-Administrator?style=social)](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator)
 
 > My CKA study notes, practice questions, and kubectl cheat sheet. Kubernetes v1.35. I scored 89% — this is everything I used to prepare.
 
@@ -26,7 +30,7 @@ If this was useful, a star helps others find it.
 If you're time-pressured, here's the fast track:
 
 1. **Run the setup script** — get your aliases and vim config right from day one: [`scripts/exam-setup.sh`](scripts/exam-setup.sh)
-2. **Do the exercises** — work through the [12 hands-on exercises](exercises/) in order. Each one targets a specific CKA domain.
+2. **Do the exercises** — work through the [17 hands-on exercises](exercises/) in order. Each one targets a specific CKA domain.
 3. **Memorize the skeletons** — the [YAML skeletons](skeletons/) are the templates I wrote from memory during the exam. Practice until you can type them without looking.
 4. **Do the mock exam** — the [17 practice questions](#practice-questions-with-answers-mock-exam) below simulate real exam weight and difficulty.
 5. **Do killer.sh twice** — once 2 weeks out, once 3 days before. See [killer.sh vs the Real Exam](#killersh-vs-the-real-cka-exam).
@@ -39,7 +43,7 @@ If you're time-pressured, here's the fast track:
 ```
 CKA-Certified-Kubernetes-Administrator/
 ├── README.md                          # This guide (you're here)
-├── exercises/                         # 12 hands-on labs
+├── exercises/                         # 17 hands-on labs
 │   ├── 01-pod-basics/
 │   ├── 02-multi-container-pod/
 │   ├── 03-configmap-secret/
@@ -51,8 +55,13 @@ CKA-Certified-Kubernetes-Administrator/
 │   ├── 09-kubeadm-upgrade/
 │   ├── 10-static-pod/
 │   ├── 11-troubleshoot-cluster/
-│   └── 12-storage-pv-pvc/
-├── skeletons/                         # 18 YAML templates
+│   ├── 12-storage-pv-pvc/
+│   ├── 13-helm-install-upgrade/
+│   ├── 14-kustomize-overlays/
+│   ├── 15-gateway-api/
+│   ├── 16-hpa/
+│   └── 17-kubectl-debug/
+├── skeletons/                         # 23 YAML templates
 │   ├── pod.yaml
 │   ├── deployment.yaml
 │   ├── service.yaml
@@ -70,18 +79,28 @@ CKA-Certified-Kubernetes-Administrator/
 │   ├── cronjob.yaml
 │   ├── configmap-secret.yaml
 │   ├── securitycontext.yaml
-│   └── resourcequota.yaml
+│   ├── resourcequota.yaml
+│   ├── hpa.yaml
+│   ├── limitrange.yaml
+│   ├── serviceaccount.yaml
+│   ├── sidecar-init-container.yaml
+│   └── validatingadmissionpolicy.yaml
 ├── cheatsheet/
 │   └── cka-cheatsheet.md              # One-page printable reference
 ├── troubleshooting/
 │   └── README.md                      # Symptom-based lookup playbook
 ├── scripts/
-│   └── exam-setup.sh                 # Aliases, vim config, bash completion
+│   ├── exam-setup.sh                 # Aliases, vim config, bash completion
+│   └── validate-local.sh             # Local YAML validation (run before pushing)
 ├── .github/
 │   ├── workflows/validate.yml         # CI — YAML lint on every push
 │   ├── ISSUE_TEMPLATE/                # Bug, content request, exam feedback
+│   │   └── config.yml                 # Discussions link for questions
 │   └── PULL_REQUEST_TEMPLATE.md
+├── CHANGELOG.md
+├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
+├── SECURITY.md
 └── LICENSE
 ```
 
@@ -140,6 +159,8 @@ CKA-Certified-Kubernetes-Administrator/
 | **OS in Exam**                     | Ubuntu Linux terminal                                                                                                                                |
 
 Important: the passing score is 66%, not 75% like some older guides say. They lowered it. Still not easy though — 2 hours goes fast when you're troubleshooting a broken kubelet under pressure.
+
+[Back to top](#table-of-contents)
 
 ---
 
@@ -560,6 +581,8 @@ k create configmap my-cm --from-literal=key=value $do > cm.yaml
 # Secret
 k create secret generic my-secret --from-literal=pass=s3cret $do > secret.yaml
 ```
+
+[Back to top](#table-of-contents)
 
 ---
 
@@ -1343,11 +1366,13 @@ k get pods -o wide
 # ClusterIP (default)
 k expose deployment webapp --port=80 --target-port=8080
 
-# NodePort
+# NodePort (random port in 30000-32767)
 k expose deployment webapp --port=80 --target-port=8080 --type=NodePort
 
-# Specific NodePort
-k expose deployment webapp --port=80 --target-port=8080 --type=NodePort --node-port=30080
+# Specific NodePort — generate YAML, edit nodePort, then apply
+k expose deployment webapp --port=80 --target-port=8080 --type=NodePort $do > svc.yaml
+# edit svc.yaml → set spec.ports[0].nodePort: 30080
+k apply -f svc.yaml
 ```
 
 The most important thing: `port` is what clients use to reach the service. `targetPort` is the port the container listens on. `nodePort` is the port on the node (NodePort/LoadBalancer only).
@@ -1576,6 +1601,8 @@ Time estimates by question type:
 | Node drain/cordon | 2-3 min | --ignore-daemonsets --delete-emptydir-data |
 
 Total available: 120 minutes. Budget ~100 minutes for questions, 20 minutes buffer for context switching, copy/paste fumbling, and double-checking.
+
+[Back to top](#table-of-contents)
 
 ---
 
@@ -2669,38 +2696,48 @@ k get pod restricted-pod -n secure
 
 ### Score Card
 
-| # | Domain | Weight | Difficulty |
-|---|---|---|---|
-| 1 | Cluster Architecture | 4% | Easy |
-| 2 | Cluster Architecture | 5% | Medium |
-| 3 | Workloads & Scheduling | 3% | Easy |
-| 4 | Troubleshooting | 5% | Medium |
-| 5 | Services & Networking | 4% | Medium |
-| 6 | Cluster Architecture | 5% | Medium |
-| 7 | Storage | 3% | Easy |
-| 8 | Troubleshooting | 5% | Hard |
-| 9 | Workloads & Scheduling | 4% | Medium |
-| 10 | Troubleshooting | 5% | Hard |
-| 11 | Workloads & Scheduling | 3% | Easy |
-| 12 | Cluster Architecture | 4% | Medium |
-| 13 | Services & Networking | 5% | Medium |
-| 14 | Troubleshooting | 5% | Hard |
-| 15 | Storage | 4% | Medium |
-| 16 | Cluster Architecture | 5% | Hard |
-| 17 | Workloads & Scheduling | 4% | Medium |
-| | **Total** | **73%** | |
+Copy this table into a text file. After completing the mock, mark each question as full credit, partial, or missed. Add up your weighted score.
 
-Passing score is 66%. If you get all Easy + Medium questions right, you pass with room to spare.
+| # | Domain | Weight | Difficulty | Result | Points |
+|---|---|---|---|---|---|
+| 1 | Cluster Architecture | 4% | Easy | ___ | /4 |
+| 2 | Cluster Architecture | 5% | Medium | ___ | /5 |
+| 3 | Workloads & Scheduling | 3% | Easy | ___ | /3 |
+| 4 | Troubleshooting | 5% | Medium | ___ | /5 |
+| 5 | Services & Networking | 4% | Medium | ___ | /4 |
+| 6 | Cluster Architecture | 5% | Medium | ___ | /5 |
+| 7 | Storage | 3% | Easy | ___ | /3 |
+| 8 | Troubleshooting | 5% | Hard | ___ | /5 |
+| 9 | Workloads & Scheduling | 4% | Medium | ___ | /4 |
+| 10 | Troubleshooting | 5% | Hard | ___ | /5 |
+| 11 | Workloads & Scheduling | 3% | Easy | ___ | /3 |
+| 12 | Cluster Architecture | 4% | Medium | ___ | /4 |
+| 13 | Services & Networking | 5% | Medium | ___ | /5 |
+| 14 | Troubleshooting | 5% | Hard | ___ | /5 |
+| 15 | Storage | 4% | Medium | ___ | /4 |
+| 16 | Cluster Architecture | 5% | Hard | ___ | /5 |
+| 17 | Workloads & Scheduling | 4% | Medium | ___ | /4 |
+| | **Total** | **73%** | | | **___/73** |
+
+**How to score:** Full credit = full weight. Partial (got the right idea but missed a flag or namespace) = half weight. Wrong or skipped = 0. Real exam uses partial scoring too, so this is realistic.
+
+**Passing threshold:** 66% of 73 = **48 points**. If you're below 48, re-study the domains where you dropped points and redo those questions in a week.
+
+**Timing target:** Set a timer for 2 hours. If you finish early, note how much time you had left — that buffer is your safety margin on exam day.
 
 **Domain breakdown of this mock:**
 
-| Domain | Questions | Total Weight |
-|---|---|---|
-| Cluster Architecture | 1, 2, 6, 12, 16 | 23% |
-| Troubleshooting | 4, 8, 10, 14 | 20% |
-| Services & Networking | 5, 13 | 9% |
-| Workloads & Scheduling | 3, 9, 11, 17 | 14% |
-| Storage | 7, 15 | 7% |
+| Domain | Questions | Total Weight | Your Score |
+|---|---|---|---|
+| Cluster Architecture | 1, 2, 6, 12, 16 | 23% | ___/23 |
+| Troubleshooting | 4, 8, 10, 14 | 20% | ___/20 |
+| Services & Networking | 5, 13 | 9% | ___/9 |
+| Workloads & Scheduling | 3, 9, 11, 17 | 14% | ___/14 |
+| Storage | 7, 15 | 7% | ___/7 |
+
+If any domain is below 50%, that's where your next study session should focus.
+
+[Back to top](#table-of-contents)
 
 ---
 
@@ -2805,6 +2842,8 @@ My scores:
 
 If you score 60%+ on killer.sh, you'll likely pass the real exam. The real exam is more straightforward — fewer trick questions, shorter multi-step problems.
 
+[Back to top](#table-of-contents)
+
 ---
 
 ## CKA Exam Day Checklist
@@ -2855,6 +2894,7 @@ Track your progress across all CKA domains.
 - [ ] Understand StorageClass and dynamic provisioning
 - [ ] Know access modes (RWO, ROX, RWX, RWOP)
 - [ ] Know reclaim policies (Retain, Delete)
+- [ ] CSI driver basics and troubleshooting
 - [ ] Mount PVC in a Pod
 - [ ] Complete [Exercise 12](exercises/12-storage-pv-pvc/)
 
@@ -2868,7 +2908,8 @@ Track your progress across all CKA domains.
 - [ ] Troubleshoot Service endpoints
 - [ ] Troubleshoot CoreDNS
 - [ ] Troubleshoot NetworkPolicy
-- [ ] Complete [Exercise 11](exercises/11-troubleshoot-cluster/)
+- [ ] Use kubectl debug (ephemeral containers + node debug)
+- [ ] Complete [Exercise 11](exercises/11-troubleshoot-cluster/), [17](exercises/17-kubectl-debug/)
 
 ### Domain 3 — Workloads & Scheduling (15%)
 
@@ -2876,11 +2917,12 @@ Track your progress across all CKA domains.
 - [ ] Rolling update and rollback
 - [ ] ConfigMaps and Secrets (env and volume)
 - [ ] Resource requests and limits
+- [ ] HPA (autoscaling/v2)
 - [ ] DaemonSet
 - [ ] Static pods
 - [ ] nodeSelector and node affinity
 - [ ] Taints and tolerations
-- [ ] Complete [Exercise 01](exercises/01-pod-basics/), [06](exercises/06-deployment-rollout/), [10](exercises/10-static-pod/)
+- [ ] Complete [Exercise 01](exercises/01-pod-basics/), [06](exercises/06-deployment-rollout/), [10](exercises/10-static-pod/), [16](exercises/16-hpa/)
 
 ### Domain 4 — Cluster Architecture (25%)
 
@@ -2890,22 +2932,25 @@ Track your progress across all CKA domains.
 - [ ] kubeadm cluster upgrade
 - [ ] etcd backup and restore
 - [ ] Understand HA topology
-- [ ] Complete [Exercise 04](exercises/04-rbac/), [07](exercises/07-etcd-backup-restore/), [08](exercises/08-node-drain-cordon/), [09](exercises/09-kubeadm-upgrade/)
+- [ ] Helm install, upgrade, rollback
+- [ ] Kustomize base + overlay
+- [ ] Complete [Exercise 04](exercises/04-rbac/), [07](exercises/07-etcd-backup-restore/), [08](exercises/08-node-drain-cordon/), [09](exercises/09-kubeadm-upgrade/), [13](exercises/13-helm-install-upgrade/), [14](exercises/14-kustomize-overlays/)
 
 ### Domain 5 — Services & Networking (20%)
 
 - [ ] ClusterIP, NodePort, LoadBalancer services
 - [ ] Ingress resources and controllers
-- [ ] Gateway API basics
+- [ ] Gateway API (Gateway + HTTPRoute)
 - [ ] NetworkPolicy (ingress + egress)
 - [ ] CoreDNS configuration
 - [ ] CNI plugin awareness
-- [ ] Complete [Exercise 05](exercises/05-networkpolicy/)
+- [ ] Complete [Exercise 05](exercises/05-networkpolicy/), [15](exercises/15-gateway-api/)
 
 ### Exam Readiness
 
 - [ ] Aliases and vim config memorized
 - [ ] Can do etcd backup/restore from memory
+- [ ] YAML skeletons written from memory (at least 10/23)
 - [ ] killer.sh session 1 completed
 - [ ] killer.sh session 2 completed
 - [ ] Mock exam completed (>66%)
@@ -3484,8 +3529,20 @@ Good luck.
 
 ---
 
+## Spread the Word
+
+If this helped you pass, three things that make a difference:
+
+1. **Star this repo** — it's how other people find it instead of outdated guides
+2. **Share it** — drop it in your team Slack, tweet it, post it on r/kubernetes
+3. **Open an issue** with your exam feedback — your score, what showed up, what you wish you'd studied more
+
+Every star and issue makes this repo more visible to the next person Googling "CKA exam prep."
+
 <p align="center">
-  <b>If this guide helped you, star the repo.</b>
+  <a href="https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator">
+    <img src="https://img.shields.io/github/stars/theplatformlab/CKA-Certified-Kubernetes-Administrator?style=for-the-badge&logo=github" alt="GitHub Stars">
+  </a>
 </p>
 
 <p align="center">
@@ -3497,5 +3554,5 @@ Good luck.
 
 ### Topics
 
-`cka` `cka-exam` `cka-certification` `cka-study-guide` `cka-practice-questions` `cka-cheat-sheet` `certified-kubernetes-administrator` `kubernetes` `kubernetes-certification` `kubernetes-exam` `cka-2026` `kubectl` `kubeadm` `etcd-backup` `kubernetes-troubleshooting` `cka-tips` `killer-sh` `kubernetes-rbac` `gateway-api` `helm`
+`cka` `cka-exam` `cka-certification` `cka-study-guide` `cka-practice-questions` `cka-cheat-sheet` `certified-kubernetes-administrator` `kubernetes` `kubernetes-certification` `kubernetes-exam` `cka-2026` `kubectl` `kubeadm` `etcd-backup` `kubernetes-troubleshooting` `cka-tips` `killer-sh` `kubernetes-rbac` `gateway-api` `helm` `kubernetes-v1.35` `cka-mock-exam` `kubectl-cheatsheet`
 

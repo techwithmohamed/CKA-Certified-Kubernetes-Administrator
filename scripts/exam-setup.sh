@@ -1,7 +1,7 @@
 #!/bin/bash
 # CKA Exam Environment Setup
 # Run this at the start of every exam session and every practice session.
-# Source: https://github.com/mbenh/CKA-Certified-Kubernetes-Administrator
+# Source: https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator
 
 # --- Aliases ---
 alias k='kubectl'

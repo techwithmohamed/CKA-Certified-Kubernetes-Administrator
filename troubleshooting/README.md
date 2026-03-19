@@ -2,6 +2,8 @@
 
 Symptom-based lookup. Find the problem, follow the steps.
 
+**Jump to:** [Pod Pending](#pod-is-pending) | [CrashLoopBackOff](#pod-is-crashloopbackoff) | [ImagePullBackOff](#pod-is-imagepullbackoff) | [Node NotReady](#node-is-notready) | [No Endpoints](#service-has-no-endpoints) | [Wrong Response](#service-reachable-but-wrong-response) | [DNS](#dns-not-resolving) | [NetworkPolicy](#networkpolicy-blocking-traffic) | [etcd](#etcd-issues) | [Control Plane](#control-plane-down) | [Helm](#helm-release-stuck-or-failed) | [Gateway API](#gateway-api-misconfigured) | [Sidecar](#native-sidecar-not-starting) | [kubectl debug](#kubectl-debug-not-working) | [CSI](#csi-volume-mount-failure) | [Kustomize](#kustomize-apply-not-working) | [Quick Commands](#quick-diagnostic-commands)
+
 ---
 
 ## Pod is Pending
@@ -243,6 +245,127 @@ sudo crictl logs <container-id>
 | etcd | Everything breaks — API server can't store/retrieve data |
 
 Fix: check the manifest YAML in `/etc/kubernetes/manifests/` for typos, wrong image, wrong flags, bad volume mounts.
+
+---
+
+## Helm Release Stuck or Failed
+
+```bash
+helm list -A
+helm status <release> -n <ns>
+helm history <release> -n <ns>
+```
+
+| Symptom | Fix |
+|---|---|
+| Status: pending-install | Previous install timed out — `helm uninstall <release> -n <ns>` then reinstall |
+| Status: failed | Check `helm history`, then `helm rollback <release> <revision> -n <ns>` |
+| Values wrong after upgrade | Compare with `helm get values <release> -n <ns>`, rerun with correct `-f values.yaml` |
+| CRDs not installed | Some charts need `--set installCRDs=true` or a separate CRD manifest first |
+
+```bash
+# Force cleanup a stuck release
+helm uninstall <release> -n <ns> --no-hooks
+```
+
+---
+
+## Gateway API Misconfigured
+
+HTTPRoute exists but traffic does not reach the backend.
+
+```bash
+k get gateway -A
+k get httproute -A
+k describe httproute <name> -n <ns>
+```
+
+| Cause | Fix |
+|---|---|
+| No GatewayClass installed | Install the controller first (e.g., Envoy Gateway, Istio, Cilium) |
+| Gateway not programmed | Check `status.conditions` on the Gateway — look for Accepted/Programmed |
+| HTTPRoute parentRef wrong | `parentRefs.name` must match the Gateway name exactly |
+| Backend service name wrong | Check `backendRefs` — service name, port, and namespace must be correct |
+| Listener port mismatch | HTTPRoute rules must target ports that the Gateway listener actually exposes |
+
+```bash
+# Check gateway status
+k get gateway <gw> -n <ns> -o yaml | grep -A10 status
+
+# Check httproute status
+k get httproute <route> -n <ns> -o yaml | grep -A10 status
+```
+
+---
+
+## Native Sidecar Not Starting
+
+Init container with `restartPolicy: Always` does not run as a sidecar.
+
+```bash
+k describe pod <pod> -n <ns>
+k get pod <pod> -n <ns> -o yaml | grep -A5 initContainers
+```
+
+| Cause | Fix |
+|---|---|
+| Missing `restartPolicy: Always` on init container | Add `restartPolicy: Always` — without it, it runs as a normal init and exits |
+| Sidecar crashing | Check `k logs <pod> -c <sidecar-name>` — bad command or missing volume |
+| Feature gate not enabled (older cluster) | Native sidecars are GA in v1.35, but older clusters need the SidecarContainers gate |
+| Volume not shared | Both sidecar and main container must mount the same volume name |
+
+---
+
+## kubectl debug Not Working
+
+```bash
+k debug node/<node> -it --image=busybox:1.36
+k debug pod/<pod> -it --image=busybox:1.36 --target=<container>
+```
+
+| Cause | Fix |
+|---|---|
+| Permission denied on node debug | You need cluster-admin or equivalent RBAC for node debug |
+| Ephemeral container not attaching | Check if the pod supports ephemeral containers (most do in v1.35) |
+| Can't see target container filesystem | Use `--target=<container>` to share process namespace |
+| Node debug pod stuck | The debug pod mounts the node filesystem at `/host` — use `chroot /host` |
+
+---
+
+## CSI Volume Mount Failure
+
+Pod stuck in `ContainerCreating` with volume-related events.
+
+```bash
+k describe pod <pod> -n <ns> | grep -A5 "Warning.*FailedMount"
+k get pvc -n <ns>
+k get pv
+k get csidrivers
+```
+
+| Cause | Fix |
+|---|---|
+| CSI driver not installed | Install it — check `k get csidrivers` |
+| StorageClass provisioner wrong | Must match an installed CSI driver name |
+| PVC stuck in Pending | Check events on the PVC itself: `k describe pvc <name> -n <ns>` |
+| Node can't attach volume | Check kubelet logs on the node where the pod is scheduled |
+| Volume already attached to another node | AccessMode conflict — use ReadWriteMany or ensure the old pod is gone |
+
+---
+
+## Kustomize Apply Not Working
+
+```bash
+k apply -k <directory>/
+k kustomize <directory>/ | less
+```
+
+| Cause | Fix |
+|---|---|
+| kustomization.yaml missing | The directory needs a `kustomization.yaml` file |
+| Resource path wrong in kustomization.yaml | Paths are relative to the kustomization.yaml location |
+| Patch target not found | Check that `target.kind`, `target.name`, and `target.namespace` match an actual resource |
+| Namespace not set | Add `namespace:` in kustomization.yaml or use `--namespace` flag |
 
 ---
 

@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: NAME
+  namespace: default
+spec:
+  initContainers:
+  - name: sidecar
+    image: busybox:1.36
+    restartPolicy: Always
+    command: ["sh", "-c", "while true; do echo sidecar running; sleep 10; done"]
+    volumeMounts:
+    - name: shared
+      mountPath: /shared
+  containers:
+  - name: main
+    image: nginx:1.27
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: shared
+      mountPath: /shared
+  volumes:
+  - name: shared
+    emptyDir: {}

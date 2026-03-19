@@ -18,15 +18,20 @@ Start with the basics and work your way down. The difficulty increases as you go
 | 10 | [Static Pod](10-static-pod/) | Workloads & Scheduling | Easy | 10 min |
 | 11 | [Troubleshoot Cluster](11-troubleshoot-cluster/) | Troubleshooting | Hard | 25 min |
 | 12 | [Storage — PV & PVC](12-storage-pv-pvc/) | Storage | Medium | 15 min |
+| 13 | [Helm Install & Upgrade](13-helm-install-upgrade/) | Cluster Architecture | Medium | 15 min |
+| 14 | [Kustomize Overlays](14-kustomize-overlays/) | Cluster Architecture | Medium | 15 min |
+| 15 | [Gateway API](15-gateway-api/) | Services & Networking | Medium | 20 min |
+| 16 | [Horizontal Pod Autoscaler](16-hpa/) | Workloads & Scheduling | Medium | 15 min |
+| 17 | [kubectl debug](17-kubectl-debug/) | Troubleshooting | Medium | 15 min |
 
 ## Domain Coverage
 
 | Domain | Weight | Exercises |
 |---|---|---|
-| Troubleshooting | 30% | 11 |
-| Cluster Architecture | 25% | 04, 07, 08, 09 |
-| Services & Networking | 20% | 05 |
-| Workloads & Scheduling | 15% | 01, 02, 03, 06, 10 |
+| Troubleshooting | 30% | 11, 17 |
+| Cluster Architecture | 25% | 04, 07, 08, 09, 13, 14 |
+| Services & Networking | 20% | 05, 15 |
+| Workloads & Scheduling | 15% | 01, 02, 03, 06, 10, 16 |
 | Storage | 10% | 12 |
 
 ## How to Use

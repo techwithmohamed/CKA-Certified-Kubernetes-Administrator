@@ -24,6 +24,11 @@ During the exam, I wrote most of these from memory instead of copying from docs.
 | [configmap-secret.yaml](configmap-secret.yaml) | ConfigMap + Secret | Workloads | App configuration |
 | [securitycontext.yaml](securitycontext.yaml) | Pod (SecurityContext) | Workloads | Non-root, read-only, drop caps |
 | [resourcequota.yaml](resourcequota.yaml) | ResourceQuota + LimitRange | Cluster Arch | Namespace resource limits |
+| [hpa.yaml](hpa.yaml) | HorizontalPodAutoscaler | Workloads | CPU-based autoscaling |
+| [limitrange.yaml](limitrange.yaml) | LimitRange | Cluster Arch | Default container resource constraints |
+| [serviceaccount.yaml](serviceaccount.yaml) | ServiceAccount | Cluster Arch | Identity for pods and RBAC bindings |
+| [sidecar-init-container.yaml](sidecar-init-container.yaml) | Pod (native sidecar) | Workloads | Init container with restartPolicy: Always (v1.35 GA) |
+| [validatingadmissionpolicy.yaml](validatingadmissionpolicy.yaml) | ValidatingAdmissionPolicy + Binding | Cluster Arch | CEL-based admission control (v1.35 GA) |
 
 ## Quick Reference
 
