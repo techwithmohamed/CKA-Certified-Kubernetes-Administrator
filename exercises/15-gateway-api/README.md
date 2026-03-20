@@ -30,6 +30,12 @@ Gateway API is GA in v1.35 and replaces classic Ingress for modern traffic manag
 - Check status: `k get gateway web-gateway -n exercise-15 -o yaml`
 - If no GatewayClass is installed, use Envoy Gateway or Cilium
 
+## What tripped me up
+
+> The `parentRefs.name` in HTTPRoute must match the Gateway name EXACTLY. I had `web-gw` in the HTTPRoute but the Gateway was called `web-gateway`. No error — the HTTPRoute just never attached to anything. Traffic goes nowhere and there's no obvious indication why. I spent 10 minutes checking backend pods and service selectors when the problem was a one-word typo in parentRefs.
+>
+> Also: Gateway API won't work without a GatewayClass controller actually installed. On a fresh cluster there might be no GatewayClass at all. `k get gatewayclass` — if it's empty, you need to install a controller first. The exam environment should have one, but verify before writing YAML.
+
 ## Verify
 
 ```bash

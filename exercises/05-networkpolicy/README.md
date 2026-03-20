@@ -24,6 +24,12 @@ Create NetworkPolicies to control pod-to-pod traffic. Watch out for the DNS gotc
 - You almost always need to allow DNS egress (UDP 53), or the pod can't resolve service names
 - Test connectivity with `k exec <pod> -- wget -qO- --timeout=2 http://<target-ip>`
 
+## What tripped me up
+
+> I wrote a perfect ingress rule but forgot egress entirely. The backend pod could receive traffic but couldn't respond to DNS lookups — so any test using service names failed. I thought my ingress rule was wrong and spent 8 minutes rewriting it. The fix was two lines: allow UDP 53 egress. I've made this mistake three separate times during practice. Now I write the DNS egress rule FIRST, before anything else.
+>
+> AND vs OR tripped me up too. Two selectors in the *same* `from` block = AND (must match both). Two separate `from` blocks = OR (match either). I had `podSelector` and `namespaceSelector` in separate blocks when they should have been in the same one — it allowed traffic from any pod in the right namespace OR any pod with the right label in any namespace.
+
 ## Verify
 
 ```bash

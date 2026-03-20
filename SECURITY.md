@@ -1,7 +1,7 @@
 # Security Policy
 
-This is a study guide repo, not a production service. There's no running application or API to exploit.
+This repo is YAML files and markdown. There's no application, no API, nothing to exploit.
 
-If you find a broken link, incorrect YAML, or outdated content, open a regular issue or PR. No need for a security disclosure process.
+Found a broken command or wrong YAML? Just open a regular PR.
 
-If someone has published real CKA exam questions in this repo (which violates CNCF policy), open an issue and I'll remove them immediately.
+Found someone posting real CKA exam questions here? Open an issue immediately. That violates CNCF policy and I'll remove it.

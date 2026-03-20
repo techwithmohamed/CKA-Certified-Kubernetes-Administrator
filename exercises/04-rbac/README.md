@@ -25,6 +25,12 @@ Set up Role-Based Access Control with Roles, ClusterRoles, and bindings. This is
 - `k create rolebinding` with `--role` and `--serviceaccount` flags
 - `k auth can-i --as=system:serviceaccount:<ns>:<sa>` to test permissions
 
+## What tripped me up
+
+> I created the Role and RoleBinding first but forgot to create the ServiceAccount. `k auth can-i` returned "no" and I assumed my Role verbs were wrong. Spent 6 minutes re-reading the Role YAML. The SA just didn't exist. Always create the ServiceAccount first, then the Role, then the binding.
+>
+> The `--as` flag format is brutal: `--as=system:serviceaccount:<namespace>:<sa-name>`. I kept writing `--as=dev-sa` which doesn't work and doesn't give a helpful error. It just says "no" to everything. Memorize the full format.
+
 ## Verify
 
 ```bash

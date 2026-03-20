@@ -11,6 +11,8 @@ spec:
     ports:
     - containerPort: 80
     resources:
+      # Don't skip these — HPA won't work without requests,
+      # and OOMKill hits with no warning if you skip limits
       requests:
         memory: "64Mi"
         cpu: "250m"

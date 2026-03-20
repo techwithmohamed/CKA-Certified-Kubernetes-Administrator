@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for considering a contribution. This repo is my personal CKA study guide, but fixes and additions are welcome.
+This is my personal CKA study guide. If you found a mistake, an outdated command, or a better way to do something — I want to hear about it. Don't write me an essay though. Show me what's broken and how to fix it.
 
 ## How to Contribute
 
@@ -8,7 +8,7 @@ Thanks for considering a contribution. This repo is my personal CKA study guide,
 2. Create a branch (`git checkout -b fix/your-fix`)
 3. Make your changes
 4. Run `bash scripts/validate-local.sh` to lint any YAML you added
-5. Test any commands on Kubernetes v1.35
+5. Test any commands on Kubernetes v1.35 — if you haven't actually run the command, don't submit it
 6. Commit (`git commit -m "fix: description"`)
 7. Push and open a PR
 
@@ -25,18 +25,17 @@ Examples: `fix: correct etcd restore flags in exercise 07`, `feat: add exercise 
 
 ## What's Helpful
 
-- Fixing outdated commands or YAML
-- Correcting typos or broken links
-- Adding practice exercises that match CKA exam style
-- Improving explanations where something is unclear
-- Sharing exam feedback via the issue template
+- Catching a broken command or wrong flag (these slip through more than I'd like)
+- Fixing outdated YAML — API versions change, flags get deprecated
+- Adding exercises that match real CKA exam style — practical tasks, not theory questions
+- Sharing what tripped you up during the exam (without sharing actual questions — see below)
 
 ## What to Avoid
 
-- Do not submit real exam questions. Sharing actual exam content violates the CNCF exam policy.
-- Do not add AI-generated filler text
-- Do not add content for certifications other than CKA
-- Do not refactor working YAML for style preference — if it works, leave it
+- **Do not submit real exam questions.** The CNCF has revoked people's certifications for this. I'm not kidding. General topics and "I got a question about etcd" is fine. Exact wording or screenshots is not.
+- Don't add AI-generated filler text. I can tell. Everyone can tell.
+- Don't refactor working YAML because you prefer a different style. If it works and it's correct, leave it alone.
+- Don't add content for CKAD or CKS — this repo is CKA only.
 
 ## Style
 

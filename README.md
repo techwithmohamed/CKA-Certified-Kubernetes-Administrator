@@ -189,14 +189,14 @@ Don't pay full price if you can wait for a sale. I paid around $300 during a Kub
 |---|---|---|---|
 | **Focus** | Cluster administration | Application development | Security |
 | **Who it's for** | SREs, platform engineers, admins | Developers deploying to K8s | Security engineers, senior admins |
-| **Difficulty** | Medium-Hard | Medium | Hard |
+| **Difficulty** | Hard — the troubleshooting and etcd questions are brutal under time pressure | Medium — if you already deploy to K8s, most of this is familiar | Hardest of the three — Falco and AppArmor syntax is miserable to memorize |
 | **Duration** | 2 hours | 2 hours | 2 hours |
 | **Passing Score** | 66% | 66% | 67% |
 | **Cost** | $445 | $445 | $445 |
 | **Prerequisites** | None | None | Must hold active CKA |
 | **Key Topics** | etcd, kubeadm, RBAC, troubleshooting, networking | Pods, Deployments, Jobs, probes, volumes | Falco, AppArmor, OPA, Network Policies, audit |
 | **Questions** | ~17-25 | ~15-20 | ~15-20 |
-| **Typical Order** | First cert to get | First or second | After CKA |
+| **My honest take** | Start here if you manage clusters. The etcd and kubeadm skills don't exist anywhere else. | Easier than CKA but less impressive on a resume. | Skip unless your job requires it — the ROI is lower. |
 
 My take: if you're doing any kind of cluster administration, start with CKA. If you're purely a dev who deploys apps, CKAD first. CKS requires an active CKA, so you can't skip it.
 
@@ -258,17 +258,17 @@ graph TB
 
 ## What Changed in Kubernetes v1.35 for CKA
 
-If you're studying from a guide written for v1.29 or v1.30, some of it is wrong. Here's what changed that matters for the CKA:
+If you're studying from a guide written for v1.29 or v1.30, some of it is wrong. I found this out the hard way — half my bookmarked blog posts had outdated sidecar syntax and still referenced `--record` on rollouts. Here's what actually changed that matters for the CKA:
 
 | Feature | Status in v1.35 | CKA Impact |
 |---|---|---|
 | **Sidecar containers (native)** | GA | Init containers with `restartPolicy: Always` run as sidecars. You'll see this on the exam. |
-| **In-place pod vertical scaling** | Beta | Can resize CPU/memory without restarting. Know it exists, probably not tested yet. |
-| **Gateway API** | GA (v1.2+) | Replacing Ingress long-term. CKA may test basics — know Gateway + HTTPRoute. |
+| **In-place pod vertical scaling** | Beta | Can resize CPU/memory without restarting. I spent 30 minutes learning this and it wasn't on my exam. Know it exists, move on. |
+| **Gateway API** | GA (v1.2+) | Replacing Ingress long-term. I got a question on this. Know how to create a Gateway and an HTTPRoute that points to a backend service. |
 | **cgroup v2** | Default | All nodes use cgroup v2 now. Affects resource monitoring and limits. |
 | **kubectl debug** | GA | `k debug node/<name>` and `k debug pod/<name>` — useful for troubleshooting tasks. |
-| **ValidatingAdmissionPolicy** | GA | CEL-based admission without webhooks. Might appear in RBAC/policy questions. |
-| **Pod Scheduling Readiness** | GA | Pods can wait in scheduling gates. Not heavily tested but know the concept. |
+| **ValidatingAdmissionPolicy** | GA | CEL-based admission without webhooks. I didn't get this on my exam but it's in the curriculum now. Worth 15 minutes of study. |
+| **Pod Scheduling Readiness** | GA | Pods can wait in scheduling gates. Not likely to show up on the exam. |
 | **CSI migration complete** | Done | In-tree volume plugins fully migrated. StorageClass provisioners are all CSI now. |
 
 The big ones for exam prep: native sidecars and Gateway API. If your study material doesn't cover these, it's outdated.
@@ -277,21 +277,21 @@ The big ones for exam prep: native sidecars and Gateway API. If your study mater
 
 ## Before You Book the CKA Exam
 
-Checklist I wish someone had given me:
+Checklist I wish someone had given me before I started booking:
 
-1. **Can you set up a cluster from scratch with kubeadm?** If not, do it at least twice before booking.
-2. **Can you do an etcd backup and restore?** This is almost guaranteed to show up. Practice until you can type the command from memory.
-3. **Are you comfortable with RBAC?** Role vs ClusterRole, RoleBinding vs ClusterRoleBinding, ServiceAccounts — you need to create these quickly.
-4. **Can you troubleshoot a NotReady node?** Check kubelet, check certificates, check networking. This is 30% of the score.
-5. **Do you have a cluster to practice on?** kind or minikube on your laptop, or Killercoda/KodeKloud online.
-6. **Have you done killer.sh at least once?** The real exam is easier, but killer.sh builds speed and confidence.
+1. **Can you set up a cluster from scratch with kubeadm?** I couldn't the first time I tried. Took me 3 attempts before I could do it without the docs open. Do it at least twice before booking.
+2. **Can you do an etcd backup and restore?** This is almost guaranteed to show up. I practiced this 10+ times. The cert flags need to be muscle memory, not something you look up.
+3. **Are you comfortable with RBAC?** Role vs ClusterRole, RoleBinding vs ClusterRoleBinding, ServiceAccounts — I fumbled the `--as=system:serviceaccount:ns:name` syntax for weeks before it clicked.
+4. **Can you troubleshoot a NotReady node?** SSH in, check kubelet, check certificates, check networking. This is 30% of the score and it's the section where most people lose the most time.
+5. **Do you have a cluster to practice on?** kind or minikube on your laptop, or Killercoda/KodeKloud online. You cannot pass this exam by reading — you have to break things.
+6. **Have you done killer.sh at least once?** The real exam is easier, but killer.sh builds speed and confidence. My first killer.sh score was terrible. That's normal.
 7. **Is your ID ready?** Government-issued ID, matching your CNCF account name. Check this before exam day.
 
 ---
 
 ## The Exam Environment (PSI Remote Desktop)
 
-The exam runs in a PSI Secure Browser — a remote Ubuntu desktop. Some things I wish I knew:
+The exam runs in a PSI Secure Browser — a remote Ubuntu desktop. Things that surprised me:
 
 **Copy/Paste:**
 - `Ctrl+Shift+C` / `Ctrl+Shift+V` in the terminal
@@ -364,7 +364,7 @@ k run test --image=nginx $do   # $do works?
 
 ## Docs Pages I Actually Used During the Exam
 
-You can access kubernetes.io during the exam. Here are the pages I actually opened:
+You can access kubernetes.io during the exam. These are the pages I remember opening — there were probably others I clicked through but these are the ones I went back to:
 
 | Topic | Page |
 |---|---|
@@ -374,13 +374,9 @@ You can access kubernetes.io during the exam. Here are the pages I actually open
 | RBAC | https://kubernetes.io/docs/reference/access-authn-authz/rbac/ |
 | NetworkPolicy | https://kubernetes.io/docs/concepts/services-networking/network-policies/ |
 | PV / PVC | https://kubernetes.io/docs/concepts/storage/persistent-volumes/ |
-| StorageClass | https://kubernetes.io/docs/concepts/storage/storage-classes/ |
 | Static pods | https://kubernetes.io/docs/tasks/configure-pod-container/static-pod/ |
-| Assign pods to nodes | https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ |
 | Taints and tolerations | https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
-| DaemonSet | https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/ |
 | Debug services | https://kubernetes.io/docs/tasks/debug/debug-application/debug-service/ |
-| Debug pods | https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/ |
 | CoreDNS | https://kubernetes.io/docs/tasks/administer-cluster/coredns/ |
 | Ingress | https://kubernetes.io/docs/concepts/services-networking/ingress/ |
 | Gateway API | https://kubernetes.io/docs/concepts/services-networking/gateway/ |
@@ -590,18 +586,18 @@ k create secret generic my-secret --from-literal=pass=s3cret $do > secret.yaml
 
 ### Domain 1 — Storage (10%)
 
-10% of the score. Don't skip it — the questions are straightforward if you know PV/PVC mechanics.
+10% of the score. Sounds small, but the questions are straightforward if you understand PV/PVC binding. I almost skipped this in my study plan and then it showed up as one of the easiest points on the exam. The main trap: `storageClassName` has to match exactly between PV and PVC, and "exactly" includes the case where one side has it set and the other doesn't.
 
 > See also: [Exercise 12 — Storage](exercises/12-storage-pv-pvc/) | Skeletons: [pv.yaml](skeletons/pv.yaml), [pvc.yaml](skeletons/pvc.yaml), [storageclass.yaml](skeletons/storageclass.yaml)
 
 #### 1.1 — Understand Storage Classes and Persistent Volumes
 
-A **PersistentVolume (PV)** is a piece of storage provisioned by an admin. A **PersistentVolumeClaim (PVC)** is a request for storage by a user. A **StorageClass** defines how storage is dynamically provisioned.
+Storage on Kubernetes is simple in concept but annoying in practice. A **PV** is the actual storage (think: the hard drive). A **PVC** is a request for that storage (think: "I need 2Gi of disk"). A **StorageClass** tells Kubernetes how to dynamically create PVs when a PVC asks for one.
 
-Key concepts:
-- PV is cluster-scoped (no namespace). PVC is namespace-scoped.
-- PVC binds to a PV when: capacity >= request, accessModes match, storageClassName matches
-- If no PV matches, the PVC stays `Pending` until one appears (or dynamic provisioning kicks in)
+What actually matters for the exam:
+- PV is cluster-scoped (no namespace). PVC is namespace-scoped. I mixed these up and created a PVC in the wrong namespace — it bound fine but the pod couldn't see it.
+- PVC binds to a PV when: capacity >= request, accessModes match, AND storageClassName matches. If any one of these is off, the PVC sits in `Pending` forever with no helpful error message.
+- The `storageClassName` trap is real. `manual` ≠ `Manual` ≠ empty string. Triple-check it.
 
 ```yaml
 # PV — cluster-scoped
@@ -657,22 +653,22 @@ spec:
 
 #### 1.2 — Understand Volume Mode, Access Modes, and Reclaim Policies
 
-**Access Modes:**
+**Access Modes** — you need to know the four-letter abbreviations:
 
-| Mode | Short | Description |
+| Mode | Short | What it actually means |
 |---|---|---|
-| ReadWriteOnce | RWO | One node can mount read-write |
-| ReadOnlyMany | ROX | Many nodes can mount read-only |
-| ReadWriteMany | RWX | Many nodes can mount read-write |
-| ReadWriteOncePod | RWOP | Only one pod can mount read-write (v1.29+) |
+| ReadWriteOnce | RWO | One node can mount read-write. This is what you'll use 90% of the time. |
+| ReadOnlyMany | ROX | Many nodes can mount read-only. Rarely comes up on the exam. |
+| ReadWriteMany | RWX | Many nodes can mount read-write. Doesn't work with hostPath — I tried. |
+| ReadWriteOncePod | RWOP | Only one pod can mount read-write. New in v1.29+, might show up. |
 
-**Reclaim Policies:**
+**Reclaim Policies** — know the difference or you'll lose data:
 
-| Policy | What happens when PVC is deleted |
+| Policy | What actually happens |
 |---|---|
-| Retain | PV stays, data preserved, must manually clean up |
-| Delete | PV and underlying storage are deleted |
-| Recycle | Deprecated — don't use |
+| Retain | PV survives PVC deletion. Data is safe but you have to manually clean up the PV before it can be reused. |
+| Delete | PV and the underlying storage get nuked. This is the default for most cloud StorageClasses. Be careful. |
+| Recycle | Deprecated. Don't use it, don't memorize it. |
 
 **Volume Modes:**
 - `Filesystem` (default) — mounted as a directory
@@ -706,7 +702,7 @@ Common gotcha: forgetting `storageClassName`. If the PVC has `storageClassName: 
 
 ### Domain 2 — Troubleshooting (30%)
 
-This is the biggest domain — 30% of the score. You'll get several questions asking you to fix broken things.
+This is the biggest domain — 30% of the score. You'll get several questions asking you to fix broken things. This is where I lost the most time in early practice because I had no system. I'd randomly check pods, then nodes, then pods again. Once I built a consistent troubleshooting order (nodes → kubelet → control plane pods → describe → logs → endpoints), my accuracy went way up.
 
 > See also: [Exercise 11 — Troubleshoot Cluster](exercises/11-troubleshoot-cluster/) | [Troubleshooting Decision Flowchart](#troubleshooting-decision-flowchart)
 
@@ -741,66 +737,57 @@ k get pods -n kube-system
 
 #### 2.2 — Monitor Applications
 
-```bash
-# Pod status and events
-k get pods
-k describe pod <pod-name>
+Honestly, monitoring during the exam boils down to two things: `k describe` and `k get events`. I never used `k top` during my actual exam — metrics-server wasn't available on every cluster. But know it exists in case they ask.
 
-# Resource usage (requires metrics-server)
+```bash
+# These two are 90% of exam monitoring
+k describe pod <pod-name>       # events section at bottom tells you everything
+k get events --sort-by='.lastTimestamp'
+
+# The rest — know them, probably won't need them
+k get pods
 k top pods
 k top nodes
-
-# Events sorted by time
-k get events --sort-by='.lastTimestamp'
 k get events -n <namespace> --field-selector reason=Failed
 ```
 
 #### 2.3 — Container stdout/stderr Logs
 
+The two you'll actually use on the exam: `k logs <pod>` and `k logs <pod> --previous`. That's it. The rest are nice-to-know but I never needed `-f` or `--tail` under exam time pressure.
+
 ```bash
-# Current logs
+# The essentials
 k logs <pod-name>
+k logs <pod-name> --previous                 # crashed container — you'll use this a lot
+k logs <pod-name> -c <container-name>         # multi-container pods
 
-# Specific container in multi-container pod
-k logs <pod-name> -c <container-name>
-
-# Previous container (crashed/restarted)
-k logs <pod-name> --previous
-
-# Follow logs
+# Rarely needed on the exam but useful
 k logs <pod-name> -f
-
-# Last N lines
 k logs <pod-name> --tail=50
-
-# Logs from all pods with a label
 k logs -l app=web --all-containers
 ```
 
 #### 2.4 — Troubleshoot Application Failure
 
-Debugging pod issues by status:
+The exam gives you a broken pod and you figure out why. After enough practice, you develop a reflex based on the status:
 
-**Pending:**
-- No node has enough resources → check `k describe pod` for events
-- PVC not bound → check `k get pvc`
-- Node selector or affinity doesn't match any node
-- Taints blocking scheduling
+**Pending** — this is the most common one on the exam. 9 times out of 10 it's one of these:
+- PVC not bound → `k get pvc` — check storageClassName matches
+- Taint with no toleration → `k describe node` and look at Taints
+- No resources available → `k describe pod` events will say "Insufficient cpu"
+- Node selector or affinity doesn't match any node → check labels
+- I once spent 5 minutes on a Pending pod that just needed a namespace with a ResourceQuota increased
 
-**CrashLoopBackOff:**
-- Container exits immediately → check `k logs <pod> --previous`
-- Wrong command or entrypoint
+**CrashLoopBackOff** — the container starts and dies immediately:
+- `k logs <pod> --previous` first. Always. The error is usually obvious.
+- Wrong command/entrypoint is the sneaky one — I got tricked by `["sh", "-c"]` vs `["sh -c"]` once
 - Missing config (env vars, configmaps, secrets)
-- Application error
 
-**ImagePullBackOff:**
-- Wrong image name or tag
-- Private registry without imagePullSecrets
-- Network issue reaching the registry
+**ImagePullBackOff** — almost always a typo in the image name. Seriously. Check the image string character by character.
+- Private registry without imagePullSecrets is the other cause, but rare on the exam
 
 **Error / Failed:**
-- Check `k describe pod` events section
-- Check `k logs`
+- `k describe pod` events section → `k logs` → you'll find it
 
 ```bash
 # Systematic pod debugging
@@ -890,13 +877,13 @@ The most common networking issues on the exam:
 
 ### Domain 3 — Workloads & Scheduling (15%)
 
-15% of the score. This covers Deployments, rolling updates, ConfigMaps, Secrets, static pods, scheduling constraints.
+15% of the score. Deployments, rolling updates, ConfigMaps, Secrets, static pods, scheduling constraints. I found this the most comfortable domain because it's what you do day-to-day. The gotcha: static pods. I kept trying to delete them with kubectl and wondering why they came back. Once you understand kubelet manages them directly, it clicks.
 
 > See also: [Exercise 01 — Pod Basics](exercises/01-pod-basics/) | [Exercise 06 — Deployment Rollout](exercises/06-deployment-rollout/) | [Exercise 10 — Static Pod](exercises/10-static-pod/)
 
 #### 3.1 — Understand Deployments and How to Perform Rolling Updates and Rollbacks
 
-Deployments manage ReplicaSets, which manage Pods. When you update a Deployment image, it creates a new ReplicaSet and gradually shifts pods over.
+Deployments manage ReplicaSets, which manage Pods. When you update the image, Kubernetes creates a new ReplicaSet and gradually shifts pods over. The thing that tripped me up: the container name in `k set image` is the container name from the pod spec, not the deployment name. I kept writing `k set image deployment/webapp webapp=nginx:1.27` when the container was actually called `nginx`. Wasted 3 minutes every time.
 
 ```bash
 # Create
@@ -996,13 +983,14 @@ k scale deployment webapp --replicas=5
 k autoscale deployment webapp --min=2 --max=10 --cpu-percent=80
 ```
 
-#### 3.4 — Understand the Primitives Used to Create Robust, Self-Healing, Application Deployments
+#### 3.4 — Self-Healing Workloads: Deployments, DaemonSets, StatefulSets
 
-Quick mental model:
-- **ReplicaSet**: Keeps N pods running (managed by Deployment — rarely created directly)
-- **Deployment**: Manages ReplicaSets, provides rolling updates
-- **DaemonSet**: Runs one pod per node (logging agents, monitoring)
-- **StatefulSet**: For stateful apps needing stable network identity and persistent storage
+The one you'll actually use on the exam is **Deployment**. It manages ReplicaSets, which manage Pods. You create Deployments, you scale them, you update them, you roll them back. That's 90% of this topic.
+
+- **ReplicaSet**: Keeps N pods running. You almost never create these directly — Deployments create them for you.
+- **Deployment**: This is the workhorse. Rolling updates, rollbacks, scaling. Know this cold.
+- **DaemonSet**: One pod per node. Logging agents, monitoring. Comes up occasionally on the exam. The YAML is basically a Deployment without `replicas`.
+- **StatefulSet**: Stable network identity and persistent storage. Barely on the CKA — know it exists, maybe know the headless service pattern, don't spend hours on it.
 
 ```yaml
 # DaemonSet — runs on every node
@@ -1141,7 +1129,7 @@ Control plane components (kube-apiserver, kube-scheduler, kube-controller-manage
 
 ### Domain 4 — Cluster Architecture, Installation & Configuration (25%)
 
-25% of the score. This is the CKA-specific domain — etcd, kubeadm, RBAC. If you're coming from CKAD, this is all new.
+25% of the score. This is the domain that separates CKA from CKAD — etcd, kubeadm, RBAC. If you're coming from CKAD, this is all new and it's where I spent the most study time. etcd backup/restore alone took me a week to get reliable. The `--as=system:serviceaccount:ns:name` syntax for testing RBAC was another thing I had to drill until it was automatic.
 
 > See also: [Exercise 04 — RBAC](exercises/04-rbac/) | [Exercise 07 — etcd Backup](exercises/07-etcd-backup-restore/) | [Exercise 09 — kubeadm Upgrade](exercises/09-kubeadm-upgrade/)
 
@@ -1213,20 +1201,21 @@ kubeadm token create --print-join-command
 
 #### 4.3 — Manage a Highly Available Kubernetes Cluster
 
-Know the concepts (not heavily tested with actual setup, but you need to understand it):
+You won't set up HA from scratch on the exam, but they want you to understand the two topologies:
 
-- **Stacked etcd**: etcd runs on the same nodes as control plane components. Simpler but less resilient.
-- **External etcd**: etcd runs on separate nodes. More resilient, harder to set up.
-- Multiple control plane nodes behind a load balancer
-- `kubeadm init --control-plane-endpoint=<lb>:6443` for HA setup
+- **Stacked etcd**: etcd on the same nodes as the control plane. This is what everyone uses. Simpler, good enough for most setups.
+- **External etcd**: etcd on dedicated nodes. I've never set this up. I doubt you will either. Just know it exists and that it's "more resilient" because etcd failures don't take down the control plane node.
+- Multiple control plane nodes behind a load balancer — the LB endpoint goes in `kubeadm init --control-plane-endpoint=<lb>:6443`
+
+I spent maybe 10 minutes on this topic. Read it, understood the difference, moved on. It wasn't worth more time than that.
 
 #### 4.4 — Provision Underlying Infrastructure to Deploy a Kubernetes Cluster
 
-This is mostly about knowing that kubeadm handles it. On the exam you won't set up VMs, but you might need to:
-- Install container runtime (containerd)
-- Disable swap
-- Load kernel modules (br_netfilter, overlay)
-- Set sysctl params (net.bridge.bridge-nf-call-iptables = 1)
+kubeadm handles most of this. You won't provision VMs on the exam, but you might need to fix a node that was set up wrong. The things that break:
+- containerd not installed or not running — `systemctl status containerd`
+- Swap still enabled — `swapoff -a` (I always forget this on fresh VMs)
+- Missing kernel modules: `br_netfilter` and `overlay`. Load them with `modprobe`.
+- sysctl params — `net.bridge.bridge-nf-call-iptables = 1`. I can never remember the exact param name, I just grep the docs page.
 
 #### 4.5 — Perform a Version Upgrade on a Kubernetes Cluster Using Kubeadm
 
@@ -1320,20 +1309,18 @@ The three flags you need every time: `--cacert`, `--cert`, `--key`. I wrote them
 
 ### Domain 5 — Services & Networking (20%)
 
-20% of the score. Services, Ingress, Gateway API, NetworkPolicy, DNS.
+20% of the score. Services, Ingress, Gateway API, NetworkPolicy, DNS. NetworkPolicy is where I lost the most points in practice exams — the AND vs OR selector behavior is unintuitive, and forgetting DNS egress is a silent killer.
 
 > See also: [Exercise 05 — NetworkPolicy](exercises/05-networkpolicy/) | Skeletons: [service.yaml](skeletons/service.yaml), [ingress.yaml](skeletons/ingress.yaml), [networkpolicy.yaml](skeletons/networkpolicy.yaml)
 
 #### 5.1 — Understand Host Networking Configuration on the Cluster Nodes
 
-Kubernetes networking model:
-- Every pod gets its own IP address
-- Pods can communicate with any other pod without NAT
-- Nodes can communicate with all pods (and vice versa) without NAT
-- The CNI plugin implements this (Calico, Flannel, Cilium, etc.)
+Networking in Kubernetes "just works" if your CNI is installed correctly. Don't overthink the model — pods get IPs, pods can talk to each other, nodes can talk to pods. The CNI plugin (Calico, Flannel, Cilium) makes it happen. That's really all you need to know conceptually.
+
+What actually matters for the exam: knowing where to look when it doesn't work.
 
 ```bash
-# Check CNI on a node
+# Check what CNI is installed
 ls /etc/cni/net.d/
 cat /etc/cni/net.d/10-calico.conflist
 
@@ -1343,7 +1330,7 @@ k cluster-info dump | grep -m 1 cluster-cidr
 
 #### 5.2 — Understand Connectivity Between Pods
 
-Pods communicate using their IP addresses. Within the same node, it's bridged. Across nodes, the CNI handles it.
+Same-node pods talk through a bridge, cross-node pods go through the CNI overlay. You don't need to know the internals — but you need to test connectivity when something breaks.
 
 ```bash
 # Test pod-to-pod connectivity
@@ -1434,16 +1421,11 @@ If DNS doesn't work:
 
 #### 5.6 — Choose an Appropriate Container Network Interface Plugin
 
-The CKA won't ask you to write a CNI plugin. But know:
+The CKA won't ask you to write a CNI plugin. Just use Calico. It supports NetworkPolicy, it's the most common, and it's what most training platforms use. The exam doesn't care which CNI is installed.
 
-| CNI | Notes |
-|---|---|
-| **Calico** | Most common, supports NetworkPolicy |
-| **Flannel** | Simple, no NetworkPolicy support |
-| **Cilium** | eBPF-based, advanced features |
-| **Weave** | Simple, supports NetworkPolicy |
+Other CNIs exist — Flannel is simpler but doesn't support NetworkPolicy (dealbreaker for the exam), Cilium is the fancy eBPF one everyone's talking about, Weave still works. But if a question says "install a CNI plugin," just apply the Calico manifest and move on.
 
-Install is usually one `kubectl apply -f <url>`. The CNI must be installed before worker nodes join — pods stay Pending without it.
+Install is one `kubectl apply -f <url>`. The CNI must be installed before worker nodes join — pods stay Pending without it.
 
 #### 5.7 — Understand NetworkPolicy
 
@@ -1577,11 +1559,11 @@ Where to focus: Troubleshooting + Cluster Architecture = 55% of the exam. If you
 
 ## Exam Day Strategy — Time Allocation
 
-I used a two-pass approach and it saved me.
+I used a two-pass approach in practice and it changed everything. Before this, I'd get stuck on a hard question for 12 minutes and run out of time for easy ones worth the same points.
 
-**Pass 1 (first 80 minutes):** Do all questions in order. If a question looks like it'll take more than 8 minutes, flag it and move on. Don't get stuck.
+**Pass 1 (first 80 minutes):** Do all questions in order. If a question looks like it'll take more than 8 minutes, flag it and move on. Don't get emotionally invested in any single question.
 
-**Pass 2 (last 40 minutes):** Go back to flagged questions. You now know how much time you have per question.
+**Pass 2 (last 40 minutes):** Go back to flagged questions. You now know exactly how much time you have. The pressure feels different when you've already banked easy points.
 
 Time estimates by question type:
 
@@ -1608,11 +1590,11 @@ Total available: 120 minutes. Budget ~100 minutes for questions, 20 minutes buff
 
 ## Mistakes That Will Fail You on the CKA
 
-These cost me points during practice. Don't repeat them.
+Every single one of these cost me points during practice exams. I'm not listing hypothetical risks — these are things I actually did wrong and had to learn from.
 
 ### 1. Forgetting to switch context
 
-Every question says "use context k8s-xxx." If you forget, you're working on the wrong cluster and get zero points.
+Every question says "use context k8s-xxx." I missed this twice during one practice exam — answered two questions perfectly on the wrong cluster. Zero points for both. Now I read the context line first, switch, then read the actual question.
 
 ```bash
 # ALWAYS do this first
@@ -1621,7 +1603,7 @@ k config use-context <context-name>
 
 ### 2. Wrong namespace
 
-You create resources in `default` when the question says `production`. Zero points.
+I created a perfect Deployment in `default` when the question said `production`. The YAML was right, the containers were right, everything worked — but the grader checks the namespace. Zero points. Now I run `kn <namespace>` as the FIRST command for every question.
 
 ```bash
 # Set namespace for the question
@@ -1632,7 +1614,7 @@ k get pods -n production
 
 ### 3. YAML indentation errors
 
-One wrong space = broken YAML = zero points. Set up vim properly.
+I had one tab character hidden in a YAML file. `kubectl apply` gave a cryptic parsing error and I spent 4 minutes hunting for the problem. Set up vim with `expandtab` so tabs become spaces. One wrong indent level = broken YAML = zero points.
 
 ```bash
 # This should already be in your .vimrc
@@ -1643,7 +1625,7 @@ set shiftwidth=2
 
 ### 4. etcd restore — forgetting to update hostPath
 
-You restore etcd to `/var/lib/etcd-restored` but forget to update the `hostPath.path` in the etcd manifest. etcd still reads from the old directory.
+This one burned me on my second practice exam. I restored etcd to `/var/lib/etcd-restored` and updated the `--data-dir` flag. Cluster came back but all my previous resources were gone. Turns out the `hostPath.path` in the volume section was still pointing to the old `/var/lib/etcd`. The etcd process and the volume mount have to agree, or you're reading from the wrong directory.
 
 ```yaml
 # Must update BOTH:
@@ -1661,7 +1643,7 @@ k drain <node> --ignore-daemonsets --delete-emptydir-data
 
 ### 6. NetworkPolicy without DNS egress
 
-You write a NetworkPolicy egress rule but forget to allow DNS (UDP 53). The pod can't resolve service names, nothing works, and you think the policy is wrong.
+I have made this mistake more times than I want to admit. You write what looks like a perfect NetworkPolicy egress rule, test connectivity, and it fails. You rewrite the rule. Still fails. You check selectors. Still right. The pod can't resolve service names because you didn't allow UDP 53. I now write the DNS egress block FIRST before writing any other egress rules.
 
 ```yaml
 # Always include this in egress rules
@@ -1673,7 +1655,7 @@ You write a NetworkPolicy egress rule but forget to allow DNS (UDP 53). The pod 
 
 ### 7. Not verifying your work
 
-You think you're done, move to the next question, and lose points because the pod isn't actually running. Always verify:
+I finished a question early once and moved on feeling confident. Turns out the pod was in `ImagePullBackOff` because I had a typo in the image name. Would have caught it in 5 seconds if I'd checked `k get pod`. Now I verify every single resource I create before moving on.
 
 ```bash
 k get pod <name> -n <ns>        # Is it Running?
@@ -1687,7 +1669,7 @@ A 3-point question and a 7-point question get the same time if you're stuck. Do 
 
 ### 9. Forgetting the ServiceAccount in RBAC
 
-The question says "create a ServiceAccount and give it access." You create the Role and RoleBinding but forget to create the ServiceAccount first.
+The question says "create a ServiceAccount and give it access." I jumped straight to creating the Role and RoleBinding, then ran `k auth can-i` and it returned "no" for everything. Spent 6 minutes thinking my Role was wrong before realizing the ServiceAccount didn't exist. The RoleBinding referenced a SA that wasn't there. Create the SA first.
 
 ```bash
 # Create SA first
@@ -2747,29 +2729,29 @@ What I actually used, in order of usefulness:
 
 ### Free
 
-| Resource | Why |
+| Resource | What I actually used it for |
 |---|---|
-| [Kubernetes Official Docs](https://kubernetes.io/docs/) | The only resource allowed during the exam. Get fast at searching it. |
-| [Kubernetes Tasks](https://kubernetes.io/docs/tasks/) | Step-by-step guides. Great for etcd backup, kubeadm upgrade, drain. |
-| [kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/) | Must-bookmark. I used this during the exam. |
-| [CKA Curriculum PDF](https://github.com/cncf/curriculum) | The official syllabus. Check this before your exam to make sure you've covered everything. |
-| [Killercoda CKA Scenarios](https://killercoda.com/cka) | Free hands-on labs in the browser. Good for daily practice. |
+| [Kubernetes Official Docs](https://kubernetes.io/docs/) | The only site allowed during the exam. I spent a week getting fast at searching it. Bookmark the Tasks section — that's where etcd backup and kubeadm upgrade live. |
+| [Kubernetes Tasks](https://kubernetes.io/docs/tasks/) | This saved me on the etcd question during the actual exam. I had the steps bookmarked and copied the cert paths directly. Don't skip this. |
+| [kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/) | I had this open in a tab during the exam. The jsonpath examples alone are worth bookmarking. |
+| [CKA Curriculum PDF](https://github.com/cncf/curriculum) | Checked this the night before to make sure I hadn't missed a topic. Found out I'd skipped Pod Scheduling Readiness entirely. |
+| [Killercoda CKA Scenarios](https://killercoda.com/cka) | Free browser labs. I did 2-3 of these per day during lunch. The RBAC and NetworkPolicy ones were the most useful. |
 
 ### Paid
 
-| Resource | Why | Cost |
+| Resource | Honest review | Cost |
 |---|---|---|
-| [killer.sh](https://killer.sh) | Included with exam purchase. 2 sessions, 24h each. Harder than the real exam — if you pass killer.sh, you'll pass CKA. | Free with exam |
-| [KodeKloud CKA Course](https://kodekloud.com) | Mumshad's course. Best structured course for CKA. Labs are built-in. | ~$15-25/mo |
-| [Udemy — Mumshad CKA](https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests/) | Same instructor as KodeKloud but one-time purchase. Wait for Udemy sales ($10-15). | ~$15 |
+| [killer.sh](https://killer.sh) | Included with your exam purchase. Two 24-hour sessions. Way harder than the real exam — I scored 60% on killer.sh and 89% on the actual CKA. If you can pass killer.sh, you're ready. Don't waste both sessions early. Save one for the week before. | Free with exam |
+| [KodeKloud CKA Course](https://kodekloud.com) | Mumshad's course carried me through the first two weeks. The built-in labs are what make it worth it — I wouldn't have learned etcd restore without them. | ~$15-25/mo |
+| [Udemy — Mumshad CKA](https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests/) | Same content as KodeKloud but one-time purchase. Wait for a Udemy sale ($10-15). I used KodeKloud instead, but either works. | ~$15 |
 
 ### Local Practice Environments
 
-| Tool | Notes |
+| Tool | My experience |
 |---|---|
-| [kind](https://kind.sigs.k8s.io/) | Kubernetes in Docker. Fast to create/destroy clusters. My daily driver. |
-| [minikube](https://minikube.sigs.k8s.io/) | Single-node cluster. Good for basic practice. |
-| [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/) | Real cluster setup. Practice this on VMs (Vagrant, Multipass, or cloud). |
+| [kind](https://kind.sigs.k8s.io/) | This was my daily driver. Create/destroy clusters in seconds. Multi-node clusters for testing drain/cordon. Only downside: no systemd inside containers, so you can't practice kubelet restart. |
+| [minikube](https://minikube.sigs.k8s.io/) | Single-node, easy setup. Fine for basic exercises but useless for kubeadm upgrade or node troubleshooting. |
+| [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/) | The real deal. Set up actual VMs (I used Vagrant + VirtualBox) and install with kubeadm. Painful to set up, but this is how you actually learn the cluster architecture domain. |
 
 Advice: don't spend your first 2 weeks watching videos. Spend 30% of your time on theory and 70% hands-on in a real cluster.
 
@@ -2777,7 +2759,7 @@ Advice: don't spend your first 2 weeks watching videos. Spend 30% of your time o
 
 ## CKA Study Plan (4-5 Weeks)
 
-This is roughly what I followed. Adjust based on your Kubernetes experience.
+This is roughly what I followed. I deviated a lot — Week 3 was supposed to be networking but I was still struggling with etcd restore, so I spent half that week redoing exercise 07 until I could do it without the docs. Adjust as you go. If something isn't clicking, stay on it.
 
 ### Week 1 — Foundations
 
@@ -2802,6 +2784,7 @@ This is roughly what I followed. Adjust based on your Kubernetes experience.
 - Cover Domain 2 (Troubleshooting): start breaking things and fixing them
 - Do exercises 05, 11, 12
 - Do killer.sh session 1
+- This was my hardest week. NetworkPolicy AND storage AND troubleshooting is a lot. If you need to push something to Week 4, push storage.
 
 ### Week 4 — Mock Exams + Weak Areas
 
@@ -2817,6 +2800,7 @@ This is roughly what I followed. Adjust based on your Kubernetes experience.
 - Focus entirely on weak domains
 - Practice speed: can you do a full RBAC setup in under 3 minutes?
 - Review the [mistakes list](#mistakes-that-will-fail-you-on-the-cka) one more time
+- I didn't need this week, but I scheduled it as a buffer just in case
 
 ---
 
@@ -2850,37 +2834,37 @@ If you score 60%+ on killer.sh, you'll likely pass the real exam. The real exam 
 
 ### 1 Week Before
 
-- [ ] Schedule the exam — pick a time when you're alert (I did Saturday morning)
-- [ ] Verify your CNCF account name matches your government ID exactly
+- [ ] Schedule the exam — pick a time when you're sharpest, not Friday evening after a long week (I did Saturday 10am)
+- [ ] Verify your CNCF account name matches your government ID EXACTLY — character for character, including middle name if it's on your ID
 - [ ] Do killer.sh session 2
-- [ ] Review weak domains one more time
-- [ ] Test your webcam and microphone
+- [ ] Review your weakest domain one more time — for me that was NetworkPolicy and etcd
+- [ ] Test your webcam, microphone, and internet — the PSI system check catches issues early
 
 ### 1 Day Before
 
-- [ ] Clear your desk — nothing on it except your computer, keyboard, mouse
-- [ ] Remove any papers, books, or second monitors
-- [ ] Test your internet connection (wired is better than WiFi)
-- [ ] Review the [first 60 seconds setup](#first-60-seconds--aliases-vim-bash)
-- [ ] Review the [exam day strategy](#exam-day-strategy--time-allocation)
-- [ ] Get a good night's sleep
+- [ ] Clear your desk completely — nothing on it except laptop, keyboard, mouse. I had to remove a sticky note from my monitor.
+- [ ] Remove second monitors, disconnect external screens
+- [ ] Switch to wired ethernet if possible — WiFi dropped during my killer.sh practice and I lost 2 minutes
+- [ ] Run through the [first 60 seconds setup](#first-60-seconds--aliases-vim-bash) from memory one last time
+- [ ] Read the [exam day strategy](#exam-day-strategy--time-allocation) but don't cram new content — it won't stick
+- [ ] Sleep. Seriously. I went to bed early and it helped more than any last-minute studying.
 
 ### 30 Minutes Before
 
-- [ ] Close all apps except the PSI browser
-- [ ] Go to the bathroom
-- [ ] Have water ready (clear bottle, no label)
-- [ ] Start the PSI check-in process (it takes 10-15 minutes)
-- [ ] Show the proctor your room and desk
+- [ ] Close every app except the PSI browser — it checks for background processes
+- [ ] Go to the bathroom. You can't pause the exam.
+- [ ] Have water ready in a clear bottle with no label (they make you peel it off if it has one)
+- [ ] Start PSI check-in 15 minutes early — the room scan and ID verification took longer than I expected
+- [ ] Show the proctor your desk, under your desk, and your walls
 
 ### During the Exam
 
-- [ ] Run the setup script / type aliases first thing
-- [ ] Switch context before every question
-- [ ] Read each question fully before starting
-- [ ] Flag hard questions, come back later
-- [ ] Verify your work: `k get`, `k describe`
-- [ ] Don't panic if kubectl hangs after an etcd restore — wait 30-60 seconds
+- [ ] Type your aliases and vim config FIRST — before even reading question 1
+- [ ] Switch context before every question — I lost two answers to wrong context during practice
+- [ ] Read the full question before touching the terminal. I misread a question once and solved the wrong problem.
+- [ ] Flag anything that looks like it'll take >8 minutes. Come back after you've scored the easy points.
+- [ ] Verify everything: `k get`, `k describe`, check the namespace
+- [ ] If kubectl hangs after etcd restore, WAIT. It comes back in 30-60 seconds. Don't start editing the manifest again.
 
 ---
 
@@ -3458,54 +3442,52 @@ spec:
 
 ### Is the CKA exam hard?
 
-It's not easy, but it's passable with 4-5 weeks of focused practice. The passing score is 66%, and if you're comfortable with command-line Kubernetes, the questions are doable. What makes it hard is the time pressure — 2 hours for ~17 tasks with a laggy terminal.
+Yes. Harder than I expected. The questions themselves aren't insane, but doing 17 tasks in 2 hours on a laggy remote desktop is stressful. I ran out of time on my first killer.sh attempt and only finished 12 questions. The passing score is 66%, which sounds low until you realize you're typing YAML from memory while a timer counts down. Practice until you're fast, not just correct.
 
 ### Is the CKA worth it in 2026?
 
-If you work with Kubernetes clusters: yes. It forces you to learn cluster admin tasks (etcd, kubeadm, RBAC, troubleshooting) that most people skip. It also gets you past resume filters — a lot of platform/SRE job postings list CKA.
+For me, absolutely. Not because of the badge — because studying for it forced me to learn etcd, kubeadm, and cluster troubleshooting. I'd been deploying apps to Kubernetes for a year without understanding any of that. The cert also gets you past resume filters for platform/SRE roles. Every job posting I looked at listed CKA. Whether you need the cert or just the knowledge depends on your situation, but I'd do it again.
 
 ### How long should I study for the CKA?
 
-Depends on your Kubernetes experience:
-- **Already using K8s daily**: 2-3 weeks
-- **Some K8s experience**: 4-5 weeks
-- **Complete beginner**: 8-10 weeks (learn K8s basics first)
+It took me about 4 weeks. I was already deploying apps to Kubernetes at work but had never touched etcd or kubeadm, so those domains ate most of my study time. If you're already an admin, less. If you're brand new to Kubernetes, honestly double it — you need to learn Kubernetes itself before you learn the exam material. I wouldn't try to rush it under 3 weeks unless you're very comfortable already.
 
 ### Do I need any prerequisites for the CKA?
 
-No formal prerequisites. But you should be comfortable with:
-- Linux command line (bash, vim, systemctl, journalctl)
-- Basic networking (TCP/IP, DNS, ports)
-- Container basics (what a container is, Docker/containerd)
-- YAML syntax
+Officially no. Unofficially, if you can't `vim` a file, `ssh` into a server, or read YAML without your eyes glazing over, you're going to have a bad time. The exam assumes you already know:
+- Linux command line — bash, vim, systemctl, journalctl. You will live in the terminal.
+- Basic networking — DNS, ports, TCP. Not deep stuff, but you need to understand why pod-to-service traffic uses port 53.
+- YAML — one wrong indent and nothing works. Practice until you can spot indentation errors by looking.
+
+You don't need Docker experience specifically. containerd is the runtime now. Docker knowledge helps but isn't required.
 
 ### What if I fail the CKA?
 
-You get one free retake included with your $445 purchase. You can schedule the retake anytime within your 12-month eligibility window. I've heard of people failing the first attempt and passing comfortably on the second.
+You get one free retake with the $445 purchase. Use it. Seriously — a lot of people fail the first attempt, especially on time management. I know people who scored 55% the first time and 80%+ on the retake just because they knew what to expect. The retake window is 12 months, so there's no rush.
 
 ### Is the CKA exam open book?
 
-Sort of. You can access kubernetes.io/docs, kubernetes.io/blog, and github.com/kubernetes in the exam browser. You cannot access Stack Overflow, personal notes, or any other website. Think of it as "open Kubernetes docs" rather than "open book."
+Kind of. You can open kubernetes.io/docs, kubernetes.io/blog, and github.com/kubernetes during the exam. That's it. No Stack Overflow, no personal notes, no ChatGPT. I bookmarked the etcd backup page and the kubeadm upgrade page before the exam — saved me at least 3 minutes of searching. The docs are allowed but the search is slow, so know where things are before exam day.
 
 ### Can I take the CKA remotely?
 
-Yes — the CKA is remote-only via PSI Secure Browser. You need a quiet, private room with a webcam and microphone. A proctor monitors you the entire time.
+Yes, it's remote-only via PSI Secure Browser. You need a quiet room, clear desk, webcam, and mic. The proctor watches you the entire time. I had to show my entire desk and the area under it before starting. One tip: use a wired internet connection. My WiFi dropped during a killer.sh practice run and I lost 2 minutes reconnecting. I switched to ethernet for the real thing.
 
 ### Should I take CKA or CKAD first?
 
-If you're a cluster admin, SRE, or platform engineer: CKA first. If you're a developer who deploys to Kubernetes: CKAD first. There's ~40% overlap, so the second cert is easier.
+CKA if you manage clusters or want to. CKAD if you only deploy apps and never touch the infrastructure. I did CKA first because I wanted to understand the whole stack, not just the deployment side. About 40% of the content overlaps (pods, services, deployments), so whichever you do second is noticeably easier.
 
 ### How is the CKA different from CKS?
 
-CKA covers cluster administration (setup, upgrade, troubleshooting, RBAC). CKS covers cluster security (Falco, AppArmor, OPA, audit logging, supply chain). CKS requires an active CKA to register.
+CKA is about building and fixing clusters. CKS is about locking them down — Falco rules, AppArmor profiles, OPA policies, audit logging. CKS requires an active CKA to even register. Unless your job is specifically Kubernetes security, I'd skip CKS and focus on getting real cluster experience instead.
 
 ### How many questions are on the CKA?
 
-Approximately 17-25 tasks. The exact number varies per exam session. Each task has a weight (percentage) that tells you how much it's worth.
+Somewhere around 17-25 tasks. Mine had 17. Each task has a weight percentage — a 7% question is worth more than a 3% one, obviously. I did the high-weight questions first on my second pass. Don't treat all questions equally.
 
 ### What Kubernetes version is on the CKA in 2026?
 
-v1.35 as of March 2026. The exam updates to match recent stable releases. Check the CNCF handbook for the current version before your exam.
+v1.35 as of March 2026. They update it to match recent stable releases. Check the [CNCF handbook](https://docs.linuxfoundation.org/tc-docs/certification/tips-cka-and-ckad) before your exam — if you studied on v1.34, most things are the same but native sidecars and Gateway API are GA now, and those showed up on my exam.
 
 ### Can I use aliases and scripts during the CKA?
 
@@ -3517,7 +3499,7 @@ Results come via email within 24 hours. Mine arrived in about 12 hours. You'll g
 
 ### What's the pass rate for the CKA?
 
-The CNCF doesn't publish official pass rates. Anecdotally, I'd estimate around 50-60% for first attempts based on community discussions. With proper preparation, it's very passable.
+No idea. The CNCF doesn't publish it. Most people I talked to in r/kubernetes and the CNCF Slack passed on the first or second try. If you've done killer.sh and scored 60%+, you'll be fine.
 
 ---
 
@@ -3531,11 +3513,7 @@ Good luck.
 
 ## Spread the Word
 
-If this helped you pass, three things that make a difference:
-
-1. **Star this repo** — it's how other people find it instead of outdated guides
-2. **Share it** — drop it in your team Slack, tweet it, post it on r/kubernetes
-3. **Open an issue** with your exam feedback — your score, what showed up, what you wish you'd studied more
+If this helped you pass, star the repo and share it wherever makes sense — team Slack, r/kubernetes, Twitter, whatever. And if you have exam feedback (what showed up, what was different from what you expected), open an issue. That's how this guide stays accurate.
 
 Every star and issue makes this repo more visible to the next person Googling "CKA exam prep."
 

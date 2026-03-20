@@ -29,6 +29,14 @@ Upgrade a cluster from one minor version to the next using kubeadm. The CKA freq
 - On workers, it's `kubeadm upgrade node` (NOT `kubeadm upgrade apply`)
 - Don't forget to drain before upgrading a worker
 
+## What tripped me up
+
+> After upgrading kubelet, it didn't start. I ran `systemctl restart kubelet` but forgot `systemctl daemon-reload` first. The systemd unit file changed but systemd didn't know about it. Always `daemon-reload` then `restart`. In that order. I lost 4 minutes on this during practice.
+>
+> On the worker node, I ran `kubeadm upgrade apply` instead of `kubeadm upgrade node`. Apply is for the control plane only. On workers it's `kubeadm upgrade node`. The error message is confusing — it doesn't immediately say "wrong command." It tries to run and fails partway through.
+>
+> Also: drain the worker BEFORE upgrading it. I upgraded first, then drained, and some pods got killed mid-upgrade when the node restarted. The safe order is: drain → upgrade → restart kubelet → uncordon.
+
 ## Verify
 
 ```bash

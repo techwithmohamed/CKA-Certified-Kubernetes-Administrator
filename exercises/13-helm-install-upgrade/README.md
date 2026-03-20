@@ -26,6 +26,12 @@ Install a chart, override values, upgrade to a new version, and roll back when s
 - `helm rollback <name> <revision> -n <ns>`
 - `helm history <name> -n <ns>`
 
+## What tripped me up
+
+> `helm install` failed with "namespace exercise-13 not found" because I forgot `--create-namespace`. Unlike `kubectl`, Helm doesn't create the namespace for you by default. I wasted 2 minutes creating the namespace manually, then realized `--create-namespace` does it in one shot. Use it every time.
+>
+> When rolling back, I ran `helm rollback web` without the revision number. It defaults to the previous revision, which worked in this case. But on the exam, if there are 4+ revisions and you need a specific one, you have to check `helm history` first and specify the revision number explicitly. I got lucky in practice but almost got burned on a more complex scenario.
+
 ## Verify
 
 ```bash

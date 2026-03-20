@@ -22,6 +22,14 @@ Back up and restore etcd. This shows up on almost every CKA exam. Know the etcdc
 - After restore, update `--data-dir` and the corresponding `hostPath` volume in the etcd manifest
 - etcd restarts automatically because it's a static pod
 
+## What tripped me up
+
+> First time I did this, the restore "worked" but the cluster came back with stale data. I updated `--data-dir` in the etcd command args but forgot to change the `hostPath.path` in the volumes section. The etcd process was writing to `/var/lib/etcd-restored` but the volume was still mounted from `/var/lib/etcd`. Two different places in the same manifest, both need to match. I've seen people fail this exact question on the exam.
+>
+> Also: after editing the etcd manifest, kubectl stops responding for 30-60 seconds while etcd restarts. I panicked and started editing the manifest again, which made it worse. Just wait. It comes back.
+>
+> The cert flags are always the same three: `--cacert`, `--cert`, `--key`. But I mixed up `--cert-file` (what etcd uses internally) with `--cert` (what etcdctl expects). They're different flags. Always use `--cert` with etcdctl.
+
 ## Verify
 
 ```bash

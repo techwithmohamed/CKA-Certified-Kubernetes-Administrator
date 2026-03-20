@@ -4,14 +4,14 @@ Short version: be helpful, be respectful, don't share real exam questions.
 
 ## Rules
 
-1. **No real exam questions.** Sharing actual CKA exam content violates the CNCF exam policy and can get people's certifications revoked. Topics and general descriptions are fine. Exact questions or screenshots are not.
+1. **No real exam questions.** The CNCF has already revoked people's certifications for sharing exam content online. Don't be that person. Saying "I got a question about etcd backup" is fine. Posting the exact task wording is not.
 
-2. **Be constructive.** If someone's solution is wrong, explain why and suggest a fix. If an exercise is confusing, say what's unclear.
+2. **If someone's wrong, show them why.** Don't just say "this is wrong" — explain what the correct approach is and why. We've all submitted broken YAML at some point.
 
-3. **Stay on topic.** This repo covers the CKA. Other certifications (CKAD, CKS) have their own communities.
+3. **CKA only.** This repo covers the CKA exam. CKAD and CKS questions belong somewhere else.
 
-4. **No spam.** Promotion of paid courses, referral links, or unrelated products will be removed.
+4. **No spam.** No referral links, no paid course promotion, no "check out my YouTube channel." If it's genuinely useful, submit it as a PR and let the content speak for itself.
 
 ## Enforcement
 
-Issues or comments that violate these rules will be edited or removed. Repeat offenders will be blocked. If you see a problem, open an issue or reach out directly.
+I'll edit or remove anything that breaks these rules. Repeat offenders get blocked. If you see something off, open an issue.

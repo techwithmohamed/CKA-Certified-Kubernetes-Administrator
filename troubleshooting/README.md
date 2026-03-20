@@ -10,6 +10,8 @@ Symptom-based lookup. Find the problem, follow the steps.
 
 The scheduler can't place the pod on any node.
 
+> I see this one more than anything else during practice. 9 times out of 10 it's either a taint without a toleration, or a PVC that isn't bound. `describe pod` tells you which — read the events at the bottom, not the status at the top.
+
 ```bash
 k describe pod <pod> -n <ns> | grep -A10 Events
 ```
@@ -38,6 +40,8 @@ k get pvc -n <ns>
 ## Pod is CrashLoopBackOff
 
 The container starts, crashes, restarts, crashes again.
+
+> Exit code 137 (OOMKilled) burned me twice. The pod logs were empty because the process got killed before writing anything. I kept checking the command and image, but the problem was a memory limit too low. `k describe pod` shows `Last State: OOMKilled` — that's the signal. Check `resources.limits.memory` first.
 
 ```bash
 k logs <pod> -n <ns> --previous    # Logs from the crashed container
@@ -85,6 +89,8 @@ k get pod <pod> -n <ns> -o jsonpath='{.spec.containers[*].image}'
 
 ## Node is NotReady
 
+> Every time I see NotReady, I immediately SSH to the node and run `systemctl status kubelet`. In practice exams, it was always one of three things: kubelet stopped, kubelet misconfigured (wrong `--config` path), or certificates expired. `journalctl -u kubelet --no-pager | tail -30` gives you the answer in the first 5 lines.
+
 ```bash
 k describe node <node> | grep -A5 Conditions
 ```
@@ -111,6 +117,8 @@ sudo cat /var/lib/kubelet/config.yaml
 
 Traffic to the service goes nowhere.
 
+> This one is sneaky. The service exists, you can `k get svc` it, but `curl` just hangs. First thing: `k get endpoints <svc> -n <ns>`. If it's empty, the service selector doesn't match any running pod. I spent 10 minutes thinking it was a NetworkPolicy issue before checking endpoints. Now it's the second thing I check after pod status.
+
 ```bash
 k get endpoints <svc> -n <ns>
 # If empty: selector doesn't match any running pod
@@ -135,24 +143,15 @@ k patch svc <svc> -n <ns> -p '{"spec":{"selector":{"app":"correct-label"}}}'
 
 ## Service Reachable but Wrong Response
 
-Endpoints exist but the response is wrong.
-
-| Cause | Fix |
-|---|---|
-| targetPort doesn't match container port | Fix `targetPort` in service spec |
-| Wrong pod behind service (label collision) | Make labels more specific |
-| Pod serving wrong content | Check pod logs and config |
-
-```bash
-k get svc <svc> -n <ns> -o yaml | grep -A5 ports
-k exec <pod> -n <ns> -- wget -qO- localhost:<port>
-```
+Endpoints exist but you're getting the wrong content back. This is usually simpler than it looks:\n\n- **targetPort wrong** — `targetPort` in the service doesn't match the port the container actually listens on. Check with `k get svc <svc> -o yaml | grep -A5 ports` and compare.\n- **Wrong pod behind the service** — label collision. You have two deployments with `app: web` and the service is load-balancing across both. Make labels more specific.\n- **Pod is just serving wrong content** — check the pod itself: `k exec <pod> -- wget -qO- localhost:<port>`\n\n```bash\nk get svc <svc> -n <ns> -o yaml | grep -A5 ports\nk exec <pod> -n <ns> -- wget -qO- localhost:<port>\n```
 
 ---
 
 ## DNS Not Resolving
 
 Pods can't reach services by name.
+
+> My go-to test: `k run test-dns --image=busybox:1.36 --rm -it -- nslookup kubernetes.default`. If that fails, check CoreDNS pods. If CoreDNS is running but DNS still fails, check if a NetworkPolicy is blocking UDP 53 — this got me twice. Also check `resolv.conf` inside the failing pod: `k exec <pod> -- cat /etc/resolv.conf`. If the nameserver IP doesn't match the kube-dns service ClusterIP, something modified the pod's DNS config.
 
 ```bash
 k run test-dns --image=busybox:1.36 --rm -it -- nslookup kubernetes.default.svc.cluster.local
@@ -172,6 +171,8 @@ Common fix: restart CoreDNS — `k rollout restart deployment coredns -n kube-sy
 ## NetworkPolicy Blocking Traffic
 
 Traffic was working, now it's not (or vice versa).
+
+> This is the #1 time sink in my practice exams. The moment I see a NetworkPolicy, I check egress DNS first. If egress is restricted and there's no UDP 53 allow, nothing works — not because of the ingress rule, but because DNS resolution fails silently.
 
 ```bash
 k get netpol -n <ns>
@@ -199,6 +200,8 @@ k get pods -n <ns> --show-labels
 
 ## etcd Issues
 
+> The cert flags haunt me. `etcdctl` uses `--cacert`, `--cert`, `--key`. The etcd manifest uses `--trusted-ca-file`, `--cert-file`, `--key-file`. They're different flag names for the same certs. I mixed them up during a practice exam and got a TLS handshake error that told me nothing useful. Now I just grep the etcd manifest for the paths and use the `etcdctl` flag names.
+
 ```bash
 # Check etcd pod
 k get pods -n kube-system | grep etcd
@@ -225,6 +228,8 @@ ETCDCTL_API=3 etcdctl endpoint health \
 
 kube-apiserver, kube-scheduler, or kube-controller-manager not working.
 
+> When `kubectl` itself stops working, don't panic. It means the API server is down. Go directly to the node, check the static pod manifests in `/etc/kubernetes/manifests/`. I've seen typos in `kube-apiserver.yaml` (wrong port, wrong cert path) that took down the entire cluster. `crictl pods` and `crictl logs` work even when kubectl doesn't.
+
 ```bash
 # Check static pod manifests
 ls /etc/kubernetes/manifests/
@@ -250,6 +255,8 @@ Fix: check the manifest YAML in `/etc/kubernetes/manifests/` for typos, wrong im
 
 ## Helm Release Stuck or Failed
 
+> `pending-install` status means the previous install timed out but didn't clean up. I tried `helm upgrade` on a stuck release and it made things worse. Clean way: `helm uninstall <release> -n <ns> --no-hooks`, then reinstall fresh.
+
 ```bash
 helm list -A
 helm status <release> -n <ns>
@@ -273,6 +280,8 @@ helm uninstall <release> -n <ns> --no-hooks
 ## Gateway API Misconfigured
 
 HTTPRoute exists but traffic does not reach the backend.
+
+> Gateway API errors are silent. The HTTPRoute creates successfully but if `parentRefs.name` doesn't match the Gateway name exactly, traffic just doesn't flow. No error, no warning in events. Check `k get httproute -o yaml` and look at the `status.parents` section — if it shows `Accepted: False`, the parentRef is wrong.
 
 ```bash
 k get gateway -A
@@ -301,6 +310,8 @@ k get httproute <route> -n <ns> -o yaml | grep -A10 status
 ## Native Sidecar Not Starting
 
 Init container with `restartPolicy: Always` does not run as a sidecar.
+
+> I forgot `restartPolicy: Always` on the init container and the pod started normally — the init container ran once and exited. The main container came up but the sidecar was gone. No error. It looked correct until I checked the container list and the sidecar showed `Terminated`. That one field is the entire difference between "init container" and "native sidecar."
 
 ```bash
 k describe pod <pod> -n <ns>
@@ -336,6 +347,8 @@ k debug pod/<pod> -it --image=busybox:1.36 --target=<container>
 
 Pod stuck in `ContainerCreating` with volume-related events.
 
+> `ContainerCreating` for more than 30 seconds usually means a volume problem. I spent 5 minutes checking the pod spec when the real issue was the CSI driver wasn't installed. `k get csidrivers` — if it's empty, that's your answer. Also check the PVC events separately: `k describe pvc <name>` sometimes shows errors the pod events don't.
+
 ```bash
 k describe pod <pod> -n <ns> | grep -A5 "Warning.*FailedMount"
 k get pvc -n <ns>
@@ -355,17 +368,7 @@ k get csidrivers
 
 ## Kustomize Apply Not Working
 
-```bash
-k apply -k <directory>/
-k kustomize <directory>/ | less
-```
-
-| Cause | Fix |
-|---|---|
-| kustomization.yaml missing | The directory needs a `kustomization.yaml` file |
-| Resource path wrong in kustomization.yaml | Paths are relative to the kustomization.yaml location |
-| Patch target not found | Check that `target.kind`, `target.name`, and `target.namespace` match an actual resource |
-| Namespace not set | Add `namespace:` in kustomization.yaml or use `--namespace` flag |
+Run `k kustomize <directory>/` first to see the rendered output. If that looks wrong, the problem is in kustomization.yaml. If it looks right but `k apply -k` fails, it's usually a namespace or resource conflict.\n\nMost common cause: paths in kustomization.yaml are relative to where the file is, not where you're running the command from. I got bitten by this in exercise 14.\n\n```bash\nk kustomize <directory>/ | less    # preview before applying\nk apply -k <directory>/\n```
 
 ---
 

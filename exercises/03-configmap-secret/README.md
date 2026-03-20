@@ -28,6 +28,12 @@ Create ConfigMaps and Secrets, then inject them into a pod as environment variab
 - Use `envFrom` to load all keys from a ConfigMap or Secret
 - Use `volumes` + `volumeMounts` to mount ConfigMap as files
 
+## What tripped me up
+
+> I referenced a ConfigMap name that didn't exist yet (`app-conf` instead of `app-config` — typo). The pod went into `CreateContainerConfigError` and I spent 3 minutes staring at the YAML before checking `k describe pod` events. The event message says exactly which ConfigMap is missing. Check events first, always.
+>
+> Also confused `envFrom` vs `env.valueFrom`. `envFrom` loads ALL keys from a ConfigMap/Secret as env vars. `env.valueFrom.configMapKeyRef` loads a single key. On the exam, if the question says "load all keys," use `envFrom`. If it says "load KEY_X as MY_VAR," use `valueFrom`. Getting them backwards doesn't error — you just get wrong variable names.
+
 ## Verify
 
 ```bash

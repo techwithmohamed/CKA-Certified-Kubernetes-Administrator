@@ -8,7 +8,7 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: my-deployment
+      app: my-deployment   # MUST match template.metadata.labels exactly
   strategy:
     type: RollingUpdate
     rollingUpdate:

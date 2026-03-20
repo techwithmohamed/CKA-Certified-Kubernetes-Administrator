@@ -38,6 +38,12 @@ Fix a broken cluster. This exercise simulates common failures you'll see on the 
 - kube-proxy runs as a DaemonSet in `kube-system`
 - `iptables-save | grep <service-name>` to check kube-proxy rules
 
+## What tripped me up
+
+> My first instinct when a node is NotReady was to run `kubectl describe node` from the control plane. That gives you conditions but not the root cause. The real answer is almost always in `journalctl -u kubelet` on the broken node itself. SSH first, check kubelet logs, then work backwards. I wasted 7 minutes on practice exam questions by troubleshooting from the wrong machine.
+>
+> For CoreDNS: `nslookup` failing doesn't always mean CoreDNS is broken. Check `resolv.conf` inside the pod first — I had a case where the pod's DNS config was pointing to the wrong IP because of a network policy blocking UDP 53 to the kube-dns service. The CoreDNS pods were fine; the traffic just couldn't reach them.
+
 ## Verify
 
 ```bash

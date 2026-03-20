@@ -8,11 +8,13 @@ Print this or keep it open during practice. Organized by what you'll actually ne
 
 ## Setup (First 60 Seconds)
 
+Do this before you touch a single question. I lost marks on my first practice exam because I didn't set up aliases and kept typing `kubectl` in full — cost me at least 5 minutes across the whole exam.
+
 ```bash
 alias k='kubectl'
 alias kn='kubectl config set-context --current --namespace'
-export do='--dry-run=client -o yaml'
-export now='--force --grace-period=0'
+export do='--dry-run=client -o yaml'    # this saves you on every create question
+export now='--force --grace-period=0'    # instant delete, no waiting 30s
 source <(kubectl completion bash)
 complete -o default -F __start_kubectl k
 ```
@@ -26,8 +28,10 @@ set expandtab tabstop=2 shiftwidth=2 number autoindent
 
 ## Context (EVERY QUESTION)
 
+I cannot stress this enough. I answered two questions on the wrong cluster context during practice. Zero points for both. Now I read the context line first and switch immediately, before reading the rest of the question.
+
 ```bash
-k config use-context <name>        # Switch context
+k config use-context <name>        # Switch context — DO THIS FIRST
 k config set-context --current --namespace=<ns>  # Set namespace
 k config current-context           # Verify
 ```
@@ -89,6 +93,8 @@ k label nodes <node> disk=ssd
 
 ## etcd Backup & Restore
 
+This is almost guaranteed on the exam. I practiced this 10+ times until I could type it from memory. The cert paths are always in the etcd manifest — don't memorize them, grep for them.
+
 ```bash
 # Backup
 ETCDCTL_API=3 etcdctl snapshot save /tmp/backup.db \
@@ -111,6 +117,8 @@ ETCDCTL_API=3 etcdctl snapshot restore /tmp/backup.db \
 ---
 
 ## kubeadm Upgrade (Control Plane)
+
+Exact sequence matters. I forgot `daemon-reload` once and the kubelet wouldn't start with the new binary. Also: on workers it's `kubeadm upgrade node`, NOT `apply`.
 
 ```bash
 sudo apt-mark unhold kubeadm
@@ -160,6 +168,8 @@ k expose deployment <name> --port=80 --target-port=8080 --type=NodePort
 
 ## NetworkPolicy
 
+The DNS egress rule below has saved me more points than any other single piece of YAML. Write it first, every time.
+
 ```yaml
 # Default deny all ingress
 spec:
@@ -181,6 +191,8 @@ AND vs OR: selectors in the same `from` block = AND. Separate `from` blocks = OR
 ---
 
 ## Troubleshooting Sequence
+
+This is my exact order. I follow it every time and it's never let me down. The mistake is jumping straight to pod logs — start at the node level and work down.
 
 ```bash
 k get nodes                              # 1. Nodes ready?
@@ -237,7 +249,9 @@ k describe node <node> | grep -A10 "Allocated resources" # Node capacity
 
 ## Time Savers
 
-- `k explain pod.spec.containers` — YAML field docs in terminal
+These are the commands that actually saved me time on the exam. The `$do` pattern alone is worth 10+ minutes across the whole test.
+
+- `k explain pod.spec.containers` — YAML field docs in terminal, faster than switching to the browser
 - `k get pod -o jsonpath='{.items[*].metadata.name}'` — extract fields
 - `k delete pod <name> $now` — instant delete (no grace period)
 - `k run tmp --image=busybox:1.36 --rm -it -- sh` — throwaway debug pod

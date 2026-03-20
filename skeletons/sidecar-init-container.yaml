@@ -7,7 +7,7 @@ spec:
   initContainers:
   - name: sidecar
     image: busybox:1.36
-    restartPolicy: Always
+    restartPolicy: Always     # THIS is what makes it a native sidecar — remove it and it's just a normal init container
     command: ["sh", "-c", "while true; do echo sidecar running; sleep 10; done"]
     volumeMounts:
     - name: shared

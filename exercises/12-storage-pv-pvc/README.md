@@ -31,7 +31,13 @@ Create PersistentVolumes, PersistentVolumeClaims, and mount them into pods. This
 - With `Delete`, deleting the PVC deletes the PV and its data
 - `k get pv` and `k get pvc -n <ns>` to check status
 
-## Verify
+## What tripped me up
+
+> PVC stuck in Pending for 10 minutes. I checked accessModes, checked capacity, everything matched. Turns out: my PV had `storageClassName: manual` and my PVC had `storageClassName: standard`. One word difference, no error message — just Pending forever. Always triple-check `storageClassName` matches exactly between PV and PVC.
+>
+> Also didn't realize PV is cluster-scoped (no namespace) but PVC is namespace-scoped. I created the PVC in `default` when the pod was in `exercise-12`. The PVC bound to the PV just fine, but the pod couldn't reference it because it was in a different namespace. PVC and pod MUST be in the same namespace.
+
+## Verify + Cleanup
 
 ```bash
 # PV should exist
@@ -45,11 +51,8 @@ k exec storage-pod -n exercise-12 -- cat /usr/share/nginx/html/test.txt
 
 # After deleting PVC, PV status should be Released
 k get pv my-pv
-```
 
-## Cleanup
-
-```bash
+# Cleanup
 k delete ns exercise-12
 k delete pv my-pv
 sudo rm -rf /data/exercise-12

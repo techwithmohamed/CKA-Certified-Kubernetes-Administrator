@@ -34,6 +34,12 @@ Use `kubectl debug` to troubleshoot running pods and access node-level resources
 - Node debug mounts the host filesystem at `/host`
 - Use `chroot /host` to run node commands directly
 
+## What tripped me up
+
+> I ran `k debug broken-app -it --image=busybox:1.36` without `--target=broken-app`. The debug container started, but `ps aux` only showed my busybox shell — no nginx processes. Without `--target`, the debug container gets its own process namespace. You NEED `--target=<container>` to share process namespace with the container you're debugging.
+>
+> For node debugging: `chroot /host` is essential. Without it, you're in the busybox container filesystem, not the real node. `systemctl status kubelet` fails because systemd isn't there. After `chroot /host`, you're in the real node root and everything works. I forgot this once and thought kubectl debug was useless for nodes.
+
 ## Verify
 
 ```bash

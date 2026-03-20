@@ -1,4 +1,5 @@
 # Namespace-scoped: Role + RoleBinding
+# Gotcha: create the ServiceAccount BEFORE the RoleBinding, or can-i returns "no" and you'll think the Role is wrong
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:

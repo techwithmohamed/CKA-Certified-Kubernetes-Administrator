@@ -26,6 +26,12 @@ Create a Deployment, perform a rolling update, check rollout history, and rollba
 - `k rollout status`, `k rollout history`, `k rollout undo`
 - Annotate with `kubernetes.io/change-cause` to track changes in rollout history
 
+## What tripped me up
+
+> I used `--record` on every deployment command because that's what older guides taught. It's deprecated and removed in v1.35 — the CHANGE-CAUSE column shows `<none>`. The correct way: annotate the deployment with `kubernetes.io/change-cause` after each change. It's one extra command but it actually works.
+>
+> Also: I forgot that `k rollout undo` creates a NEW revision, not a revert. After undo, I had revision 1, 3 (not 1, 2). My history looked weird and I thought something broke. That's just how it works — undo creates revision N+1 with the old spec.
+
 ## Verify
 
 ```bash

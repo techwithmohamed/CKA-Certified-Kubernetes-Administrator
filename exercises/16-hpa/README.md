@@ -30,6 +30,12 @@ Configure a Horizontal Pod Autoscaler to scale a deployment based on CPU usage. 
 - Load generation: `k run load-gen --image=busybox:1.36 --rm -it -- sh -c "while true; do wget -q -O- http://load-svc.exercise-16; done"`
 - Scale down takes a few minutes after load stops
 
+## What tripped me up
+
+> HPA showed `<unknown>/50%` for CPU and never scaled. I stared at the HPA for 5 minutes thinking the metrics-server was broken. The actual problem: my Deployment didn't have `resources.requests.cpu` set. HPA calculates percentage based on *requested* CPU. No request = no baseline = `<unknown>`. Always set resource requests on pods that need autoscaling.
+>
+> Scale-down is slow by default — it takes 5 minutes after load stops. During practice I thought it was broken and kept restarting the HPA. It's working, it's just conservative. Don't panic if replicas stay high for a few minutes after you stop the load generator.
+
 ## Verify
 
 ```bash

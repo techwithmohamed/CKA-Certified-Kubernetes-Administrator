@@ -38,6 +38,12 @@ Build a base deployment and apply an overlay that changes the namespace and repl
 - Overlay `kustomization.yaml` references the base with `resources: [../../base]`
 - Use `replicas` field in kustomization.yaml to patch replica count
 
+## What tripped me up
+
+> All paths in `kustomization.yaml` are relative to the file's location. I used an absolute path (`/home/user/kustomize-lab/base/`) and got a cryptic error about paths not being within the root. Keep everything relative: `../../base` from the overlay directory. This bit me twice during practice.
+>
+> Also: I forgot the `resources:` field in the overlay kustomization.yaml. Without pointing to the base, Kustomize has nothing to patch. It just silently produces empty output. I applied it and wondered why nothing was created. Run `kubectl kustomize <dir>/ | less` first to preview what you're about to apply — if it's empty, something's wrong with your kustomization.yaml.
+
 ## Verify
 
 ```bash

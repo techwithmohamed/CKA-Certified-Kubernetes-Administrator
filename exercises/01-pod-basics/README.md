@@ -23,6 +23,12 @@ Create a pod with specific resource requests, labels, and verify it's running.
 - `k label pod` to add labels, `k label pod <name> <label>-` to remove them
 - Resource fields go under `spec.containers[].resources`
 
+## What tripped me up
+
+> I created the pod in `default` the first time because I forgot `-n exercise-01` on the `k apply`. Zero points — the grader checks the exact namespace. Now I always run `kn <namespace>` before touching anything. Cost me 4 minutes the first time.
+>
+> Also: I kept trying to add resources directly in `k run`. You can't. You have to generate the YAML with `$do`, edit it, then apply. Don't fight the CLI — just redirect to a file.
+
 ## Verify
 
 ```bash

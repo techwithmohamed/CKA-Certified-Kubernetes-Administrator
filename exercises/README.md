@@ -1,8 +1,8 @@
 # CKA Exercises
 
-Hands-on labs covering all five CKA exam domains. Each exercise has tasks, hints, verification steps, and a full solution.
+17 hands-on labs covering all five CKA exam domains. Each one has a task list, hints (use them — they save time), verification commands, and a full solution behind a spoiler tag.
 
-Start with the basics and work your way down. The difficulty increases as you go.
+I ordered these roughly by difficulty. If you're short on time, prioritize 07 (etcd), 09 (kubeadm), 11 (troubleshooting), and 05 (NetworkPolicy) — those cover the highest-weight domains and the questions most people get wrong.
 
 | # | Exercise | Domain | Difficulty | Time |
 |---|---|---|---|---|

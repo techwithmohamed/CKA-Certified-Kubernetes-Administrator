@@ -12,6 +12,8 @@ spec:
   - Egress
   ingress:
   - from:
+    # WARNING: these two selectors in the SAME from block = AND (must match both)
+    # If you want OR, put them in separate from blocks
     - namespaceSelector:
         matchLabels:
           name: trusted
@@ -29,6 +31,7 @@ spec:
     ports:
     - protocol: TCP
       port: 5432
+  # NEVER forget DNS egress — without this, service name resolution breaks silently
   - to: []
     ports:
     - protocol: UDP

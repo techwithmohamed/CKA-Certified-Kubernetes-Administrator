@@ -17,11 +17,13 @@ Drain a worker node for maintenance, then bring it back. This tests your underst
 
 ## Hints
 
-- `k cordon <node>` marks unschedulable but doesn't evict existing pods
-- `k drain <node> --ignore-daemonsets --delete-emptydir-data` evicts pods
-- Without `--ignore-daemonsets`, drain fails if DaemonSet pods exist
-- Without `--delete-emptydir-data`, drain fails if pods use emptyDir volumes
-- `k uncordon <node>` makes the node schedulable again
+You honestly don't need hints for this one. `k drain --help` tells you everything. The two flags you always need are `--ignore-daemonsets` and `--delete-emptydir-data`.
+
+## What tripped me up
+
+> I ran `k drain worker-1` without `--ignore-daemonsets` and it failed immediately. The error message is long and mentions DaemonSet-managed pods, but I didn't read it carefully — I just thought drain was broken. Always use `--ignore-daemonsets --delete-emptydir-data`. Every time. No exceptions.
+>
+> Subtle one: `k cordon` marks the node unschedulable but does NOT evict existing pods. I cordoned a node thinking it would move pods off it, then spent 5 minutes wondering why pods were still there. Cordon = "don't schedule new pods here." Drain = "evict everything and cordon."
 
 ## Verify
 
