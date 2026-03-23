@@ -29,7 +29,7 @@ Create a pod with a main container and a sidecar container that tails the main c
 
 > First attempt: I put the sidecar in `containers` instead of `initContainers`. It ran, but it wasn't a native sidecar — it started alongside the main container with no ordering guarantee. The whole point of native sidecars (v1.35) is that they start *before* the main container and keep running. Has to be `initContainers` + `restartPolicy: Always`.
 >
-> Second mistake: the `tail -f` command failed silently because the log file didn't exist yet. The sidecar starts first, before the main container writes anything. The fix is `tail -f` which waits for the file to appear — but I wasted 5 minutes thinking the volume mount was wrong.
+> Second mistake: the `tail -f` command failed silently because the log file didn't exist yet. The sidecar starts first, before the main container writes anything. The fix is `tail -F` which waits for the file to appear — but I wasted 5 minutes thinking the volume mount was wrong.
 
 ## Verify
 
