@@ -325,45 +325,19 @@ The exam runs in a PSI Secure Browser — a remote Ubuntu desktop. Things that s
 
 ---
 
-## First 60 Seconds — Aliases, vim, bash
+## Important: Exam Environment vs Practice
 
-Run this at the start of every exam session. It saves 10-15 minutes over 2 hours.
+**In the exam, each question is a fresh SSH connection.** Any aliases or configuration you set up will NOT carry over to the next question. Do not waste exam time on setup.
 
-```bash
-# Aliases
-alias k='kubectl'
-alias kn='kubectl config set-context --current --namespace'
-alias kgp='kubectl get pods'
-alias kgs='kubectl get svc'
-alias kgn='kubectl get nodes'
-export do='--dry-run=client -o yaml'
-export now='--force --grace-period=0'
+**Only reliable shortcut:** The `k` alias for `kubectl` is pre-configured on every machine.
 
-# Tab completion
-source <(kubectl completion bash)
-complete -o default -F __start_kubectl k
+**For practice on your laptop,** you can use the setup script in [`scripts/exam-setup.sh`](scripts/exam-setup.sh) to speed up drilling. But practice without these shortcuts 1-2 weeks before the exam to build command muscle memory. You need to know:
+- `kubectl run ...`
+- `kubectl create ...`
+- `--dry-run=client -o yaml` (type it out, not an alias)
+- `--force --grace-period=0` (type it out, not an alias)
 
-# vim config
-cat <<'EOF' >> ~/.vimrc
-set expandtab
-set tabstop=2
-set shiftwidth=2
-set number
-set autoindent
-EOF
-
-# etcdctl
-export ETCDCTL_API=3
-```
-
-Or just run: `source scripts/exam-setup.sh` — see [`scripts/exam-setup.sh`](scripts/exam-setup.sh)
-
-After setting up, verify:
-
-```bash
-k get nodes          # aliases work?
-k run test --image=nginx $do   # $do works?
-```
+Memorize the commands. That beats any alias on test day.
 
 ---
 
