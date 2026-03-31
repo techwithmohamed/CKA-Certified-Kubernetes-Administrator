@@ -3,7 +3,7 @@
 [![YAML Validation](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml/badge.svg)](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml)
 [![CKA](https://img.shields.io/badge/CKA-Certified%202026-success)]()
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
-[![Exercises](https://img.shields.io/badge/Exercises-17-blue)](exercises/)
+[![Exercises](https://img.shields.io/badge/Exercises-18-blue)](exercises/)
 [![Skeletons](https://img.shields.io/badge/YAML%20Skeletons-23-blue)](skeletons/)
 [![GitHub stars](https://img.shields.io/github/stars/theplatformlab/CKA-Certified-Kubernetes-Administrator?style=social)](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator)
 
@@ -17,7 +17,7 @@
 
 I took the CKA in March 2026 and scored 89%. Writing this while it's fresh — partly because I was frustrated with how many outdated guides are still floating around (dockershim references in 2026, come on) and partly because organizing my notes helped me retain what I learned.
 
-The [CKA](https://www.cncf.io/certification/cka/) is a hands-on, terminal-based exam. 2 hours, roughly 17 tasks, no multiple choice. I prepped for about 4 weeks. This repo has my notes, the commands I actually used, YAML I wrote from memory, and the mistakes I made along the way.
+The [CKA](https://www.cncf.io/certification/cka/) is a hands-on, terminal-based exam. 2 hours, roughly 17-25 tasks, no multiple choice. I prepped for about 4 weeks. This repo has my notes, the commands I actually used, YAML I wrote from memory, and the mistakes I made along the way.
 
 > Blog version of these notes: [Pass the CKA Certification Exam](https://techwithmohamed.com/blog/cka-exam-study-guide/)
 
@@ -30,9 +30,9 @@ If this was useful, a star helps others find it.
 If you're time-pressured, here's the fast track:
 
 1. **Run the setup script** — get your aliases and vim config right from day one: [`scripts/exam-setup.sh`](scripts/exam-setup.sh)
-2. **Do the exercises** — work through the [17 hands-on exercises](exercises/) in order. Each one targets a specific CKA domain.
+2. **Do the exercises** — work through the [18 hands-on exercises](exercises/) in order. Each one targets a specific CKA domain.
 3. **Memorize the skeletons** — the [YAML skeletons](skeletons/) are the templates I wrote from memory during the exam. Practice until you can type them without looking.
-4. **Do the mock exam** — the [17 practice questions](#practice-questions-with-answers-mock-exam) below simulate real exam weight and difficulty.
+4. **Do the mock exam** — the [18 practice questions](#practice-questions-with-answers-mock-exam) below simulate real exam weight and difficulty.
 5. **Do killer.sh twice** — once 2 weeks out, once 3 days before. See [killer.sh vs the Real Exam](#killersh-vs-the-real-cka-exam).
 6. **Read the exam day strategy** — the [two-pass approach](#exam-day-strategy--time-allocation) saved me at least 15 minutes.
 
@@ -43,14 +43,13 @@ If you're time-pressured, here's the fast track:
 ```
 CKA-Certified-Kubernetes-Administrator/
 ├── README.md                          # This guide (you're here)
-├── exercises/                         # 17 hands-on labs
+├── exercises/                         # 18 hands-on labs
 │   ├── 01-pod-basics/
 │   ├── 02-multi-container-pod/
 │   ├── 03-configmap-secret/
 │   ├── 04-rbac/
 │   ├── 05-networkpolicy/
 │   ├── 06-deployment-rollout/
-│   ├── 07-etcd-backup-restore/
 │   ├── 08-node-drain-cordon/
 │   ├── 09-kubeadm-upgrade/
 │   ├── 10-static-pod/
@@ -60,7 +59,8 @@ CKA-Certified-Kubernetes-Administrator/
 │   ├── 14-kustomize-overlays/
 │   ├── 15-gateway-api/
 │   ├── 16-hpa/
-│   └── 17-kubectl-debug/
+│   ├── 17-kubectl-debug/
+│   └── 18-cri-dockerd-setup/
 ├── skeletons/                         # 23 YAML templates
 │   ├── pod.yaml
 │   ├── deployment.yaml
@@ -1441,7 +1441,7 @@ Control plane components (kube-apiserver, kube-scheduler, kube-controller-manage
 
 25% of the score. This is the domain that separates CKA from CKAD — etcd, kubeadm, RBAC. If you're coming from CKAD, this is all new and it's where I spent the most study time. etcd backup/restore alone took me a week to get reliable. The `--as=system:serviceaccount:ns:name` syntax for testing RBAC was another thing I had to drill until it was automatic.
 
-> See also: [Exercise 04 — RBAC](exercises/04-rbac/) | [Exercise 07 — etcd Backup](exercises/07-etcd-backup-restore/) | [Exercise 09 — kubeadm Upgrade](exercises/09-kubeadm-upgrade/)
+> See also: [Exercise 04 — RBAC](exercises/04-rbac/) | [Exercise 09 — kubeadm Upgrade](exercises/09-kubeadm-upgrade/) | [Exercise 18 — CRI-dockerd Setup](exercises/18-cri-dockerd-setup/)
 
 #### 4.1 — Manage Role-Based Access Control (RBAC)
 
@@ -3224,11 +3224,11 @@ Track your progress across all CKA domains.
 - [ ] ServiceAccounts
 - [ ] kubeadm cluster setup
 - [ ] kubeadm cluster upgrade
-- [ ] etcd backup and restore
+- [ ] Container runtime configuration (CRI-dockerd, containerd)
 - [ ] Understand HA topology
 - [ ] Helm install, upgrade, rollback
 - [ ] Kustomize base + overlay
-- [ ] Complete [Exercise 04](exercises/04-rbac/), [07](exercises/07-etcd-backup-restore/), [08](exercises/08-node-drain-cordon/), [09](exercises/09-kubeadm-upgrade/), [13](exercises/13-helm-install-upgrade/), [14](exercises/14-kustomize-overlays/)
+- [ ] Complete [Exercise 04](exercises/04-rbac/), [08](exercises/08-node-drain-cordon/), [09](exercises/09-kubeadm-upgrade/), [13](exercises/13-helm-install-upgrade/), [14](exercises/14-kustomize-overlays/), [18](exercises/18-cri-dockerd-setup/)
 
 ### Domain 5 — Services & Networking (20%)
 
@@ -3243,7 +3243,8 @@ Track your progress across all CKA domains.
 ### Exam Readiness
 
 - [ ] Aliases and vim config memorized
-- [ ] Can do etcd backup/restore from memory
+- [ ] CRI-dockerd kernel configuration and setup memorized
+- [ ] Can install and configure kubeadm cluster from memory
 - [ ] YAML skeletons written from memory (at least 10/23)
 - [ ] killer.sh session 1 completed
 - [ ] killer.sh session 2 completed
