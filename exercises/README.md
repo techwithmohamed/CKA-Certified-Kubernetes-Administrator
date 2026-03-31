@@ -1,8 +1,8 @@
 # CKA Exercises
 
-17 hands-on labs covering all five CKA exam domains. Each one has a task list, hints (use them — they save time), verification commands, and a full solution behind a spoiler tag.
+16 hands-on labs covering all five CKA exam domains. Each one has a task list, hints (use them — they save time), verification commands, and a full solution behind a spoiler tag.
 
-I ordered these roughly by difficulty. If you're short on time, prioritize 07 (etcd), 09 (kubeadm), 11 (troubleshooting), and 05 (NetworkPolicy) — those cover the highest-weight domains and the questions most people get wrong.
+I ordered these roughly by difficulty. If you're short on time, prioritize 09 (kubeadm), 11 (troubleshooting), and 05 (NetworkPolicy) — those cover the highest-weight domains and the questions most people get wrong.
 
 | # | Exercise | Domain | Difficulty | Time |
 |---|---|---|---|---|
@@ -12,7 +12,6 @@ I ordered these roughly by difficulty. If you're short on time, prioritize 07 (e
 | 04 | [RBAC](04-rbac/) | Cluster Architecture | Medium | 15 min |
 | 05 | [NetworkPolicy](05-networkpolicy/) | Services & Networking | Medium | 20 min |
 | 06 | [Deployment Rollout](06-deployment-rollout/) | Workloads & Scheduling | Easy | 10 min |
-| 07 | [etcd Backup & Restore](07-etcd-backup-restore/) | Cluster Architecture | Hard | 20 min |
 | 08 | [Node Drain & Cordon](08-node-drain-cordon/) | Cluster Architecture | Easy | 10 min |
 | 09 | [kubeadm Upgrade](09-kubeadm-upgrade/) | Cluster Architecture | Hard | 25 min |
 | 10 | [Static Pod](10-static-pod/) | Workloads & Scheduling | Easy | 10 min |
@@ -24,12 +23,10 @@ I ordered these roughly by difficulty. If you're short on time, prioritize 07 (e
 | 16 | [Horizontal Pod Autoscaler](16-hpa/) | Workloads & Scheduling | Medium | 15 min |
 | 17 | [kubectl debug](17-kubectl-debug/) | Troubleshooting | Medium | 15 min |
 
-## Domain Coverage
-
 | Domain | Weight | Exercises |
 |---|---|---|
 | Troubleshooting | 30% | 11, 17 |
-| Cluster Architecture | 25% | 04, 07, 08, 09, 13, 14 |
+| Cluster Architecture | 25% | 04, 08, 09, 13, 14 |
 | Services & Networking | 20% | 05, 15 |
 | Workloads & Scheduling | 15% | 01, 02, 03, 06, 10, 16 |
 | Storage | 10% | 12 |
