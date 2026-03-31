@@ -3,9 +3,11 @@
 [![YAML Validation](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml/badge.svg)](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml)
 [![CKA](https://img.shields.io/badge/CKA-Certified%202026-success)]()
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
-[![Exercises](https://img.shields.io/badge/Exercises-18-blue)](exercises/)
+[![Exercises](https://img.shields.io/badge/Exercises-20-blue)](exercises/)
 [![Skeletons](https://img.shields.io/badge/YAML%20Skeletons-23-blue)](skeletons/)
 [![GitHub stars](https://img.shields.io/github/stars/theplatformlab/CKA-Certified-Kubernetes-Administrator?style=social)](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator)
+
+**Disclaimer:** This is a study and practice resource. It contains practice exercises and training materials designed to help prepare for the CKA exam. It does not include, share, or reproduce actual CKA exam questions. All exercises are independently designed training scenarios. See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for policies.
 
 > My CKA study notes, practice questions, and kubectl cheat sheet. Kubernetes v1.35. I scored 89% — this is everything I used to prepare.
 
@@ -30,7 +32,7 @@ If this was useful, a star helps others find it.
 If you're time-pressured, here's the fast track:
 
 1. **Run the setup script** — get your aliases and vim config right from day one: [`scripts/exam-setup.sh`](scripts/exam-setup.sh)
-2. **Do the exercises** — work through the [18 hands-on exercises](exercises/) in order. Each one targets a specific CKA domain.
+2. **Do the exercises** — work through the [20 hands-on exercises](exercises/) in order. Each one targets a specific CKA domain.
 3. **Memorize the skeletons** — the [YAML skeletons](skeletons/) are the templates I wrote from memory during the exam. Practice until you can type them without looking.
 4. **Do the mock exam** — the [18 practice questions](#practice-questions-with-answers-mock-exam) below simulate real exam weight and difficulty.
 5. **Do killer.sh twice** — once 2 weeks out, once 3 days before. See [killer.sh vs the Real Exam](#killersh-vs-the-real-cka-exam).
@@ -43,7 +45,7 @@ If you're time-pressured, here's the fast track:
 ```
 CKA-Certified-Kubernetes-Administrator/
 ├── README.md                          # This guide (you're here)
-├── exercises/                         # 18 hands-on labs
+├── exercises/                         # 20 hands-on labs
 │   ├── 01-pod-basics/
 │   ├── 02-multi-container-pod/
 │   ├── 03-configmap-secret/
@@ -60,7 +62,9 @@ CKA-Certified-Kubernetes-Administrator/
 │   ├── 15-gateway-api/
 │   ├── 16-hpa/
 │   ├── 17-kubectl-debug/
-│   └── 18-cri-dockerd-setup/
+│   ├── 18-cri-dockerd-setup/
+│   ├── 19-ingress-classic/
+│   └── 20-pod-security-standards/
 ├── skeletons/                         # 23 YAML templates
 │   ├── pod.yaml
 │   ├── deployment.yaml
@@ -3221,24 +3225,27 @@ Track your progress across all CKA domains.
 ### Domain 4 — Cluster Architecture (25%)
 
 - [ ] RBAC: Role, ClusterRole, RoleBinding, ClusterRoleBinding
+- [ ] kubectl auth can-i for RBAC debugging
 - [ ] ServiceAccounts
+- [ ] Pod Security Standards (PSS) enforcement
 - [ ] kubeadm cluster setup
 - [ ] kubeadm cluster upgrade
 - [ ] Container runtime configuration (CRI-dockerd, containerd)
 - [ ] Understand HA topology
 - [ ] Helm install, upgrade, rollback
 - [ ] Kustomize base + overlay
-- [ ] Complete [Exercise 04](exercises/04-rbac/), [08](exercises/08-node-drain-cordon/), [09](exercises/09-kubeadm-upgrade/), [13](exercises/13-helm-install-upgrade/), [14](exercises/14-kustomize-overlays/), [18](exercises/18-cri-dockerd-setup/)
+- [ ] Complete [Exercise 04](exercises/04-rbac/), [08](exercises/08-node-drain-cordon/), [09](exercises/09-kubeadm-upgrade/), [13](exercises/13-helm-install-upgrade/), [14](exercises/14-kustomize-overlays/), [18](exercises/18-cri-dockerd-setup/), [20](exercises/20-pod-security-standards/)
 
 ### Domain 5 — Services & Networking (20%)
 
 - [ ] ClusterIP, NodePort, LoadBalancer services
-- [ ] Ingress resources and controllers
+- [ ] Classic Ingress resources and path-based routing
+- [ ] Ingress TLS termination and IngressClass
 - [ ] Gateway API (Gateway + HTTPRoute)
 - [ ] NetworkPolicy (ingress + egress)
 - [ ] CoreDNS configuration
 - [ ] CNI plugin awareness
-- [ ] Complete [Exercise 05](exercises/05-networkpolicy/), [15](exercises/15-gateway-api/)
+- [ ] Complete [Exercise 05](exercises/05-networkpolicy/), [15](exercises/15-gateway-api/), [19](exercises/19-ingress-classic/)
 
 ### Exam Readiness
 

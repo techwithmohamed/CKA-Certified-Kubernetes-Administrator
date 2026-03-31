@@ -59,7 +59,7 @@ metadata:
 spec:
   initContainers:
   - name: log-agent
-    image: busybox:1.36
+    image: busybox:1.37
     restartPolicy: Always
     command: ["sh", "-c", "tail -f /var/log/app/app.log"]
     volumeMounts:
@@ -67,7 +67,7 @@ spec:
       mountPath: /var/log/app
   containers:
   - name: app
-    image: busybox:1.36
+    image: busybox:1.37
     command: ["sh", "-c", "while true; do echo \"$(date) - app running\" >> /var/log/app/app.log; sleep 3; done"]
     volumeMounts:
     - name: log-volume

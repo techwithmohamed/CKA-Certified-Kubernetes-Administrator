@@ -56,7 +56,7 @@ k delete ns exercise-01
 k create ns exercise-01
 
 # Generate pod YAML
-k run web -n exercise-01 --image=nginx:1.27 --labels=app=web,tier=frontend $do > pod.yaml
+k run web -n exercise-01 --image=nginx:1.28 --labels=app=web,tier=frontend $do > pod.yaml
 ```
 
 Edit `pod.yaml` to add resources:

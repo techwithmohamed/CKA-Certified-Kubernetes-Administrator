@@ -4,9 +4,19 @@
 >
 > Related: [HPA skeleton](../../skeletons/hpa.yaml) | [README — Workloads & Scheduling](../../README.md#domain-3--workloads--scheduling-15)
 
-Configure a Horizontal Pod Autoscaler to scale a deployment based on CPU usage. This requires the metrics-server to be installed in the cluster.
+Configure a Horizontal Pod Autoscaler to scale a deployment based on CPU usage. Also understand Vertical Pod Autoscaler for resource optimization. This requires the metrics-server to be installed in the cluster.
 
-## Tasks
+## Context: HPA vs VPA
+
+## Context: HPA vs VPA
+
+HPA (Horizontal Pod Autoscaler) scales the number of replicas based on metrics like CPU or memory. When CPU exceeds target, HPA creates more pods. When load drops, it removes pods.
+
+VPA (Vertical Pod Autoscaler) adjusts the CPU and memory requests/limits for existing pods based on actual usage. If a pod requests 256Mi memory but only uses 64Mi, VPA recommends lowering the request. This doesn't scale replicas; it optimizes resource allocation to improve bin-packing and reduce waste.
+
+The CKA focuses on HPA, but understanding VPA helps with cluster resource efficiency.
+
+## Tasks (HPA)
 
 1. Create a namespace called `exercise-16`
 2. Verify the metrics-server is running in the cluster
@@ -120,3 +130,45 @@ k get pods -n exercise-16 -w
 ```
 
 </details>
+
+## Optional: Vertical Pod Autoscaler (VPA) Understanding
+
+While VPA is not always tested on the CKA, understanding it helps optimize workloads and appears in cluster efficiency questions. VPA recommends resource adjustments but doesn't enforce them automatically—you review recommendations and apply them.
+
+VPA workflow:
+
+```bash
+# Install VPA (if not already installed)
+# VPA components: Recommender, Updater, Admission Controller
+# Usually installed via: git clone https://github.com/kubernetes/autoscaler.git
+# ./autoscaler/vertical-pod-autoscaler/hack/vpa-up.sh
+
+# After VPA is running, create a VPA policy
+kubectl apply -f - <<EOF
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: vpa-example
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: load-app
+  updatePolicy:
+    updateMode: "Off"  # "Off" = recommendations only, no changes
+EOF
+
+# Check VPA recommendations (after metrics are collected)
+k get vpa vpa-example --watch
+k describe vpa vpa-example
+
+# View recommended resource changes
+k get vpa vpa-example -o jsonpath='{.status.recommendation}'
+```
+
+Key VPA concepts:
+
+- updateMode: "Off" (recommendations only), "Initial" (apply on pod creation), "Recreate" (apply and restart pods), "Auto" (smart choice)
+- VPA may recreate pods to apply new resource requests—plan for disruption
+- VPA works best with PodDisruptionBudgets to avoid cascading disruptions
+- Unlike HPA, VPA requires the Recommender to collect metrics first (takes 1-5 minutes)

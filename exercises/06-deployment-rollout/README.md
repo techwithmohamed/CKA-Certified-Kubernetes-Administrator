@@ -13,15 +13,15 @@ Create a Deployment, perform a rolling update, check rollout history, and rollba
    - Strategy: RollingUpdate with maxSurge=1, maxUnavailable=0
    - Record the change cause
 3. Verify all 3 replicas are running
-4. Update the image to `nginx:1.27` and record the change
+4. Update the image to `nginx:1.29` and record the change
 5. Watch the rollout status
 6. Check rollout history — you should see 2 revisions
-7. Rollback to the previous version (nginx:1.26)
+7. Rollback to the previous version (nginx:1.28)
 8. Verify the rollback worked by checking the image
 
 ## Hints
 
-- `k create deployment webapp --image=nginx:1.26 --replicas=3`
+- `k create deployment webapp --image=nginx:1.28 --replicas=3`
 - `k set image deployment/webapp` to update
 - `k rollout status`, `k rollout history`, `k rollout undo`
 - Annotate with `kubernetes.io/change-cause` to track changes in rollout history
@@ -39,7 +39,7 @@ Create a Deployment, perform a rolling update, check rollout history, and rollba
 k get deploy webapp -n exercise-06
 k get rs -n exercise-06
 
-# After rollback — image should be nginx:1.26
+# After rollback — image should be nginx:1.28
 k get deploy webapp -n exercise-06 -o jsonpath='{.spec.template.spec.containers[0].image}'
 ```
 
@@ -56,7 +56,7 @@ k delete ns exercise-06
 k create ns exercise-06
 
 # Create deployment
-k create deployment webapp -n exercise-06 --image=nginx:1.26 --replicas=3 $do > deploy.yaml
+k create deployment webapp -n exercise-06 --image=nginx:1.28 --replicas=3 $do > deploy.yaml
 ```
 
 Edit `deploy.yaml` to add rolling update strategy, then apply:
@@ -84,20 +84,20 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:1.26
+        image: nginx:1.28
 ```
 
 ```bash
 k apply -f deploy.yaml
-k annotate deployment webapp -n exercise-06 kubernetes.io/change-cause="initial deploy nginx:1.26"
+k annotate deployment webapp -n exercise-06 kubernetes.io/change-cause="initial deploy nginx:1.28"
 
 # Verify
 k get deploy webapp -n exercise-06
 k get pods -n exercise-06
 
 # Update image
-k set image deployment/webapp nginx=nginx:1.27 -n exercise-06
-k annotate deployment webapp -n exercise-06 kubernetes.io/change-cause="update to nginx:1.27" --overwrite
+k set image deployment/webapp nginx=nginx:1.29 -n exercise-06
+k annotate deployment webapp -n exercise-06 kubernetes.io/change-cause="update to nginx:1.29" --overwrite
 
 # Watch rollout
 k rollout status deployment/webapp -n exercise-06
@@ -110,7 +110,7 @@ k rollout undo deployment/webapp -n exercise-06
 
 # Verify rollback
 k get deploy webapp -n exercise-06 -o jsonpath='{.spec.template.spec.containers[0].image}'
-# Should output: nginx:1.26
+# Should output: nginx:1.28
 ```
 
 </details>

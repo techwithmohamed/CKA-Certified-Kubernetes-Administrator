@@ -13,7 +13,7 @@ Gateway API is GA in v1.35 and replaces classic Ingress for modern traffic manag
 3. Create a Gateway named `web-gateway` in namespace `exercise-15`:
    - Reference the existing GatewayClass
    - Listen on port 80, protocol HTTP
-4. Create a Deployment named `web` with image `nginx:1.27` and 2 replicas
+4. Create a Deployment named `web` with image `nginx:1.28` and 2 replicas
 5. Expose it with a ClusterIP Service named `web-svc` on port 80
 6. Create an HTTPRoute named `web-route` that:
    - References `web-gateway` as the parent
@@ -86,7 +86,7 @@ spec:
 
 ```bash
 # Deploy backend
-k create deployment web -n exercise-15 --image=nginx:1.27 --replicas=2
+k create deployment web -n exercise-15 --image=nginx:1.28 --replicas=2
 k expose deployment web -n exercise-15 --port=80 --target-port=80 --name=web-svc
 ```
 

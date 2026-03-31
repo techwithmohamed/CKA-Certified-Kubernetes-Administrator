@@ -18,12 +18,21 @@ Set up Role-Based Access Control with Roles, ClusterRoles, and bindings. This is
 8. Create a ClusterRoleBinding named `dev-node-access` binding `node-viewer` to `dev-sa`
 9. Verify that `dev-sa` can now list nodes
 
+## Additional Real-Exam Scenarios
+
+10. A developer reports they cannot delete a deployment in `exercise-04`. Use `k auth can-i` to debug why
+11. Test what `dev-sa` can do with deployments (should return "no")
+12. List all permissions granted to `dev-sa` in the `exercise-04` namespace
+
 ## Hints
 
 - `k create sa` to create ServiceAccount
 - `k create role` with `--verb` and `--resource` flags
 - `k create rolebinding` with `--role` and `--serviceaccount` flags
 - `k auth can-i --as=system:serviceaccount:<ns>:<sa>` to test permissions
+- `k auth can-i --list --as=...` to see all permissions for a ServiceAccount
+- `k get role/clusterrole <name> -o yaml` to audit actual permissions granted
+- Use `k auth can-i` to debug "permission denied" errors before production
 
 ## What tripped me up
 
@@ -42,6 +51,18 @@ k auth can-i list pods -n default --as=system:serviceaccount:exercise-04:dev-sa
 
 # Should return "yes" after ClusterRoleBinding
 k auth can-i list nodes --as=system:serviceaccount:exercise-04:dev-sa
+
+# Real exam scenarios
+# Verify no permission to delete services (only get/list allowed)
+k auth can-i delete services -n exercise-04 --as=system:serviceaccount:exercise-04:dev-sa
+# Should return "no"
+
+# Verify no permission on deployments (not in the Role)
+k auth can-i delete deployments -n exercise-04 --as=system:serviceaccount:exercise-04:dev-sa
+# Should return "no"
+
+# List all permissions granted (exam-critical debugging)
+k auth can-i --list --as=system:serviceaccount:exercise-04:dev-sa -n exercise-04
 ```
 
 ## Cleanup
