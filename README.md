@@ -3,7 +3,7 @@
 [![YAML Validation](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml/badge.svg)](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml)
 [![CKA](https://img.shields.io/badge/CKA-Certified%202026-success)]()
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
-[![Exercises](https://img.shields.io/badge/Exercises-20-blue)](exercises/)
+[![Exercises](https://img.shields.io/badge/Exercises-22-blue)](exercises/)
 [![Skeletons](https://img.shields.io/badge/YAML%20Skeletons-23-blue)](skeletons/)
 [![GitHub stars](https://img.shields.io/github/stars/theplatformlab/CKA-Certified-Kubernetes-Administrator?style=social)](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator)
 
@@ -45,13 +45,14 @@ If you're time-pressured, here's the fast track:
 ```
 CKA-Certified-Kubernetes-Administrator/
 ├── README.md                          # This guide (you're here)
-├── exercises/                         # 20 hands-on labs
+├── exercises/                         # 22 hands-on labs
 │   ├── 01-pod-basics/
 │   ├── 02-multi-container-pod/
 │   ├── 03-configmap-secret/
 │   ├── 04-rbac/
 │   ├── 05-networkpolicy/
 │   ├── 06-deployment-rollout/
+│   ├── 07-statefulset/
 │   ├── 08-node-drain-cordon/
 │   ├── 09-kubeadm-upgrade/
 │   ├── 10-static-pod/
@@ -64,7 +65,9 @@ CKA-Certified-Kubernetes-Administrator/
 │   ├── 17-kubectl-debug/
 │   ├── 18-cri-dockerd-setup/
 │   ├── 19-ingress-classic/
-│   └── 20-pod-security-standards/
+│   ├── 20-pod-security-standards/
+│   ├── 21-jobs-cronjobs/
+│   └── 22-priorityclass/
 ├── skeletons/                         # 23 YAML templates
 │   ├── pod.yaml
 │   ├── deployment.yaml
