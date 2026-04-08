@@ -20,6 +20,9 @@ Kubernetes deprecated dockershim in v1.20 and removed it in v1.24. To continue u
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - Download the latest amd64 release from https://github.com/Mirantis/cri-dockerd/releases
 - Use `curl -s https://api.github.com/repos/Mirantis/cri-dockerd/releases/latest` to get the latest version automatically
 - The socket path must match what you pass to kubelet: `--cri-socket=unix:///run/cri-dockerd.sock`
@@ -28,6 +31,8 @@ Kubernetes deprecated dockershim in v1.20 and removed it in v1.24. To continue u
 - Check service status with: `sudo systemctl status cri-docker.service`
 - Verify socket exists: `ls -la /run/cri-dockerd.sock`
 - Check logs if service fails: `sudo journalctl -u cri-docker.service -n 50`
+
+</details>
 
 ## What tripped me up
 

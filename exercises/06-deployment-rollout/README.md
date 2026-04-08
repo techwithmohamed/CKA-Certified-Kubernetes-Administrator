@@ -21,10 +21,15 @@ Create a Deployment, perform a rolling update, check rollout history, and rollba
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - `k create deployment webapp --image=nginx:1.28 --replicas=3`
 - `k set image deployment/webapp` to update
 - `k rollout status`, `k rollout history`, `k rollout undo`
 - Annotate with `kubernetes.io/change-cause` to track changes in rollout history
+
+</details>
 
 ## What tripped me up
 

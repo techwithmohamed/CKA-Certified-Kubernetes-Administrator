@@ -21,9 +21,14 @@ Create a pod with a main container and a sidecar container that tails the main c
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - Native sidecars in v1.35: put the sidecar in `initContainers` with `restartPolicy: Always`
 - The sidecar starts before the main container and keeps running alongside it
 - Shared volume: both containers mount the same `emptyDir`
+
+</details>
 
 ## What tripped me up
 

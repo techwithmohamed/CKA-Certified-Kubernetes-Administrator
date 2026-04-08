@@ -40,6 +40,9 @@ Fix a broken cluster. This exercise simulates common failures you'll see on the 
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - `systemctl status kubelet` and `journalctl -u kubelet` for kubelet issues
 - CoreDNS pods run as a Deployment in `kube-system`
 - `k exec <pod> -- nslookup kubernetes` to test DNS
@@ -48,6 +51,8 @@ Fix a broken cluster. This exercise simulates common failures you'll see on the 
 - Audit logs typically at `/var/log/audit/audit.log` or `/var/log/kubernetes/audit/audit.log`
 - Check `/etc/kubernetes/manifests/kube-apiserver.yaml` for `--audit-log-path` and `--audit-policy-file`
 - Look for `"verb":"delete"` or `"user":{"username":"system:admin"}` in audit logs to find specific operations
+
+</details>
 
 ## What tripped me up
 

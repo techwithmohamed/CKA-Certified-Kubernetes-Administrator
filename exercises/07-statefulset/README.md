@@ -26,12 +26,17 @@ Unlike Deployments where pod identity doesn't matter, StatefulSets maintain iden
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - Headless Service: set `spec.clusterIP: None` in the Service definition
 - StatefulSet pods get DNS names like `nginx-0.nginx.default.svc.cluster.local`
 - Use `.spec.serviceName` to reference the headless Service
 - `.spec.volumeClaimTemplates` automatically creates a PVC for each replica
 - Pod ordinals matter: `mysql-0` runs before `mysql-1` (controlled by `podManagementPolicy: OrderedReady`)
 - `k get pvc` will show each pod's persistent claim
+
+</details>
 
 ## What tripped me up
 

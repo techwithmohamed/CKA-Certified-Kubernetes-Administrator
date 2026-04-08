@@ -17,7 +17,12 @@ Drain a worker node for maintenance, then bring it back. This tests your underst
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 You honestly don't need hints for this one. `k drain --help` tells you everything. The two flags you always need are `--ignore-daemonsets` and `--delete-emptydir-data`.
+
+</details>
 
 ## What tripped me up
 

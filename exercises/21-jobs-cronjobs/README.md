@@ -32,6 +32,9 @@ On the exam, you'll create both and understand backoff limits, completions, and 
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - **completions=3**: The Job must run 3 times successfully before completion.
 - **parallelism=1**: Run one pod at a time, serially.
 - **backoffLimit=3**: Retry failed pods up to 3 times, then give up.
@@ -39,6 +42,8 @@ On the exam, you'll create both and understand backoff limits, completions, and 
 - For CronJobs, use `spec.schedule` with standard cron syntax (e.g., `0 * * * *` = every hour).
 - `kubectl get cronjob` shows the next scheduled time in the LAST SCHEDULE column.
 - To manually trigger a CronJob: `kubectl create job <jobname> --from=cronjob/<cronname>`.
+
+</details>
 
 ---
 

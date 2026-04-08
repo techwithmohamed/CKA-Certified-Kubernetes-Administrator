@@ -25,11 +25,16 @@ Create PersistentVolumes, PersistentVolumeClaims, and mount them into pods. This
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - PV is cluster-scoped (no namespace). PVC is namespace-scoped.
 - The PVC binds to a PV if capacity >= request AND accessMode and storageClass match
 - With `Retain`, deleting the PVC releases the PV but doesn't delete the data
 - With `Delete`, deleting the PVC deletes the PV and its data
 - `k get pv` and `k get pvc -n <ns>` to check status
+
+</details>
 
 ## What tripped me up
 

@@ -33,10 +33,15 @@ Build a base deployment and apply an overlay that changes the namespace and repl
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - `kubectl apply -k <overlay-dir>/`
 - `kubectl kustomize <overlay-dir>/` to preview the output without applying
 - Overlay `kustomization.yaml` references the base with `resources: [../../base]`
 - Use `replicas` field in kustomization.yaml to patch replica count
+
+</details>
 
 ## What tripped me up
 

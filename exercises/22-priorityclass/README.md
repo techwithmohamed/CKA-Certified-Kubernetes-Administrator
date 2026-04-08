@@ -32,12 +32,17 @@ On the exam, you'll create PriorityClasses and assign them to pods. You need to 
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - **Priority values**: Higher number = higher priority. System pods use 2000000000 (reserved by Kubernetes). Use 1-1000 for application priorities to stay safe.
 - **preemptionPolicy: PreemptLowerPriority**: Allow this priority class to evict lower-priority pods if resources are scarce.
 - **preemptionPolicy: Never**: This priority class will not evict or be evicted, even if it can't fit. It'll just wait.
 - Default priority is 0. Pods without an explicit PriorityClass use priority 0.
 - You must create a PriorityClass with `kind: PriorityClass` (not a built-in). PriorityClasses are cluster-wide, not namespaced.
 - Preemption only happens when the scheduler can't fit a pod and has eviction candidates. It's not automatic.
+
+</details>
 
 ---
 

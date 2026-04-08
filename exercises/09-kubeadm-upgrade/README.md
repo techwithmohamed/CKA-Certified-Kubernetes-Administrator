@@ -23,11 +23,16 @@ Upgrade a cluster from one minor version to the next using kubeadm. The CKA freq
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - Always upgrade control plane first, then workers one at a time
 - The package manager commands depend on your OS (apt for Ubuntu, yum for CentOS)
 - `kubeadm upgrade plan` shows you what versions are available
 - On workers, it's `kubeadm upgrade node` (NOT `kubeadm upgrade apply`)
 - Don't forget to drain before upgrading a worker
+
+</details>
 
 ## What tripped me up
 

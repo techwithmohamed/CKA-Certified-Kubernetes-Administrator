@@ -23,10 +23,15 @@ Create ConfigMaps and Secrets, then inject them into a pod as environment variab
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - `k create configmap app-config --from-literal=APP_MODE=production --from-literal=LOG_LEVEL=debug`
 - `k create secret generic db-creds --from-literal=DB_USER=admin --from-literal=DB_PASS=s3cretP@ss`
 - Use `envFrom` to load all keys from a ConfigMap or Secret
 - Use `volumes` + `volumeMounts` to mount ConfigMap as files
+
+</details>
 
 ## What tripped me up
 

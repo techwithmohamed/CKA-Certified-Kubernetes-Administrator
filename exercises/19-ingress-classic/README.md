@@ -31,12 +31,17 @@ This differs from Exercise 15 (Gateway API) because it tests the older API that'
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - `k create service clusterip` to create services imperatively
 - Ingress requires an Ingress Controller (usually nginx-ingress or similar) to function
 - Path-based routing uses `path` with `pathType: Prefix` in Ingress rules
 - `k get ingress` shows ingress resources; `k describe ingress` shows routing rules
 - Without an Ingress Controller, the Ingress creates successfully but no ADDRESS is assigned
 - Exam scenario: You may need to install/verify nginx-ingress controller first
+
+</details>
 
 ## What tripped me up
 

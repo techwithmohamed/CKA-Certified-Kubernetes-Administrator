@@ -24,11 +24,16 @@ Gateway API is GA in v1.35 and replaces classic Ingress for modern traffic manag
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - `k get gatewayclass` to find the available class
 - The Gateway `listeners[].protocol` is `HTTP`, not `TCP`
 - HTTPRoute `parentRefs` must match the Gateway name and namespace
 - Check status: `k get gateway web-gateway -n exercise-15 -o yaml`
 - If no GatewayClass is installed, use Envoy Gateway or Cilium
+
+</details>
 
 ## What tripped me up
 

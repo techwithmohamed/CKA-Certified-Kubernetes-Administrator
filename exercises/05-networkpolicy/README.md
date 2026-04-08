@@ -20,9 +20,14 @@ Create NetworkPolicies to control pod-to-pod traffic. Watch out for the DNS gotc
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - Once you apply any NetworkPolicy to a pod, all traffic not explicitly allowed is denied
-- You almost always need to allow DNS egress (UDP 53), or the pod can't resolve service names
+- You almost always need to allow DNS egress (UDP port 53), or the pod can't resolve service names
 - Test connectivity with `k exec <pod> -- wget -qO- --timeout=2 http://<target-ip>`
+
+</details>
 
 ## What tripped me up
 

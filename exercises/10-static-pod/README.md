@@ -17,10 +17,15 @@ Create a static pod by placing a manifest in the kubelet's static pod directory.
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - The static pod path is configured in the kubelet config, usually `/etc/kubernetes/manifests/`
 - Check kubelet config: `cat /var/lib/kubelet/config.yaml | grep staticPodPath`
 - Static pods show up in `kubectl` but can't be deleted through the API — the kubelet recreates them
 - The pod name will be `static-web-<node-name>`
+
+</details>
 
 ## Verify
 

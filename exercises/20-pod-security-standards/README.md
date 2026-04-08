@@ -28,12 +28,17 @@ In Kubernetes 1.35, Pod Security Standards are part of the standard admission co
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - Namespace labels for PSS use format: `pod-security.kubernetes.io/enforce=restricted`
 - Three modes: `enforce` (deny), `audit` (allow but log), `warn` (allow but show warning)
 - Pod security levels: `privileged` (no restrictions), `baseline` (minimal restrictions), `restricted` (modern hardening)
 - `k label ns <namespace> pod-security.kubernetes.io/enforce=restricted` to add PSS labels
 - `k get pods -o yaml` shows audit annotations in `metadata.annotations` when violations occur
 - A "restricted" level pod must have: `runAsNonRoot=true`, `allowPrivilegeEscalation=false`, `readOnlyRootFilesystem=true`
+
+</details>
 
 ## What tripped me up
 

@@ -19,9 +19,14 @@ Create a pod with specific resource requests, labels, and verify it's running.
 
 ## Hints
 
-- Use `k run` with `$do` to generate the YAML, then edit it to add resources
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
+- Use `k run` to generate the YAML, then edit it to add resources
 - `k label pod` to add labels, `k label pod <name> <label>-` to remove them
 - Resource fields go under `spec.containers[].resources`
+
+</details>
 
 ## What tripped me up
 

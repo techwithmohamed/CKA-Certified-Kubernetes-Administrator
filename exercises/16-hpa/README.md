@@ -35,10 +35,15 @@ The CKA focuses on HPA, but understanding VPA helps with cluster resource effici
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - `k top pods -n exercise-16` to check if metrics-server is working
 - `k autoscale deployment load-app --cpu-percent=50 --min=1 --max=5`
 - Load generation: `k run load-gen --image=busybox:1.36 --rm -it -- sh -c "while true; do wget -q -O- http://load-svc.exercise-16; done"`
 - Scale down takes a few minutes after load stops
+
+</details>
 
 ## What tripped me up
 

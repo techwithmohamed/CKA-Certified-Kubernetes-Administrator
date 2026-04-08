@@ -28,11 +28,16 @@ Use `kubectl debug` to troubleshoot running pods and access node-level resources
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - Pod debug: `k debug <pod> -it --image=busybox:1.36 --target=<container>`
 - Node debug: `k debug node/<node-name> -it --image=busybox:1.36`
 - The `--target` flag shares process namespace with the target container
 - Node debug mounts the host filesystem at `/host`
 - Use `chroot /host` to run node commands directly
+
+</details>
 
 ## What tripped me up
 

@@ -26,6 +26,9 @@ Set up Role-Based Access Control with Roles, ClusterRoles, and bindings. This is
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - `k create sa` to create ServiceAccount
 - `k create role` with `--verb` and `--resource` flags
 - `k create rolebinding` with `--role` and `--serviceaccount` flags
@@ -33,6 +36,8 @@ Set up Role-Based Access Control with Roles, ClusterRoles, and bindings. This is
 - `k auth can-i --list --as=...` to see all permissions for a ServiceAccount
 - `k get role/clusterrole <name> -o yaml` to audit actual permissions granted
 - Use `k auth can-i` to debug "permission denied" errors before production
+
+</details>
 
 ## What tripped me up
 

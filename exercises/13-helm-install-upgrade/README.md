@@ -20,11 +20,16 @@ Install a chart, override values, upgrade to a new version, and roll back when s
 
 ## Hints
 
+<details>
+<summary>Stuck? Click to reveal hints</summary>
+
 - `helm repo add bitnami https://charts.bitnami.com/bitnami`
 - `helm install <name> <chart> -n <ns> --create-namespace --set key=value`
 - `helm upgrade <name> <chart> -n <ns> --set key=value`
 - `helm rollback <name> <revision> -n <ns>`
 - `helm history <name> -n <ns>`
+
+</details>
 
 ## What tripped me up
 
