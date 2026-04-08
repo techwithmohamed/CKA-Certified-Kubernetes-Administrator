@@ -31,12 +31,12 @@ If this was useful, a star helps others find it.
 
 If you're time-pressured, here's the fast track:
 
-1. **Run the setup script** — get your aliases and vim config right from day one: [`scripts/exam-setup.sh`](scripts/exam-setup.sh)
-2. **Do the exercises** — work through the [20 hands-on exercises](exercises/) in order. Each one targets a specific CKA domain.
-3. **Memorize the skeletons** — the [YAML skeletons](skeletons/) are the templates I wrote from memory during the exam. Practice until you can type them without looking.
-4. **Do the mock exam** — the [18 practice questions](#practice-questions-with-answers-mock-exam) below simulate real exam weight and difficulty.
+1. **Run the setup script** — get your aliases and vim config right from day one: [scripts/exam-setup.sh](scripts/exam-setup.sh)
+2. **Do the exercises** — work through the [22 hands-on exercises](exercises/) in order. Each one targets a specific CKA domain.
+3. **Use YAML templates** — reference [TEMPLATES.md](TEMPLATES.md) for all skeleton YAML. Copy, paste, modify.
+4. **Do the mock exam** — practice under exam conditions with timed scenarios.
 5. **Do killer.sh twice** — once 2 weeks out, once 3 days before. See [killer.sh vs the Real Exam](#killersh-vs-the-real-cka-exam).
-6. **Read the exam day strategy** — the [two-pass approach](#exam-day-strategy--time-allocation) saved me at least 15 minutes.
+6. **Read the exam day strategy** — the [two-pass approach](#exam-day-strategy--time-allocation) saved time on exam day.
 
 ---
 
@@ -68,30 +68,8 @@ CKA-Certified-Kubernetes-Administrator/
 │   ├── 20-pod-security-standards/
 │   ├── 21-jobs-cronjobs/
 │   └── 22-priorityclass/
-├── skeletons/                         # 23 YAML templates
-│   ├── pod.yaml
-│   ├── deployment.yaml
-│   ├── service.yaml
-│   ├── networkpolicy.yaml
-│   ├── ingress.yaml
-│   ├── gateway-api.yaml
-│   ├── rbac.yaml
-│   ├── clusterrole.yaml
-│   ├── pv.yaml
-│   ├── pvc.yaml
-│   ├── storageclass.yaml
-│   ├── daemonset.yaml
-│   ├── statefulset.yaml
-│   ├── job.yaml
-│   ├── cronjob.yaml
-│   ├── configmap-secret.yaml
-│   ├── securitycontext.yaml
-│   ├── resourcequota.yaml
-│   ├── hpa.yaml
-│   ├── limitrange.yaml
-│   ├── serviceaccount.yaml
-│   ├── sidecar-init-container.yaml
-│   └── validatingadmissionpolicy.yaml
+├── TEMPLATES.md                       # All YAML templates in collapsible format
+├── skeletons/                         # 23 YAML template files (see TEMPLATES.md)
 ├── cheatsheet/
 │   └── cka-cheatsheet.md              # One-page printable reference
 ├── troubleshooting/
