@@ -2,7 +2,7 @@
 
 Ready-to-use Kubernetes YAML templates for the CKA exam. These cover every resource type you'll encounter.
 
-During the exam, I wrote most of these from memory instead of copying from docs. It was faster. Practice writing them until you don't need to look anything up.
+During the exam, don't write YAML from memory. Instead, use imperative kubectl commands to generate YAML — it's faster and has fewer typos. These skeletons are for reference and for resources where no imperative command exists. For everything else, use `kubectl create`, `kubectl run`, or `kubectl expose`, then pipe to `--dry-run=client -o yaml`.
 
 | Skeleton | Kind(s) | Domain | When You Need It |
 |---|---|---|---|
@@ -30,25 +30,41 @@ During the exam, I wrote most of these from memory instead of copying from docs.
 | [sidecar-init-container.yaml](sidecar-init-container.yaml) | Pod (native sidecar) | Workloads | Init container with restartPolicy: Always (v1.35 GA) |
 | [validatingadmissionpolicy.yaml](validatingadmissionpolicy.yaml) | ValidatingAdmissionPolicy + Binding | Cluster Arch | CEL-based admission control (v1.35 GA) |
 
-## Quick Reference
+## Exam Strategy: Generate vs Write
 
-Generate YAML on the fly instead of copying from here:
+**Generate YAML with imperative commands (faster, fewer typos):**
 
 ```bash
 # Pod
-k run my-pod --image=nginx:1.27 $do > pod.yaml
+k run my-pod --image=nginx:1.28 --dry-run=client -o yaml
 
 # Deployment
-k create deployment my-dep --image=nginx:1.27 --replicas=3 $do > dep.yaml
+k create deployment my-dep --image=nginx:1.28 --replicas=3 --dry-run=client -o yaml
 
 # Service
-k expose deployment my-dep --port=80 --target-port=80 $do > svc.yaml
+k expose deployment my-dep --port=80 --target-port=8080 --type=ClusterIP --dry-run=client -o yaml
 
 # Job
-k create job my-job --image=busybox:1.36 -- sh -c "echo done" $do > job.yaml
+k create job my-job --image=busybox:1.37 --dry-run=client -o yaml -- sh -c "echo done"
 
 # CronJob
-k create cronjob my-cron --image=busybox:1.36 --schedule="*/5 * * * *" -- sh -c "date" $do > cron.yaml
+k create cronjob my-cron --image=busybox:1.37 --schedule="*/5 * * * *" --dry-run=client -o yaml -- sh -c "date"
+
+# DaemonSet (no imperative command exists; use skeleton or kubectl explain)
+k explain daemonset.spec
 ```
 
-For anything more complex (NetworkPolicy, PV, StatefulSet, DaemonSet), use the skeletons in this directory as your starting point.
+**When to write from YAML skeletons:**
+- NetworkPolicy (no `kubectl create networkpolicy`)
+- PersistentVolume / PersistentVolumeClaim (static provisioning)
+- RBAC (Role, RoleBinding, ClusterRole)
+- StorageClass (custom provisioner logic)
+- Ingress / Gateway API (complex routing rules)
+- SecurityContext (fine-grained pod security)
+
+**Always have these available in the exam:**
+- `kubectl explain <resource>` — Check valid field names and structure
+- `kubectl explain pod.spec.containers` — Drill into nested fields
+- kubernetes.io documentation (searchable in exam browser)
+
+Use the skeletons in this directory as starting points when you need to write YAML. Copy, paste, modify — don't type from memory.
