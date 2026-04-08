@@ -5,6 +5,7 @@
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![Exercises](https://img.shields.io/badge/Exercises-22-blue)](exercises/)
 [![Skeletons](https://img.shields.io/badge/YAML%20Skeletons-23-blue)](skeletons/)
+[![Mock Exams](https://img.shields.io/badge/Mock%20Exams-2-success)](mock-exams/)
 [![GitHub stars](https://img.shields.io/github/stars/theplatformlab/CKA-Certified-Kubernetes-Administrator?style=social)](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator)
 
 **Disclaimer:** This is a study and practice resource. It contains practice exercises and training materials designed to help prepare for the CKA exam. It does not include, share, or reproduce actual CKA exam questions. All exercises are independently designed training scenarios. See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for policies.
@@ -70,6 +71,11 @@ CKA-Certified-Kubernetes-Administrator/
 │   └── 22-priorityclass/
 ├── TEMPLATES.md                       # All YAML templates in collapsible format
 ├── skeletons/                         # 23 YAML template files (see TEMPLATES.md)
+├── mock-exams/                        # Full practice exams (15 questions, 2 hours each)
+│   ├── MOCK-EXAM-01.md               # Practice questions
+│   ├── MOCK-EXAM-01-SOLUTIONS.md    # Complete solutions and explanations
+│   ├── MOCK-EXAM-02.md
+│   └── MOCK-EXAM-02-SOLUTIONS.md
 ├── cheatsheet/
 │   └── cka-cheatsheet.md              # One-page printable reference
 ├── troubleshooting/
@@ -93,17 +99,7 @@ CKA-Certified-Kubernetes-Administrator/
 
 ## Table of Contents
 
-- [CKA Exam Details — Cost, Duration, Passing Score, Format](#cka-exam-details--cost-duration-passing-score-format-march-2026)
-- [How Much Does the CKA Exam Cost?](#how-much-does-the-cka-exam-cost)
-- [CKA vs CKAD vs CKS — Which One Should You Take?](#cka-vs-ckad-vs-cks--which-one-should-you-take)
-- [CKA vs CKAD vs CKS Scope Architecture Diagram](#cka-vs-ckad-vs-cks-scope-architecture-diagram)
-- [What Changed in Kubernetes v1.35 for CKA](#what-changed-in-kubernetes-v135-for-cka)
-- [Before You Book the CKA Exam](#before-you-book-the-cka-exam)
-- [The Exam Environment (PSI Remote Desktop)](#the-exam-environment-psi-remote-desktop)
-- [First 60 Seconds — Aliases, vim, bash](#first-60-seconds--aliases-vim-bash)
-- [Imperative Commands Quick Reference](#imperative-commands-quick-reference)
-- [Docs Pages I Actually Used During the Exam](#docs-pages-i-actually-used-during-the-exam)
-- [kubectl Cheat Sheet for CKA](#kubectl-cheat-sheet-for-cka)
+### Start Here — Practice Your Skills
 - [CKA Syllabus Breakdown (v1.35)](#cka-syllabus-breakdown-v135)
   - [Domain 1 — Storage (10%)](#domain-1--storage-10)
   - [Domain 2 — Troubleshooting (30%)](#domain-2--troubleshooting-30)
@@ -111,18 +107,37 @@ CKA-Certified-Kubernetes-Administrator/
   - [Domain 4 — Cluster Architecture, Installation & Configuration (25%)](#domain-4--cluster-architecture-installation--configuration-25)
   - [Domain 5 — Services & Networking (20%)](#domain-5--services--networking-20)
 - [CKA Domain Weight Distribution](#cka-domain-weight-distribution)
+- [Practice Scenarios with Full Solutions](#practice-scenarios-with-full-solutions)
+- [Mock Exams — Final Preparation](#mock-exams--final-preparation)
+- [Study Progress Tracker](#study-progress-tracker)
+
+### Exam Preparation Strategy
+- [The Exam Environment (PSI Remote Desktop)](#the-exam-environment-psi-remote-desktop)
+- [First 60 Seconds — Aliases, vim, bash](#first-60-seconds--aliases-vim-bash)
+- [Imperative Commands Quick Reference](#imperative-commands-quick-reference)
+- [YAML Templates Quick Reference](#yaml-skeletons--write-these-from-memory)
 - [Exam Day Strategy — Time Allocation](#exam-day-strategy--time-allocation)
 - [Mistakes That Will Fail You on the CKA](#mistakes-that-will-fail-you-on-the-cka)
 - [Troubleshooting Decision Flowchart](#troubleshooting-decision-flowchart)
-- [Practice Scenarios with Full Solutions](#practice-scenarios-with-full-solutions)
-- [Practice Questions with Answers (Mock Exam)](#practice-questions-with-answers-mock-exam)
-- [Study Resources for CKA 2026](#study-resources-for-cka-2026)
-- [CKA Study Plan (4-5 Weeks)](#cka-study-plan-4-5-weeks)
-- [killer.sh vs the Real CKA Exam](#killersh-vs-the-real-cka-exam)
 - [CKA Exam Day Checklist](#cka-exam-day-checklist)
-- [Study Progress Tracker](#study-progress-tracker)
-- [YAML Skeletons — Write These from Memory](#yaml-skeletons--write-these-from-memory)
+
+### Study Resources & Planning
+- [kubectl Cheat Sheet for CKA](#kubectl-cheat-sheet-for-cka)
+- [Docs Pages I Actually Used During the Exam](#docs-pages-i-actually-used-during-the-exam)
+- [CKA Study Plan (4-5 Weeks)](#cka-study-plan-4-5-weeks)
+- [Study Resources for CKA 2026](#study-resources-for-cka-2026)
+- [killer.sh vs the Real CKA Exam](#killersh-vs-the-real-cka-exam)
+
+### Exam Details & Reference
+- [CKA Exam Details — Cost, Duration, Passing Score, Format](#cka-exam-details--cost-duration-passing-score-format-march-2026)
+- [How Much Does the CKA Exam Cost?](#how-much-does-the-cka-exam-cost)
+- [CKA vs CKAD vs CKS — Which One Should You Take?](#cka-vs-ckad-vs-cks--which-one-should-you-take)
+- [CKA vs CKAD vs CKS Scope Architecture Diagram](#cka-vs-ckad-vs-cks-scope-architecture-diagram)
+- [What Changed in Kubernetes v1.35 for CKA](#what-changed-in-kubernetes-v135-for-cka)
+- [Before You Book the CKA Exam](#before-you-book-the-cka-exam)
 - [CKA FAQ — Common Questions](#cka-faq--common-questions)
+
+### Final Thoughts
 - [Final Words](#final-words)
 
 ---
@@ -3212,6 +3227,25 @@ Track your progress across all CKA domains.
 - [ ] killer.sh session 2 completed
 - [ ] Mock exam completed (>66%)
 - [ ] ID verified and CNCF account name matches
+
+---
+
+## Mock Exams — Final Preparation
+
+Two comprehensive practice exams matching real CKA format:
+
+- [Mock Exam 01](mock-exams/MOCK-EXAM-01.md) — 15 questions, 2 hours (answers in [MOCK-EXAM-01-SOLUTIONS.md](mock-exams/MOCK-EXAM-01-SOLUTIONS.md))
+- [Mock Exam 02](mock-exams/MOCK-EXAM-02.md) — 15 questions, 2 hours (answers in [MOCK-EXAM-02-SOLUTIONS.md](mock-exams/MOCK-EXAM-02-SOLUTIONS.md))
+
+Each exam:
+- Covers all 5 domains with realistic weight distribution
+- Requires 7-10 minutes per question (like real exam)
+- Has separate question and solution files (don't look at solutions until done)
+- Focuses on integration across domains, not single-domain skills
+
+Scoring: 10+ correct (66%) = pass. 12+ = strong. 15/15 = ready for the real exam.
+
+Study approach: Complete all 22 exercises first, then take both mock exams under timed conditions. Track weak areas and review corresponding exercises before taking the real exam.
 
 ---
 
