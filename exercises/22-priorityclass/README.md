@@ -64,8 +64,13 @@ k get priorityclass -o wide
 
 # Check pod priority
 k get pod -o wide
-k get pod critical-app -o json | jq '.spec.priorityClassName, .spec.priority'
-k get pod background-job -o json | jq '.spec.priorityClassName, .spec.priority'
+
+# Fast priority check (all pods in one table)
+k get pod -o custom-columns=NAME:.metadata.name,CLASS:.spec.priorityClassName,PRIORITY:.spec.priority
+
+# Single pod checks (exam-safe, no jq needed)
+k get pod critical-app -o jsonpath='{.spec.priorityClassName}{" "}{.spec.priority}{"\n"}'
+k get pod background-job -o jsonpath='{.spec.priorityClassName}{" "}{.spec.priority}{"\n"}'
 
 # Check pod scheduling
 k describe pod critical-app
