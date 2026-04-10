@@ -118,6 +118,7 @@ CKA-Certified-Kubernetes-Administrator/
 - [YAML Templates Quick Reference](#yaml-skeletons--write-these-from-memory)
 - [Exam Day Strategy — Time Allocation](#exam-day-strategy--time-allocation)
 - [Mistakes That Will Fail You on the CKA](#mistakes-that-will-fail-you-on-the-cka)
+- [Vim Keys I Actually Used on Exam Day](#vim-keys-i-actually-used-on-exam-day)
 - [Troubleshooting Decision Flowchart](#troubleshooting-decision-flowchart)
 - [CKA Exam Day Checklist](#cka-exam-day-checklist)
 
@@ -1965,6 +1966,41 @@ k create rolebinding my-binding \
   --serviceaccount=my-ns:my-sa \
   -n my-ns
 ```
+
+---
+
+## Vim Keys I Actually Used on Exam Day
+
+Not a vim guide, just the handful I kept hitting. If you already know vim, skip this.
+
+Vim has two modes that matter here: **insert mode** (where you type text like a normal editor) and **normal mode** (where keys are commands). You start in normal mode. Press `i` to enter insert mode, press `Esc` to get back to normal mode. Almost every shortcut below is a normal mode command, so hit `Esc` first if you are not sure where you are.
+
+**Opening and saving**
+
+- `vim <file>` to open the file. You start in normal mode.
+- `i` (normal mode) to enter insert mode and start typing.
+- `Esc` to leave insert mode and go back to normal mode.
+- `:wq` (normal mode) to save and quit. `:q!` to bail without saving.
+
+**Moving around (normal mode)**
+
+- `A` jumps to the end of the current line and drops you into insert mode. Handy for adding to an existing line without arrow-keying across.
+- `$` moves the cursor to the end of the line without entering insert mode.
+- `0` moves to the start of the line.
+- `gg` jumps to the top of the file, `G` jumps to the bottom.
+- `H` top of the visible screen, `M` middle, `L` bottom.
+- `/word` then `Enter` to search, `n` for the next match.
+
+**Editing (normal mode)**
+
+- `<number>dd` deletes that many lines. `5dd` wipes 5 lines at once. I used this constantly to clean up the junk that `kubectl ... --dry-run=client -o yaml` adds (status blocks, creationTimestamp, empty resources).
+- `dd` on its own deletes the current line.
+- `u` to undo.
+
+That is all I needed. Anything fancier I would look up, but on exam day I never had to.
+
+[Back to top](#table-of-contents)
+
 
 ---
 
