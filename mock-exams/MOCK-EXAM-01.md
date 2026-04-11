@@ -106,9 +106,7 @@ Enable API server audit logging and examine the logs for ConfigMap access patter
 
 ## Question 9: HPA and Application Scaling
 
-An application deployment runs with 2 replicas. Under load, it should scale up to 10 replicas when CPU reaches 70%. It should scale down to 2 replicas when CPU drops below 30%.
-
-Create a Horizontal Pod Autoscaler that enforces these constraints. The deployment is named `web-app` in namespace `production`.
+An application deployment named `web-app` in namespace `production` runs with 2 replicas. Create a Horizontal Pod Autoscaler that maintains an average CPU utilization of 70% across pods, scaling between a minimum of 2 and a maximum of 10 replicas.
 
 **Time: 7 minutes**
 

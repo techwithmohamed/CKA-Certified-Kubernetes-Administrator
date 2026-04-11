@@ -390,9 +390,10 @@ Verify HPA:
 ```bash
 k get hpa -n production
 k describe hpa web-app-hpa -n production
+kubectl top pods -n production   # confirms metrics-server is working
 ```
 
-**Key insight:** avgUtilization 70 means scale up when average CPU across all replicas exceeds 70%. It will scale down when it drops below the default threshold (usually 30% by default, but can be tuned). HPA requires metrics-server to be running.
+**Key insight:** HPA uses a single target utilization, not separate scale-up and scale-down thresholds. On each sync it computes `desiredReplicas = ceil(currentReplicas × currentCPU / targetCPU)` and scales in either direction within the `minReplicas`/`maxReplicas` bounds. A built-in tolerance (default 10%) prevents action on minor fluctuations, and scale-down aggressiveness can be tuned via `spec.behavior.scaleDown` (e.g. `stabilizationWindowSeconds`) rather than any fixed percentage. HPA requires `metrics-server` to be running.
 
 ---
 
