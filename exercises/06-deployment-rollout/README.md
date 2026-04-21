@@ -9,7 +9,7 @@ Create a Deployment, perform a rolling update, check rollout history, and rollba
 1. Create a namespace called `exercise-06`
 2. Create a Deployment named `webapp` with:
    - 3 replicas
-   - Image: `nginx:1.26`
+   - Image: `nginx:1.28`
    - Strategy: RollingUpdate with maxSurge=1, maxUnavailable=0
    - Record the change cause
 3. Verify all 3 replicas are running
