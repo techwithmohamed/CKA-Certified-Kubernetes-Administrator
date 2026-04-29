@@ -87,10 +87,32 @@ k create ns exercise-04
 # ServiceAccount
 k create sa dev-sa -n exercise-04
 
-# Role
-k create role pod-manager -n exercise-04 \
-  --verb=get,list,watch,create,delete --resource=pods \
-  --verb=get,list --resource=services
+# Role - Option 1: Create via YAML to ensure separate rules
+cat <<EOF | k apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-manager
+  namespace: exercise-04
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+EOF
 
 # RoleBinding
 k create rolebinding dev-pod-access -n exercise-04 \
