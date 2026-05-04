@@ -25,7 +25,7 @@ Create NetworkPolicies to control pod-to-pod traffic. Watch out for the DNS gotc
 
 - Once you apply any NetworkPolicy to a pod, all traffic not explicitly allowed is denied
 - You almost always need to allow DNS egress (UDP port 53), or the pod can't resolve service names
-- Test connectivity with `k exec <pod> -- wget -qO- --timeout=2 http://<target-ip>`
+- Test connectivity with `k exec <pod> -- curl -m2 http://<target-ip>`
 
 </details>
 
@@ -42,10 +42,10 @@ Create NetworkPolicies to control pod-to-pod traffic. Watch out for the DNS gotc
 BACKEND_IP=$(k get pod backend -n exercise-05 -o jsonpath='{.status.podIP}')
 
 # Frontend -> Backend: should work
-k exec frontend -n exercise-05 -- wget -qO- --timeout=2 http://$BACKEND_IP
+k exec frontend -n exercise-05 -- curl -m2 http://$BACKEND_IP
 
 # Attacker -> Backend: should time out
-k exec attacker -n exercise-05 -- wget -qO- --timeout=2 http://$BACKEND_IP
+k exec attacker -n exercise-05 -- curl -m2 http://$BACKEND_IP
 ```
 
 ## CNI Troubleshooting
@@ -117,7 +117,7 @@ ssh <node> sudo iptables -L -n
 ssh <node> sudo iptables -L -n -t nat
 
 # Step 5: Verify service connectivity
-k exec frontend -n exercise-05 -- wget -qO- http://kubernetes.default.svc.cluster.local
+k exec frontend -n exercise-05 -- curl -m2 http://kubernetes.default.svc.cluster.local
 k exec frontend -n exercise-05 -- nslookup kubernetes.default
 ```
 
@@ -182,8 +182,8 @@ k apply -f netpol.yaml
 
 # Test
 BACKEND_IP=$(k get pod backend -n exercise-05 -o jsonpath='{.status.podIP}')
-k exec frontend -n exercise-05 -- wget -qO- --timeout=2 http://$BACKEND_IP
-k exec attacker -n exercise-05 -- wget -qO- --timeout=2 http://$BACKEND_IP
+k exec frontend -n exercise-05 -- curl -m2 http://$BACKEND_IP
+k exec attacker -n exercise-05 -- curl -m2 http://$BACKEND_IP
 ```
 
 </details>
