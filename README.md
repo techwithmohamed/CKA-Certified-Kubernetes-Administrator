@@ -286,7 +286,7 @@ Checklist I wish someone had given me before I started booking:
 3. **Are you comfortable with RBAC?** Role vs ClusterRole, RoleBinding vs ClusterRoleBinding, ServiceAccounts — I fumbled the `--as=system:serviceaccount:ns:name` syntax for weeks before it clicked.
 4. **Can you troubleshoot a NotReady node?** SSH in, check kubelet, check certificates, check networking. This is 30% of the score and it's the section where most people lose the most time.
 5. **Do you have a cluster to practice on?** kind or minikube on your laptop, or Killercoda/KodeKloud online. You cannot pass this exam by reading — you have to break things.
-6. **Have you done killer.sh at least once?** The real exam is easier, but killer.sh builds speed and confidence. My first killer.sh score was terrible. That's normal.
+6. **Have you done killer.sh at least once?** killer.sh is good practice but don't assume the real exam is easier. Both have tricky questions. Killer.sh builds speed and confidence, which matters more. My first killer.sh score was terrible. That's normal.
 7. **Is your ID ready?** Government-issued ID, matching your CNCF account name. Check this before exam day.
 
 ---
@@ -3061,7 +3061,7 @@ What I actually used, in order of usefulness:
 
 | Resource | Honest review | Cost |
 |---|---|---|
-| [killer.sh](https://killer.sh) | Included with your exam purchase. Two 24-hour sessions. Way harder than the real exam — I scored 60% on killer.sh and 89% on the actual CKA. If you can pass killer.sh, you're ready. Don't waste both sessions early. Save one for the week before. | Free with exam |
+| [killer.sh](https://killer.sh) | Included with your exam purchase. Two 24-hour sessions. Significantly harder, but the real exam also has tricky questions. If you can pass killer.sh, you're likely ready. I scored 60% on killer.sh and 89% on the actual CKA. Don't waste both sessions early. Save one for the week before. | Free with exam |
 | [KodeKloud CKA Course](https://kodekloud.com) | Mumshad's course carried me through the first two weeks. The built-in labs are what make it worth it — I wouldn't have learned etcd restore without them. | ~$15-25/mo |
 | [Udemy — Mumshad CKA](https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests/) | Same content as KodeKloud but one-time purchase. Wait for a Udemy sale ($10-15). I used KodeKloud instead, but either works. | ~$15 |
 
@@ -3133,18 +3133,19 @@ I did killer.sh twice. Here's how it compares:
 | **Difficulty** | Harder — deliberately over-tests | Moderate |
 | **Number of questions** | ~25 | ~17-25 |
 | **Time pressure** | Very tight — most people don't finish | Tight but doable |
-| **Question length** | Some are multi-step and long | More focused, shorter |
+| **Question length** | Some are multi-step and long | More focused, but some still tricky |
 | **Scoring** | Shows score after 24h session | Shows score in 24h via email |
 | **Environment** | Same PSI-like terminal | PSI Secure Browser |
 | **kubectl access** | Same as real exam | Same |
 | **Docs access** | kubernetes.io | kubernetes.io |
+| **Gotchas** | Design to fail you | Fewer gotchas, but present |
 
 My scores:
 - killer.sh session 1: 62% (failed, felt terrible)
 - killer.sh session 2: 78% (passed, felt confident)
 - Real exam: 89%
 
-If you score 60%+ on killer.sh, you'll likely pass the real exam. The real exam is more straightforward — fewer trick questions, shorter multi-step problems.
+If you score 60%+ on killer.sh, you'll likely pass the real exam. Note: killer.sh is harder overall, but the real exam has its own tricky questions. Don't underestimate the actual exam — stay focused on every question, not just the complex ones.
 
 [Back to top](#table-of-contents)
 

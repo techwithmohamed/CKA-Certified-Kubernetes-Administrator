@@ -247,6 +247,29 @@ k describe node <node> | grep -A10 "Allocated resources" # Node capacity
 
 ---
 
+## kubectl explain — Your Secret Weapon
+
+This command appears on the exam. Use it when you're unsure about manifest structure or field names. Faster than opening docs.
+
+```bash
+k explain pod                          # Top-level Pod fields
+k explain pod.spec                     # Fields under .spec
+k explain pod.spec.containers          # Container fields
+k explain pod.spec.containers.env      # Nested fields (env variables)
+k explain deployment.spec.strategy     # RollingUpdate fields
+k explain --recursive pod | less       # Full tree of all fields
+```
+
+When to use during exam:
+- RBAC: `k explain rolebinding.roleRef` — forget which field is required?
+- Deployments: `k explain deployment.spec.strategy.rollingUpdate`
+- PVC: `k explain pvc.spec.resources` — what storage request syntax?
+- Probe: `k explain pod.spec.containers.livenessProbe` — see all probe fields
+
+Faster than searching docs. Real exam tested this.
+
+---
+
 ## Time Savers
 
 These are the commands that actually saved me time on the exam. The `$do` pattern alone is worth 10+ minutes across the whole test.
