@@ -10,7 +10,7 @@ Create a pod with a main container and a sidecar container that tails the main c
 2. Create a pod named `logger` in namespace `exercise-02` with:
    - An init container (sidecar) named `log-agent` using `busybox:1.36`
      - Set `restartPolicy: Always` on the init container to make it a native sidecar
-     - Command: `tail -f /var/log/app/app.log`
+     - Command: `tail -F /var/log/app/app.log` (capital F waits for file creation)
      - Mount a shared volume at `/var/log/app`
    - A main container named `app` using `busybox:1.36`
      - Command: write a line to `/var/log/app/app.log` every 3 seconds
@@ -34,7 +34,7 @@ Create a pod with a main container and a sidecar container that tails the main c
 
 > First attempt: I put the sidecar in `containers` instead of `initContainers`. It ran, but it wasn't a native sidecar — it started alongside the main container with no ordering guarantee. The whole point of native sidecars (v1.35) is that they start *before* the main container and keep running. Has to be `initContainers` + `restartPolicy: Always`.
 >
-> Second mistake: the `tail -f` command failed silently because the log file didn't exist yet. The sidecar starts first, before the main container writes anything. The fix is `tail -F` which waits for the file to appear — but I wasted 5 minutes thinking the volume mount was wrong.
+> Second mistake: the `tail -f` command failed silently because the log file didn't exist yet. The sidecar starts first (native sidecar starts before main container), before the app container writes anything. The log file is created by the app container, so the sidecar must use `tail -F` (capital F) which waits for the file to appear and follows it through rotations.
 
 ## Verify
 
@@ -66,7 +66,7 @@ spec:
   - name: log-agent
     image: busybox:1.37
     restartPolicy: Always
-    command: ["sh", "-c", "tail -f /var/log/app/app.log"]
+    command: ["sh", "-c", "tail -F /var/log/app/app.log"]
     volumeMounts:
     - name: log-volume
       mountPath: /var/log/app
