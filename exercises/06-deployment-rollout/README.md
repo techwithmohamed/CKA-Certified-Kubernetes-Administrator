@@ -36,6 +36,8 @@ Create a Deployment, perform a rolling update, check rollout history, and rollba
 > I used `--record` on every deployment command because that's what older guides taught. It's deprecated and removed in v1.35 — the CHANGE-CAUSE column shows `<none>`. The correct way: annotate the deployment with `kubernetes.io/change-cause` after each change. It's one extra command but it actually works.
 >
 > Also: I forgot that `k rollout undo` creates a NEW revision, not a revert. After undo, I had revision 1, 3 (not 1, 2). My history looked weird and I thought something broke. That's just how it works — undo creates revision N+1 with the old spec.
+>
+> **Why `--overwrite` on the second annotation?** The `kubernetes.io/change-cause` annotation lives on the Deployment object itself, not on individual revisions. When you update the image, the Deployment object remains the same. The old annotation persists, so you need `--overwrite` to change its value. First annotation (initial deploy) doesn't need it because the key doesn't exist yet. Second annotation (after update) needs it because the key already exists. Without `--overwrite`, the command would error with "annotation already exists".
 
 ## Verify
 
@@ -94,6 +96,7 @@ spec:
 
 ```bash
 k apply -f deploy.yaml
+# First annotation — no --overwrite needed because the key doesn't exist yet
 k annotate deployment webapp -n exercise-06 kubernetes.io/change-cause="initial deploy nginx:1.28"
 
 # Verify
@@ -102,6 +105,8 @@ k get pods -n exercise-06
 
 # Update image
 k set image deployment/webapp nginx=nginx:1.29 -n exercise-06
+# Second annotation — MUST use --overwrite because kubernetes.io/change-cause already exists on the Deployment object
+# The annotation key lives on the Deployment, not on individual revisions, so it persists across updates
 k annotate deployment webapp -n exercise-06 kubernetes.io/change-cause="update to nginx:1.29" --overwrite
 
 # Watch rollout
