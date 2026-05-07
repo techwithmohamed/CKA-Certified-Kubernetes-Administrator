@@ -3,7 +3,7 @@
 [![YAML Validation](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml/badge.svg)](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator/actions/workflows/validate.yml)
 [![CKA](https://img.shields.io/badge/CKA-Certified%202026-success)]()
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
-[![Exercises](https://img.shields.io/badge/Exercises-22-blue)](exercises/)
+[![Exercises](https://img.shields.io/badge/Exercises-31-blue)](exercises/)
 [![Skeletons](https://img.shields.io/badge/YAML%20Skeletons-23-blue)](skeletons/)
 [![Mock Exams](https://img.shields.io/badge/Mock%20Exams-2-success)](mock-exams/)
 [![GitHub stars](https://img.shields.io/github/stars/theplatformlab/CKA-Certified-Kubernetes-Administrator?style=social)](https://github.com/theplatformlab/CKA-Certified-Kubernetes-Administrator)
@@ -33,7 +33,7 @@ If this was useful, a star helps others find it.
 If you're time-pressured, here's the fast track:
 
 1. **Run the setup script** — get your aliases and vim config right from day one: [scripts/exam-setup.sh](scripts/exam-setup.sh)
-2. **Do the exercises** — work through the [22 hands-on exercises](exercises/) in order. Each one targets a specific CKA domain.
+2. **Do the exercises** — work through the [31 hands-on exercises](exercises/) in order. Each one targets a specific CKA domain.
 3. **Use YAML templates** — reference [TEMPLATES.md](TEMPLATES.md) for all skeleton YAML. Copy, paste, modify.
 4. **Do the mock exam** — practice under exam conditions with timed scenarios.
 5. **Do killer.sh twice** — once 2 weeks out, once 3 days before. See [killer.sh vs the Real Exam](#killersh-vs-the-real-cka-exam).
@@ -46,7 +46,7 @@ If you're time-pressured, here's the fast track:
 ```
 CKA-Certified-Kubernetes-Administrator/
 ├── README.md                          # This guide (you're here)
-├── exercises/                         # 22 hands-on labs
+├── exercises/                         # 31 hands-on labs
 │   ├── 01-pod-basics/
 │   ├── 02-multi-container-pod/
 │   ├── 03-configmap-secret/
@@ -68,7 +68,16 @@ CKA-Certified-Kubernetes-Administrator/
 │   ├── 19-ingress-classic/
 │   ├── 20-pod-security-standards/
 │   ├── 21-jobs-cronjobs/
-│   └── 22-priorityclass/
+│   ├── 22-priorityclass/
+│   ├── 23-resource-requests-tuning/
+│   ├── 24-priorityclass-patch/
+│   ├── 25-storage-waitforfirstconsumer/
+│   ├── 26-cri-dockerd-setup/
+│   ├── 27-cni-tigera-install/
+│   ├── 28-network-policy-complex/
+│   ├── 29-troubleshoot-etcd-endpoint/
+│   ├── 30-tls-configuration-update/
+│   └── 31-argocd-gitops-setup/
 ├── TEMPLATES.md                       # All YAML templates in collapsible format
 ├── skeletons/                         # 23 YAML template files (see TEMPLATES.md)
 ├── mock-exams/                        # Full practice exams (15 questions, 2 hours each)

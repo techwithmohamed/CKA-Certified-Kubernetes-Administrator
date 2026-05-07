@@ -1,8 +1,10 @@
 # CKA Exercises
 
-23 hands-on labs covering all five CKA exam domains. Each one has a task list, hints (use them — they save time), verification commands, and a full solution behind a spoiler tag.
+31 hands-on labs covering all seven CKA exam domains. Each one has a task list, hints (use them — they save time), verification commands, and a full solution behind a spoiler tag.
 
-I ordered these roughly by difficulty. If you're short on time, prioritize 09 (kubeadm), 11 (troubleshooting), and 05 (NetworkPolicy) — those cover the highest-weight domains and the questions most people get wrong.
+I ordered these roughly by difficulty. If you're short on time, prioritize 09 (kubeadm), 11 (troubleshooting), 29 (etcd fix), and 28 (NetworkPolicy) — those cover the highest-weight domains and represent real exam patterns.
+
+**New in v2.0:** Exercises 23-31 based on 2026 real exam feedback. These test advanced scenarios and common failure patterns.
 
 | # | Exercise | Domain | Difficulty | Time |
 |---|---|---|---|---|
@@ -28,14 +30,23 @@ I ordered these roughly by difficulty. If you're short on time, prioritize 09 (k
 | 20 | [Pod Security Standards](20-pod-security-standards/) | Cluster Architecture | Medium | 15 min |
 | 21 | [Jobs & CronJobs](21-jobs-cronjobs/) | Workloads & Scheduling | Medium | 15 min |
 | 22 | [PriorityClass](22-priorityclass/) | Workloads & Scheduling | Medium | 15 min |
+| 23 | [Resource Requests Tuning](23-resource-requests-tuning/) | Workloads & Scheduling | Hard | 20 min |
+| 24 | [PriorityClass Patch](24-priorityclass-patch/) | Workloads & Scheduling | Medium | 15 min |
+| 25 | [Storage WaitForFirstConsumer](25-storage-waitforfirstconsumer/) | Storage | Hard | 20 min |
+| 26 | [CRI-dockerd Installation](26-cri-dockerd-setup/) | Cluster Architecture | Hard | 30 min |
+| 27 | [CNI Tigera/Calico Install](27-cni-tigera-install/) | Services & Networking | Hard | 30 min |
+| 28 | [Complex NetworkPolicy](28-network-policy-complex/) | Services & Networking | Hard | 25 min |
+| 29 | [Troubleshoot etcd Endpoint](29-troubleshoot-etcd-endpoint/) | Troubleshooting | Hard | 20 min |
+| 30 | [TLS Configuration Update](30-tls-configuration-update/) | Security | Hard | 20 min |
+| 31 | [Argo CD GitOps Setup](31-argocd-gitops-setup/) | Cluster Architecture | Hard | 25 min |
 
 | Domain | Weight | Exercises |
 |---|---|---|
-| Troubleshooting | 30% | 11, 17 |
-| Cluster Architecture | 25% | 04, 08, 09, 13, 14, 18, 20 |
-| Services & Networking | 20% | 05, 15, 19 |
-| Workloads & Scheduling | 15% | 01, 02, 03, 06, 07, 10, 16, 21, 22 |
-| Storage | 10% | 12 |
+| Troubleshooting | 30% | 11, 17, 29 |
+| Cluster Architecture | 25% | 04, 08, 09, 13, 14, 18, 20, 26, 31 |
+| Services & Networking | 20% | 05, 15, 19, 27, 28 |
+| Workloads & Scheduling | 15% | 01, 02, 03, 06, 07, 10, 16, 21, 22, 23, 24 |
+| Storage | 10% | 12, 25 |
 
 ## How to Use
 
