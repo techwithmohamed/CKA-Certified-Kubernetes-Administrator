@@ -357,7 +357,7 @@ k run nginx --image=nginx:1.27 --port=80
 k run nginx --image=nginx:1.27 --labels=app=web,tier=frontend
 
 # There is no direct command to run pod with resource limits, instead you can use dry-run then edit file or use --overrides arg
-kubectl run nginx --image=nginx --overrides='{"spec":{"containers":[{"name":"nginx","image":"nginx","resources":{"requests":{"cpu":"100m","memory":"128Mi"},"limits":{"cpu":"200m","memory":"256Mi"}}}]}}'
+k run nginx --image=nginx --overrides='{"spec":{"containers":[{"name":"nginx","image":"nginx","resources":{"requests":{"cpu":"100m","memory":"128Mi"},"limits":{"cpu":"200m","memory":"256Mi"}}}]}}'
 
 # Pod with environment variables
 k run nginx --image=nginx:1.27 --env=LOG_LEVEL=debug --env=APP_ENV=prod
