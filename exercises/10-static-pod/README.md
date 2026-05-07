@@ -48,6 +48,8 @@ sudo rm /etc/kubernetes/manifests/static-web.yaml
 > I kept running `kubectl delete pod static-web-node01` and it kept coming back 5 seconds later. I did this four times before I realized: kubelet manages static pods, not the API server. You CANNOT delete a static pod through kubectl. You have to SSH into the node and delete the manifest file from `/etc/kubernetes/manifests/`. This is one of those things that feels wrong but is correct.
 >
 > Also forgot to check the actual `staticPodPath` on the node. Most guides say `/etc/kubernetes/manifests/` but it's configurable in the kubelet config. On the exam, always verify: `cat /var/lib/kubelet/config.yaml | grep staticPodPath`. I once put the file in the wrong directory and the pod never appeared.
+>
+> Pro tip: always specify the namespace when creating the pod manifest (`--namespace=exercise-10`). If you create it in default, the static pod won't work properly in the exercise namespace context. Use docker exec aliases (`d exec`, `de`) to interact with containers when troubleshooting: `de <container-id> cat /etc/kubernetes/manifests/static-web.yaml`. Check the kubelet service directly: `systemctl status kubelet` and `journalctl -u kubelet` for debugging static pod issues.
 
 <details>
 <summary>Solution</summary>
